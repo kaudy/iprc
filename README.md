@@ -32,6 +32,7 @@
 - Login usuário - OK
 - Recuperação de senha usuário - OK
 - Envio de email - OK
+  
 -----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
 # Sprint 02
 - Registro de usuário
