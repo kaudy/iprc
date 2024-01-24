@@ -161,8 +161,8 @@
 				{/if}
 			</div>
 			<br>
-			<button class="btn btn-primary" type="submit">Alterar</button>
-			<a class="btn btn-light" href="{base_url()}usuario">Voltar</button>
+			<button class="btn btn-primary btn-sm" type="submit">Alterar</button>
+			<a class="btn btn-outline-warning btn-sm" href="{base_url()}usuario">Voltar</a>
 		</form>
 	</div>
 {/block}

@@ -7,6 +7,7 @@ use App\Models\Usuario;
 use App\Models\Pessoa;
 use App\Models\Perfil;
 use App\Models\TipoStatus;
+use PHPMailer\PHPMailer\PHPMailer;
 
 class UsuarioC extends BaseController {
 
@@ -54,17 +55,20 @@ class UsuarioC extends BaseController {
 	 */
 	public function login() {
 		$usuario_sessao = $this->usuario->check();
-		$data['msg'] = "";
-		$data['msg_type'] = "";
-		$data['errors'] = [];
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
 
 		if($this->request->getMethod() === 'post') {
 			$email = $this->request->getPost('email');
 			$senha = $this->request->getPost('senha');
 
 			$usuario_sessao = $this->usuario->check($email, $senha);
-
-			if($usuario_sessao->logado == false) {
+			if($usuario_sessao == false || $usuario_sessao->logado == false) {
 				$data['msg'] = "Usuário e/ou senha incorretos.";
 				$data['msg_type'] = 'danger';
 			}else {
@@ -100,10 +104,6 @@ class UsuarioC extends BaseController {
 			return redirect()->route('/');
 		}
 		$usuario_sessao = $this->usuario->check();
-		$data['msg'] = "";
-		$data['msg_type'] = "";
-		$data['errors'] = [];
-
 		$data['msg'] = "";
 		$data['msg_type'] = "";
 		$data['errors'] = [];
@@ -158,7 +158,7 @@ class UsuarioC extends BaseController {
 			}
 
 			if($status) {
-				// Cria nova pessoa e cria usuário
+				// Cria nova pessoa e cria o novo usuário
 				$dados = (object) array(
 					"documento" => $documento,
 					"tipo_documento" => $tipo_documento,
@@ -176,6 +176,29 @@ class UsuarioC extends BaseController {
 				);
 				$novo_usuario = $this->usuario->adicionar($dados);
 				if($novo_usuario) {
+					// Envia email para ativação do novo usuário
+					$usuario = $this->usuario->where('id', $novo_usuario)->first();
+					$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
+					$link = url_to('usuario_ativar', $usuario->id, $usuario->chave_ativacao);
+
+					// Monta os dados do template
+					$dados_template = (object) array (
+						"nome" => primeiroNome($pessoa->nome),
+						"link_ativacao" => $link
+					);
+					$this->smarty->assign("dados_template", $dados_template);
+					$template = $this->smarty->fetch($this->smarty->getTemplateDir(0) .'/emails/ativar_usuario.tpl');
+
+					// Monta os dados do email
+					$dados_email = (object) array(
+						'email_destinatario'=> $pessoa->email,
+						'nome_destinatario' => $pessoa->nome,
+						'titulo'			=> 'Ativação de usuário',
+						'template'			=> $template
+					);
+					enviaEmail($dados_email);
+
+					// Retorna mensagem de sucesso para tela de login
 					$data['msg'] = "Usuário cadastrado com sucesso!";
 					$data['msg_type'] = "primary";
 					return redirect()->route('usuario')->with('data', $data);
@@ -306,7 +329,219 @@ class UsuarioC extends BaseController {
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/alterar.tpl');
 	}
 
-	public function visualizar() {
+	/**
+	 * Visualizar todos os dados do usuário e pessoa vinculada ao mesmo
+	 */
+	public function visualizar($usuario_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		$data['msg'] = "";
+		$data['msg_type'] = "";
+		$data['errors'] = [];
 
+		// Usuário
+		$usuario = $this->usuario->where('id', $usuario_id)->first();
+		if(!isset($usuario_id) || $usuario_id == '' || $usuario_id=null || $usuario == null) {
+			$data['msg'] = "Usuário não encontrado!";
+			$data['msg_type'] = "danger";
+			return redirect()->route('usuario')->with('data', $data);
+		}
+
+		// Pessoa
+		$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
+		// Carrega perfil do usuario
+		$perfil_usuario = $this->perfil->where('id', $usuario->perfil_id)->first();
+
+		if($this->request->getMethod() === 'post') {
+		}
+
+		$this->smarty->assign("usuario", $usuario);
+		$this->smarty->assign("pessoa", $pessoa);
+		$this->smarty->assign("perfil_usuario", $perfil_usuario);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/visualizar.tpl');
+	}
+
+	/**
+	 * Efetua ativação do usuário e valida chave de ativação
+	 */
+	public function ativarUsuario($usuario_id, $chave_ativacao) {
+		$usuario_sessao = $this->usuario->check();
+		$data['msg'] = "";
+		$data['msg_type'] = "";
+		$data['errors'] = [];
+
+		// Usuário
+		$usuario = $this->usuario->where('id', $usuario_id)->first();
+		// Pessoa
+		$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
+
+		// Se usuario, pessoa não existir ou chave de ativação não correta redireciona para tela de login
+		if(!$usuario || !$pessoa) {
+			return redirect()->route('login');
+		}
+		if($usuario->chave_ativacao != $chave_ativacao) {
+			return redirect()->route('login');
+		}
+
+		if($this->request->getMethod() === 'post') {
+			$senha = $this->request->getPost('senha');
+			$confirmar_senha = $this->request->getPost('confirmar_senha');
+
+			if($senha != $confirmar_senha ||  strlen($senha) < 8 ||  strlen($confirmar_senha) < 8) {
+				$data['msg'] = "Senha Inválida";
+				$data['msg_type'] = "danger";
+				$data['errors'] = [
+					'Senha e confirmação devem ser iguais;',
+					'Deve conter no minimo 8 digitos;'
+				];
+			}else {
+				$dados = array(
+					"usuario_id" => $usuario->id,
+					"chave_ativacao" => null,
+					"data_alteracao" => date('Y-m-d H:i:s'),
+					"usuario_alteracao_id" => $usuario->id,
+					"senha" => $senha,
+					"status" => 1
+				);
+
+				$usuario_alterado = $this->usuario->ativarUsuario((object) $dados);
+				if($usuario_alterado) {
+					$data['msg'] = "Usuário ativado com sucesso!";
+					$data['msg_type'] = "primary";
+					return redirect()->route('login')->with('data', $data);
+				}else {
+					$data['msg'] = "Usuário não alterado. Erros encontrados:";
+					$data['msg_type'] = "danger";
+					array_push($data['errors'], $novo_usuario);
+					$status = false;
+				}
+			}
+		}
+
+		$this->smarty->assign("usuario", $usuario);
+		$this->smarty->assign("pessoa", $pessoa);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/ativar.tpl');
+	}
+
+	/**
+	 * Efetua ativação do usuário e valida chave de ativação
+	 */
+	public function recuperarSenha() {
+		$usuario_sessao = $this->usuario->check();
+		$data['msg'] = "";
+		$data['msg_type'] = "";
+		$data['errors'] = [];
+
+		if($this->request->getMethod() === 'post') {
+			$email_recuperacao = $this->request->getPost('email_recuperacao');
+			$pessoa = $this->usuario->recuperarSenha($email_recuperacao);
+			if($pessoa) {
+				// Envia email ao solicitante
+				$usuario = $this->usuario->where('pessoa_id', $pessoa->id)->first();
+				$link = url_to('usuario_ativar', $usuario->id, $usuario->chave_ativacao);
+
+				// Monta os dados do template
+				$dados_template = (object) array (
+					"nome" => $pessoa->nome,
+					"link_ativacao" => $link
+				);
+				$this->smarty->assign("dados_template", $dados_template);
+				$template = $this->smarty->fetch($this->smarty->getTemplateDir(0) .'/emails/recuperar_senha.tpl');
+
+				// Monta os dados do email
+				$dados_email = (object) array(
+					'email_destinatario'=> $pessoa->email,
+					'nome_destinatario' => $pessoa->nome,
+					'titulo'			=> 'Alteração de Senha',
+					'template'			=> $template
+				);
+				enviaEmail($dados_email);
+			}
+
+			$data['msg'] = "Solicitado recuperação de senha.<br>Verifique sua caixa de email!";
+			$data['msg_type'] = "primary";
+			return redirect()->route('login')->with('data', $data);
+		}
+
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/recuperar_senha.tpl');
+	}
+
+	/**
+	 * Reenvia email de ativação de usuário
+	 */
+	public function reenviaEmailAtivacao($usuario_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		$data['msg'] = "";
+		$data['msg_type'] = "";
+		$data['errors'] = [];
+
+		$usuario = $this->usuario->where('id', $usuario_id)->first();
+		$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
+		$link = url_to('usuario_ativar', $usuario->id, $usuario->chave_ativacao);
+
+		// Monta os dados do template
+		$dados_template = (object) array (
+			"nome" => primeiroNome($pessoa->nome),
+			"link_ativacao" => $link
+		);
+		$this->smarty->assign("dados_template", $dados_template);
+		$template = $this->smarty->fetch($this->smarty->getTemplateDir(0) .'/emails/ativar_usuario.tpl');
+
+		// Monta os dados do email
+		$dados_email = (object) array(
+			'email_destinatario'=> $pessoa->email,
+			'nome_destinatario' => $pessoa->nome,
+			'titulo'			=> 'Ativação de usuário',
+			'template'			=> $template
+		);
+		enviaEmail($dados_email);
+
+		// Retorna mensagem de sucesso para tela de login
+		$data['msg'] = "Efetuado o reenvio do email de ativação!";
+		$data['msg_type'] = "primary";
+		return redirect()->route('usuario')->with('data', $data);
+	}
+
+
+	/**
+	 * Teste de envio de email
+	 * TODO: Migrar esse disparo para uma função que pode ser enviado um email para usuário
+	 * via sistema
+	 */
+	public function mail() {
+		$pessoa = $this->pessoa->where('email', 'djaene@gmail.com')->first();
+		$usuario = $this->usuario->where('pessoa_id', $pessoa->id)->first();
+		$link = url_to('usuario_ativar', $usuario->id, $usuario->chave_ativacao);
+
+		// Monta os dados do template
+		$dados_template = (object) array (
+			"nome" => $pessoa->nome,
+			"link_ativacao" => $link
+		);
+		$this->smarty->assign("dados_template", $dados_template);
+		$template = $this->smarty->fetch($this->smarty->getTemplateDir(0) .'/emails/recuperar_senha.tpl');
+
+		// Monta os dados do email
+		$dados_email = (object) array(
+			'email_destinatario'=> 'williankaudy@gmail.com',
+			'nome_destinatario' => 'Willian Kaudy',
+			'titulo'			=> 'Email de teste 123',
+			'corpo'				=> 'Teste envio de email pelo custom helper sem template',
+			'template'			=> null
+		);
+
+		$dados_email->template = $template;
+		enviaEmail($dados_email);
 	}
 }

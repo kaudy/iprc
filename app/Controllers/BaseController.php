@@ -72,6 +72,7 @@ abstract class BaseController extends Controller
 		$this->smarty->setCompileDir($configDirs['compileDir']);
 		$this->smarty->setCacheDir($configDirs['cacheDir']);
 		$this->smarty->setConfigDir($configDirs['configDir']);
+		$this->smarty->addPluginsDir($configDirs['pluginsDir']);
 	}
 
 	// metodo para carregar um template

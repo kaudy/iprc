@@ -1,5 +1,6 @@
 <?php
 	use CodeIgniter\CodeIgniter;
+	use PHPMailer\PHPMailer\PHPMailer;
 
 	/**
 	 * Busca o ip externo do cliente
@@ -28,11 +29,11 @@
 	}
 
 	/**
-	* Converte de mm/dd/aaaa para dd/mm/aaaa
+	* Converte de yyyy-mm-dd para dd/mm/aaaa
 	*/
 	function DataConvertBr($data) {
-		$d = explode('/', $data);
-		return "{$d[1]}/{$d[0]}/{$d[2]}";
+		$d = explode('-', $data);
+		return "{$d[2]}/{$d[1]}/{$d[0]}";
 	}
 
 	/**
@@ -62,7 +63,7 @@
 	*/
 	function mascaraCpf($string) {
 		if (!empty($string)) {
-			$string = $this->somenteNumeros($string);
+			$string = somenteNumeros($string);
 			$string = str_pad($string, 11, "0", STR_PAD_LEFT);
 			return substr($string, 0, 3).'.'.substr($string, 3, 3).'.'.substr($string, 6, 3).'-'.substr($string, 9);
 		}
@@ -74,6 +75,84 @@
 	*/
 	function somenteNumeros($string) {
 		return preg_replace('/[^0-9]/', '', $string);
+	}
+
+	/*
+	 * Retorna o link encurtado.
+	 */
+	function linkEncurtado($link) {
+		$curl = curl_init('http://tinyurl.com/api-create.php?url='.$link);
+		curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_TIMEOUT, 5);
+		curl_setopt($curl, CURLOPT_USERAGENT, getenv('HTTP_USER_AGENT'));
+		return curl_exec($curl);
+	}
+
+	/**
+	 * Primeiro nome
+	 */
+	function primeiroNome($nome_completo) {
+		$parts = explode(" ", $nome_completo);
+		return ucfirst($parts[0]);
+	}
+
+	/**
+	 *	Retorna o nome do status solicitado pelo id
+	 */
+	function statusNome($tipo_status_id) {
+		$db = db_connect();
+		$sql = "SELECT
+					ts.nome
+				FROM
+					tipos_status ts
+				WHERE
+					ts.id = {$tipo_status_id};";
+		$query = $db->query($sql);
+		$result = $query->getRow();
+		return ucfirst($result->nome);
+	}
+
+	/**
+	 * Envia email pelo PHPMailer
+	 */
+	function enviaEmail($dados_email) {
+		if($dados_email) {
+			// Configuações
+			$mail = new PHPMailer;
+			$mail->isSMTP();
+			$mail->SMTPDebug = 0; // 2-DEBUG TOTAL
+			$mail->Host = 'sandbox.smtp.mailtrap.io';
+			$mail->Port = 25;
+			$mail->SMTPAuth = true;
+			$mail->Username = 'f28874ad168bc9';
+			$mail->Password = '0aa6ba0dd16f30';
+			$mail->CharSet = 'utf-8';
+			$mail->setFrom('iprc@noreply.com', 'iPRC');
+
+			// Monta os dados do email
+			$mail->addAddress($dados_email->email_destinatario, $dados_email->nome_destinatario);
+			$mail->Subject = "iPRC - {$dados_email->titulo}";
+			$mail->Body = isset($dados_email->corpo) ? $dados_email->corpo : null;
+			//$mail->addReplyTo('test@hostinger-tutorials.com', 'Your Name');
+
+			if($dados_email->template != null) {
+				$mail->Body = null;
+				$mail->isHTML(true); //Define formato do email em HTML
+				$mail->msgHTML($dados_email->template);
+				$mail->AltBody = 'Para ver a mensagem, por favor utilize um gerenciador de email compativel com HTML!';
+			}else {
+				$mail->Body = $dados_email->corpo;
+			}
+
+			if(!$mail->send()) {
+				echo 'Mailer Error: ' . $mail->ErrorInfo;
+			}else {
+				echo 'The email message was sent.';
+			}
+		}else {
+			return false;
+		}
 	}
 
 

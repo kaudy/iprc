@@ -29,9 +29,9 @@ class Usuario extends Model {
 
 	// // Callbacks
 	protected $allowCallbacks = true;
-	protected $beforeInsert   = ['hashSenha'];
+	protected $beforeInsert   = ['hashSenha', 'hashChaveAtivacao'];
 	protected $afterInsert    = [];
-	protected $beforeUpdate   = ['hashSenha'];
+	protected $beforeUpdate   = ['hashSenha', 'hashChaveAtivacao'];
 	protected $afterUpdate    = [];
 	protected $beforeFind     = [];
 	protected $afterFind      = [];
@@ -53,10 +53,18 @@ class Usuario extends Model {
 	protected function hashSenha($data) {
 		if($data && isset($data['data']['senha'])) {
 			$data['data']['senha'] = password_hash($data['data']['senha'], PASSWORD_DEFAULT);
+		}
+		return $data;
+	}
+
+	/**
+	 * Transforma a chave de ativacao em hash, sha256, antes de ser gravado na base de dados
+	 */
+	protected function hashChaveAtivacao($data) {
+		//&& $data['data']['status'] == 3
+		if($data && isset($data['data']['chave_ativacao']) && $data['data']['chave_ativacao'] != null && $data['data']['chave_ativacao'] != '') {
 			// Se for novo cadastro e estiver no status pendente, gera chave para ativacao
-			if($data['data']['chave_ativacao'] != null && $data['data']['chave_ativacao'] != '' && $data['data']['status'] == 3) {
-				$data['data']['chave_ativacao'] = password_hash($data['data']['chave_ativacao'], PASSWORD_DEFAULT);
-			}
+			$data['data']['chave_ativacao'] = hash('sha256', $data['data']['chave_ativacao']);
 		}
 		return $data;
 	}
@@ -101,10 +109,10 @@ class Usuario extends Model {
 			$usuario = $query->getRow();
 
 			if(is_null($usuario)) {
-				return false;
+				return $retorno;
 			}
 			if(!password_verify($senha, $usuario->senha)) {
-				return false;
+				return $retorno;
 			}
 
 			// Carrega os modulos e regras
@@ -195,12 +203,13 @@ class Usuario extends Model {
 			);
 			$nova_pessoa_id = $this->pessoa->insert($dados_pessoa);
 			if($nova_pessoa_id) {
+				$timestamp = strtotime(date('Y-m-d H:i:s'));
 				$dados_usuario = array(
 					"pessoa_id" => $nova_pessoa_id,
 					"perfil_id" => $dados->perfil_id,
 					"senha" => $dados->senha,
 					"status" => 3, // pendente
-					"chave_ativacao" => $dados->chave_ativacao,
+					"chave_ativacao" => "{$dados->chave_ativacao}{$timestamp}",
 					"data_cadastro" => $dados->data_cadastro,
 					"usuario_cadastro_id" => $dados->usuario_cadastro_id
 				);
@@ -245,10 +254,11 @@ class Usuario extends Model {
 
 			$pessoa_atualizada = $this->pessoa->update($dados->pessoa_id, $dados_pessoa);
 			if($pessoa_atualizada) {
+				$timestamp = strtotime(date('Y-m-d H:i:s'));
 				$dados_usuario = array(
 					"pessoa_id" => $dados->pessoa_id,
 					"perfil_id" => $dados->perfil_id,
-					"chave_ativacao" => $dados->chave_ativacao,
+					"chave_ativacao" => "{$dados->chave_ativacao}{$timestamp}",
 					"data_alteracao" => $dados->data_alteracao,
 					"usuario_alteracao_id" => $dados->usuario_alteracao_id
 				);
@@ -275,6 +285,52 @@ class Usuario extends Model {
 			$this->db->transRollback();
 			return $e;
 		}
+	}
+
+	/**
+	 * Ativar e troca senha usuário
+	 */
+	public function ativarUsuario($dados) {
+		try {
+			$this->db->transException(true)->transStart();
+			$dados_usuario = array(
+				"chave_ativacao" => $dados->chave_ativacao,
+				"data_alteracao" => $dados->data_alteracao,
+				"usuario_alteracao_id" => $dados->usuario_alteracao_id,
+				"senha" => $dados->senha,
+				"status" => $dados->status
+			);
+			$usuario_atualizado = $this->update($dados->usuario_id, $dados_usuario);
+			if($usuario_atualizado) {
+				$this->db->transComplete();
+				return $usuario_atualizado;
+			}else {
+				$this->db->transRollback();
+				return false;
+			}
+		} catch (DatabaseException $e) {
+			$this->db->transRollback();
+			return $e;
+		}
+	}
+
+	/**
+	 *	Verifica email e gera nova chave de ativação para troca de senha
+	 */
+	public function recuperarSenha($email) {
+		$pessoa = $this->pessoa->where('email', $email)->first();
+		if($pessoa && $pessoa->email == $email) {
+			$usuario = $this->where('pessoa_id', $pessoa->id)->first();
+			if($usuario) {
+				$timestamp = strtotime(date('Y-m-d H:i:s'));
+				$dados_usuario = array(
+					"chave_ativacao" => "{$pessoa->documento}{$pessoa->email}{$timestamp}"
+				);
+				$this->update($usuario->id, $dados_usuario);
+				return $pessoa = $this->pessoa->where('email', $email)->first();
+			}
+		}
+		return false;
 	}
 
 }

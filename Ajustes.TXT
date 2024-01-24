@@ -1,0 +1,9 @@
+# Projeto: iPRC
+
+# Ajustes efetuados:
+24/01/24
+- Adicionar mascara conforme tipo do documento e limitar quantidade de caracteres
+- Adicionar mascara telefone
+- Enum sexo, primeira letra maiuscula
+- Carrega status pelo id
+

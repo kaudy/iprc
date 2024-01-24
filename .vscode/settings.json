@@ -1,0 +1,8 @@
+{
+    "php.validate.executablePath": "",
+    "files.trimTrailingWhitespace": true,
+	"php.validate.enable": false,
+	"editor.tabSize": 4,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false
+}
