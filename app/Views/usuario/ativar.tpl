@@ -29,6 +29,11 @@
 				$('#senha').addClass('is-valid');
 				return true;
 			}else {
+				if(senha === confirmarSenha && senha.length <= 8) {
+					$('#tooltip_confirmar_senha').text('Senha deve conter no mínimo 8 dígitos');
+				}else {
+					$('#tooltip_confirmar_senha').text('Confirmação de senha inválida!');
+				}
 				$('#confirmar_senha').removeClass('is-valid');
 				$('#confirmar_senha').addClass('is-invalid');
 				$('#senha').removeClass('is-valid');
@@ -60,16 +65,19 @@
 									{/if}
 									{csrf_field()}
 									<div class="form-outline form-white mb-4">
-										<input type="password" id="senha" name="senha" class="form-control"
-											placeholder="Nova Senha" onchange="validaSenha();" onkeyup="validaSenha();" required/>
 										<label class="form-label" for="senha">Nova Senha</label>
+										<input type="password" id="senha" name="senha" class="form-control"
+											placeholder="Digite a nova senha" onchange="validaSenha();" onkeyup="validaSenha();" required/>
 									</div>
-									<div class="form-outline form-white mb-4">
-										<input type="password" id="confirmar_senha" name="confirmar_senha"
-											class="form-control" placeholder="Confirmação da Senha" onchange="validaSenha();" onkeyup="validaSenha();" required/>
+									<div class="form-outline form-white mb-4 has-validation position-relative">
 										<label class="form-label" for="confirmar_senha">Confirmação da Senha</label>
+										<input type="password" id="confirmar_senha" name="confirmar_senha"
+											class="form-control" placeholder="Digite a confirmação da senha" onchange="validaSenha();" onkeyup="validaSenha();" required/>
+										<div class="invalid-tooltip" id="tooltip_confirmar_senha">
+										</div>
 									</div>
 									</p>
+									<br>
 									<button class="btn btn-outline-light btn-lg px-5" type="submit">Alterar Senha</button>
 								</div>
 							</div>

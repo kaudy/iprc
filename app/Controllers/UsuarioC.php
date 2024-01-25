@@ -144,18 +144,21 @@ class UsuarioC extends BaseController {
 			// Validação dos dados
 			$result = $this->pessoa->where('email', $email)->first();
 			if($result && $result->email == $email) {
-				$data['msg'] = "Usuário não cadastrado. Erros encontrados:";
+				$data['msg'] = "Usuário não foi cadastrado. Erros encontrados:";
 				$data['msg_type'] = "danger";
 				array_push($data['errors'], "Email já cadastrado.");
 				$status = false;
 			}
 			$result = $this->pessoa->where('documento', $documento)->where('tipo_documento', $tipo_documento)->first();
 			if($result && $result->email == $email) {
-				$data['msg'] = "Usuário não cadastrado. Erros encontrados:";
+				$data['msg'] = "Usuário não foi cadastrado. Erros encontrados:";
 				$data['msg_type'] = "danger";
 				array_push($data['errors'], "Documento já cadastrado.");
 				$status = false;
 			}
+			//
+			// TODO: Adicionar validação do documento pelo tipo do documento
+			//
 
 			if($status) {
 				// Cria nova pessoa e cria o novo usuário
