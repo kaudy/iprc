@@ -7,3 +7,8 @@
 - Enum sexo, primeira letra maiuscula
 - Carrega status pelo id
 
+25/01/24
+- Corrigido validação na tela de ativação de usuário
+- Ajuste no .gitignore
+- Ajuste no .env
+- Ajuste no config/APP para setar url padrão

@@ -102,7 +102,7 @@
 						<select class="form-control" name="estado_civil" id="estado_civil" required>
 							<option value="">Selecione</option>
 							{foreach from=$estados_civil item=estado_civil}
-								<option value="{$estado_civil}" {if $pessoa->sexo == $sexo}selected {/if}>
+								<option value="{$estado_civil}" {if $pessoa->estado_civil == $estado_civil}selected {/if}>
 									{$estado_civil|ucfirst}</option>
 							{/foreach}
 						</select>
