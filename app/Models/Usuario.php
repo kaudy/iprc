@@ -41,10 +41,12 @@ class Usuario extends Model {
 	// Models
 	protected $modulo;
 	protected $pessoa;
+	protected $usuarioGrupo;
 
 	protected function initialize() {
 		$this->modulo = model(Modulo::class);
 		$this->pessoa = model(Pessoa::class);
+		$this->usuarioGrupo = model(UsuarioGrupo::class);
 	}
 
 	/**
@@ -215,6 +217,19 @@ class Usuario extends Model {
 				);
 				$novo_usuario_id = $this->insert($dados_usuario);
 				if($novo_usuario_id) {
+					// Adiciona os Grupos do usuário
+					if(count($dados->usuario_grupos) > 0) {
+						foreach($dados->usuario_grupos as $c => $v) {
+							$dados_usuario_grupo = array(
+								"usuario_id" => $novo_usuario_id,
+								"grupo_id" => $v,
+								"status" => 1,
+								"data_cadastro" => $dados->data_cadastro,
+								"usuario_cadastro_id" => $dados->usuario_cadastro_id
+							);
+							$this->usuarioGrupo->insert($dados_usuario_grupo);
+						}
+					}
 					$this->db->transComplete();
 					return $novo_usuario_id;
 				}else {
@@ -271,6 +286,31 @@ class Usuario extends Model {
 
 				$usuario_atualizado = $this->update($dados->usuario_id, $dados_usuario);
 				if($usuario_atualizado) {
+					if(count($dados->usuario_grupos) > 0) {
+						// Inativa todos os grupos do usuário que não estiverem na lista
+						$usuario_grupo_inativar = $this->usuarioGrupo->whereNotIn('grupo_id', $dados->usuario_grupos)->where('status', 1)->findAll();
+						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {
+							$usuario_grupo->status = 4; // Excluido
+							$usuario_grupo->data_alteracao = $dados->data_alteracao;
+							$usuario_grupo->usuario_alteracao_id = $dados->usuario_alteracao_id;
+							$this->usuarioGrupo->update($usuario_grupo->id, $usuario_grupo);
+						}
+						// Verifica todos os grupos ativos vinculados ao usuário
+						foreach($dados->usuario_grupos as $c => $v) {
+							$usuario_grupo_ativo = $this->usuarioGrupo->where('usuario_id', $dados->usuario_id)->where('grupo_id', $v)->where('status', 1)->find();
+							if(count($usuario_grupo_ativo) == 0) {
+								// Adiciona novo grupo ao usuário
+								$dados_usuario_grupo = array(
+									"usuario_id" => $dados->usuario_id,
+									"grupo_id" => $v,
+									"status" => 1,
+									"data_cadastro" => $dados->data_alteracao,
+									"usuario_cadastro_id" => $dados->usuario_alteracao_id
+								);
+								$this->usuarioGrupo->insert($dados_usuario_grupo);
+							}
+						}
+					}
 					$this->db->transComplete();
 					return $usuario_atualizado;
 				}else {

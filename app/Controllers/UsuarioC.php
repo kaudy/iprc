@@ -7,6 +7,8 @@ use App\Models\Usuario;
 use App\Models\Pessoa;
 use App\Models\Perfil;
 use App\Models\TipoStatus;
+use App\Models\Grupo;
+use App\Models\UsuarioGrupo;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class UsuarioC extends BaseController {
@@ -15,12 +17,16 @@ class UsuarioC extends BaseController {
 	protected $pessoa;
 	protected $perfil;
 	protected $tipoStatus;
+	protected $grupo;
+	protected $usuarioGrupo;
 
 	public function __construct() {
 		$this->usuario = model(Usuario::class);
 		$this->pessoa = model(Pessoa::class);
 		$this->perfil = model(Perfil::class);
 		$this->tipoStatus = model(TipoStatus::class);
+		$this->grupo = model(Grupo::class);
+		$this->usuarioGrupo = model(UsuarioGrupo::class);
 	}
 
 	/**
@@ -140,6 +146,11 @@ class UsuarioC extends BaseController {
 			$estado_civil = $this->request->getPost('estado_civil');
 			$telefone = $this->request->getPost('telefone');
 			$perfil_id = $this->request->getPost('perfil_id');
+			// Grupos usuario
+			$usuario_grupos = $this->request->getPost('usuario_grupos') != '' ? $this->request->getPost('usuario_grupos') : null;
+			if($usuario_grupos != null) {
+				$usuario_grupos = explode(",", $usuario_grupos);
+			}
 
 			// Validação dos dados
 			$result = $this->pessoa->where('email', $email)->first();
@@ -173,6 +184,7 @@ class UsuarioC extends BaseController {
 					"email" => $email,
 					"perfil_id" => $perfil_id,
 					"senha" => $senha != null && $senha != '' ? $senha : "{$documento}{$email}",
+					"usuario_grupos" => $usuario_grupos,
 					"chave_ativacao" => "{$documento}{$email}",
 					"data_cadastro" => date('Y-m-d H:i:s'),
 					"usuario_cadastro_id" => $usuario_sessao->usuario->id
@@ -216,8 +228,11 @@ class UsuarioC extends BaseController {
 
 		// Carrega todos os perfis ativos
 		$perfis = $this->perfil->where('status', 1)->findAll();
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status', 1)->findAll();
 
 		$this->smarty->assign("perfis", $perfis);
+		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("estados_civil", getEnum('pessoas', 'estado_civil'));
 		$this->smarty->assign("tipos_sexos", getEnum('pessoas', 'sexo'));
@@ -257,6 +272,11 @@ class UsuarioC extends BaseController {
 			$telefone = $this->request->getPost('telefone');
 			$perfil_id = $this->request->getPost('perfil_id');
 			$tipo_status_id = $this->request->getPost('tipo_status_id') != null && $this->request->getPost('tipo_status_id') != '' ? $this->request->getPost('tipo_status_id') : null;
+			// Grupos usuario
+			$usuario_grupos = $this->request->getPost('usuario_grupos') != '' ? $this->request->getPost('usuario_grupos') : null;
+			if($usuario_grupos != null) {
+				$usuario_grupos = explode(",", $usuario_grupos);
+			}
 
 			// Validação dos dados
 			$result = $this->pessoa->where('email', $email)->where('id !=', $usuario->pessoa_id)->first();
@@ -288,6 +308,7 @@ class UsuarioC extends BaseController {
 					"telefone" => $telefone,
 					"email" => $email,
 					"perfil_id" => $perfil_id,
+					"usuario_grupos" => $usuario_grupos,
 					"chave_ativacao" => "{$documento}{$email}",
 					"data_alteracao" => date('Y-m-d H:i:s'),
 					"usuario_alteracao_id" => $usuario_sessao->usuario->id
@@ -317,6 +338,10 @@ class UsuarioC extends BaseController {
 		$perfis = $this->perfil->where('status', 1)->findAll();
 		// Carrega os tipos de status
 		$tipos_status = $this->tipoStatus->whereIn('id', array('1','2'))->findAll();
+		// Usuario Grupos
+		$usuario_grupos = $this->usuarioGrupo->listar($usuario->id);
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status', 1)->findAll();
 
 		//echo "<pre>";var_dump($usuario);exit;
 
@@ -324,6 +349,8 @@ class UsuarioC extends BaseController {
 		$this->smarty->assign("pessoa", $pessoa);
 		$this->smarty->assign("perfis", $perfis);
 		$this->smarty->assign("tipos_status", $tipos_status);
+		$this->smarty->assign("grupos", $grupos);
+		$this->smarty->assign("usuario_grupos", $usuario_grupos);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("estados_civil", getEnum('pessoas', 'estado_civil'));
 		$this->smarty->assign("tipos_sexos", getEnum('pessoas', 'sexo'));
@@ -356,6 +383,8 @@ class UsuarioC extends BaseController {
 		$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
 		// Carrega perfil do usuario
 		$perfil_usuario = $this->perfil->where('id', $usuario->perfil_id)->first();
+		// Usuario Grupos
+		$usuario_grupos = $this->usuarioGrupo->listar($usuario->id);
 
 		if($this->request->getMethod() === 'post') {
 		}
@@ -363,6 +392,7 @@ class UsuarioC extends BaseController {
 		$this->smarty->assign("usuario", $usuario);
 		$this->smarty->assign("pessoa", $pessoa);
 		$this->smarty->assign("perfil_usuario", $perfil_usuario);
+		$this->smarty->assign("usuario_grupos", $usuario_grupos);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/visualizar.tpl');

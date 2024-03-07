@@ -14,16 +14,12 @@
 - Cinza: #a7b1b6 - RGB (167, 177, 182)
 
 -----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
-# Usuário Cadastro
-- Regras
-- - Ao adicionar novo usuário, salvar dados da pessoa fisica e gerar chave para ativação:
-- - - chave codificada = documento + email
-- - Caso email ou documento já estejam cadastrado, mostra mensagem e não permite Cadastro
-
-# Ajustes:
-- Adicionar mascara conforme tipo do documento e limitar quantidade de caracteres
-- Adicionar mascara telefone
-- Enum sexo, primeira letra maiuscula
+# Usuário
+## Ajustes:
+- Adicionar mascara conforme tipo do documento e limitar quantidade de caracteres - OK
+- Adicionar mascara telefone - OK
+- Enum sexo, primeira letra maiuscula - OK
+- Validar documento conforme o tipo
 
 -----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
 # Sprint 01
@@ -32,7 +28,14 @@
 - Login usuário - OK
 - Recuperação de senha usuário - OK
 - Envio de email - OK
-  
+
 -----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|-----|
 # Sprint 02
-- Registro de usuário
+- Grupos
+- Usuários Grupos
+- - Vinculado ao usuário - OK
+- Regras
+- Votações
+
+
+

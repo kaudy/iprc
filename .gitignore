@@ -21,6 +21,7 @@ application/logs/*
 /writable/*
 
 #Smarty
+/app/Templates_c/
 /app/Templates_c/*
 
-/app/.DS_Store
+*.DS_Store

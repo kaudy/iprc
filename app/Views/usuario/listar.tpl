@@ -1,9 +1,15 @@
 {extends file="../head.tpl"}
 {block name=main}
 	<div class="container">
-		<div class="title">
-			<h2>Usuários</h2>
+		<div class="row">
+			<div class="col-md-11">
+				<h2>Usuários</h2>
+			</div>
+			<div class="col-md-1">
+			<a class="btn btn-outline-primary btn-sm" href="{url_to('usuario_cadastar')}">Cadastrar</a>
+			</div>
 		</div>
+		<br>
 		{if $data['msg'] != null && $data['msg'] != ''}
 			<div class="alert alert-{$data['msg_type']}" role="alert">
 				{$data['msg']}
@@ -17,8 +23,8 @@
 			</div>
 		{/if}
 		<div class="row">
-			<table cellspacing="1" summary="Listagem de todos usuários" class="table">
-				<thead>
+			<table cellspacing="1" summary="Listagem de todos usuários" class="table table-sm table-responsive table-striped">
+				<thead  class="thead-light">
 					<tr>
 						<th scope="col">
 							#
@@ -36,7 +42,7 @@
 				</thead>
 				<tbody>
 					{foreach from=$usuarios item=registro}
-						<tr class="{cycle values='odd,even'}">
+						<tr>
 							<td data-title="Usuário">
 								{$registro->id}
 							</td>
@@ -55,7 +61,7 @@
 						</tr>
 					{foreachelse}
 						<tr>
-							<td colspan="3" class="null">
+							<td colspan="4" class="null">
 								<p>Registro indisponível</p>
 							</td>
 						</tr>
