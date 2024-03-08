@@ -11,6 +11,7 @@ use App\Models\Votacao;
 use App\Models\VotacaoOpcao;
 use App\Models\VotacaoGrupo;
 use App\Models\VotacaoFiscal;
+use App\Models\Voto;
 
 class VotacaoC extends BaseController {
 
@@ -19,6 +20,7 @@ class VotacaoC extends BaseController {
 	protected $votacaoOpcao;
 	protected $votacaoGrupo;
 	protected $votacaoFiscal;
+	protected $voto;
 	protected $grupo;
 	protected $tipoStatus;
 
@@ -30,6 +32,7 @@ class VotacaoC extends BaseController {
 		$this->grupo = model(Grupo::class);
 		$this->tipoStatus = model(TipoStatus::class);
 		$this->votacaoFiscal = model(VotacaoFiscal::class);
+		$this->voto = model(Voto::class);
 	}
 
 	/**
@@ -52,10 +55,20 @@ class VotacaoC extends BaseController {
 			$titulo = $this->request->getPost('titulo') != '' ? $this->request->getPost('titulo') : null;
 			$tipo_status_id = $this->request->getPost('tipo_status_id') != '' ? $this->request->getPost('tipo_status_id') : null;
 			// Carrega lista de votacoes
-			$votacoes = $this->votacao->listar(null, $titulo, $tipo_status_id);
+			$votacoes = $this->votacao->listar(null, $titulo, $tipo_status_id, $usuario_sessao->usuario->id);
 		}else {
 			// Carrega lista de votacoes
 			$votacoes = $this->votacao->listar(null, null, 1);
+		}
+		// Verifica permissões das votações
+		foreach($votacoes as $c => $votacao) {
+			//echo "<pre>";var_dump($votacao->permite_votar);exit;
+			$permissao_grupo = $this->votacaoGrupo->verificaPermissaoGrupo($votacao->id, $usuario_sessao->usuario->id);
+			$voto_realizado = $this->voto->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+
+			if($votacao->status_id == 1 && $permissao_grupo && !$voto_realizado) {
+				$votacoes[$c]->permite_votar = true;
+			}
 		}
 
 		// Carrega os tipos de status
@@ -582,5 +595,76 @@ class VotacaoC extends BaseController {
 			array_push($data['errors'], $status);
 			return redirect()->route('votacao')->with('data', $data);
 		}
+	}
+
+	/**
+	 *
+	 */
+	public function votar($votacao_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega votacao
+		$votacao = $this->votacao->find($votacao_id);
+		if(!$votacao) {
+			return redirect()->route('votacao');
+		}
+		// Verifica permissão de grupo do usuario
+		$permissao_grupo = $this->votacaoGrupo->verificaPermissaoGrupo($votacao_id, $usuario_sessao->usuario->id);
+		if(!$permissao_grupo) {
+			return redirect()->route('votacao');
+		}
+		// Carrega voto do usuário
+		$voto_realizado = $this->voto->where('votacao_id', $votacao_id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+		if($voto_realizado) {
+			$data['msg'] = "Voto já computado para o usuário!";
+			$data['msg_type'] = "warning";
+			return redirect()->route('votacao')->with('data', $data);
+		}
+
+		if($this->request->getMethod() === 'post') {
+			$voto = $this->request->getPost('voto');
+			if($voto != null & $voto != '') {
+				$dados = (object) array(
+					"votacao_id" => $votacao_id,
+					"usuario_id" => $usuario_sessao->usuario->id,
+					"voto" => $voto,
+					"data_voto" => date('Y-m-d H:i:s'),
+					"ip_usuario" => getIpClient()
+				);
+				$status = $this->voto->insert($dados);
+				if($status) {
+					$data['msg'] = "Voto efetuado com sucesso!";
+					$data['msg_type'] = "primary";
+					return redirect()->route('votacao')->with('data', $data);
+				}else {
+					$data['msg'] = "Erro ao validar voto. Por favor tente novamente!";
+					$data['msg_type'] = "danger";
+					array_push($data['errors'], $status);
+					return redirect()->route('votacao')->with('data', $data);
+				}
+			}
+		}
+
+		// Carrega todas as opçoes de votacao ativas
+		$votacao_opcoes = $this->votacaoOpcao->where('votacao_id', $votacao_id)->orderBy('titulo', 'asc')->findAll();
+		// Carrega os grupos vinculados a votação
+		$votacao_grupos = $this->votacaoGrupo->listar(null, $votacao_id, null, 1);
+
+		$this->smarty->assign("votacao", $votacao);
+		$this->smarty->assign("votacao_opcoes", $votacao_opcoes);
+		$this->smarty->assign("votacao_grupos", $votacao_grupos);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/votacao/votar.tpl');
 	}
 }

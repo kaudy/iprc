@@ -119,6 +119,8 @@ class Usuario extends Model {
 
 			// Carrega os modulos e regras
 			$modulos = $this->modulo->listarPorPefil($usuario->perfil_id);
+			// Carrega os grupos vinculados ao usuário
+			$usuario_grupos = $this->usuarioGrupo->listar($usuario->id);
 
 			// Monta Retorno
 			$retorno->logado = true;
@@ -135,10 +137,10 @@ class Usuario extends Model {
 			);
 			// modulos
 			$retorno->modulos = $modulos;
+			// Usuario Grupos
+			$retorno->usuario_grupos = $usuario_grupos;
 			// Regras
-
 			// TODO: carregas as regras
-
 
 			// Atualizada data do ultimo login e ip
 			$data = array(

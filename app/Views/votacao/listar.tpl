@@ -98,6 +98,9 @@
 								{$registro->status|ucfirst}
 							</td>
 							<td data-title="Ações">
+								{if $registro->permite_votar == true}
+									<a class="btn btn-primary btn-sm" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
+								{/if}
 								{if $registro->status_id == 3}
 									<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $registro->id)}">Ativar</a>
 									<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_alterar', $registro->id)}">Alterar</a>

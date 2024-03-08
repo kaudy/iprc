@@ -77,4 +77,31 @@ class VotacaoGrupo extends Model
 
 		return $result;
 	}
+
+	/**
+	 *	Verifica se usuário possui o grupo vinculado a votação
+	 */
+	public function verificaPermissaoGrupo($votacao_id, $usuario_id) {
+		$sql = "SELECT
+					vg.id,
+					vg.votacao_id,
+					vg.grupo_id,
+					g.nome AS grupo_nome,
+					vg.status
+				FROM
+					votacoes_grupos AS vg
+						INNER JOIN
+					usuarios_grupos ug ON ug.grupo_id = vg.grupo_id
+						INNER JOIN
+					grupos g ON g.id = vg.grupo_id
+				WHERE
+					vg.votacao_id = {$votacao_id}
+					AND ug.usuario_id = {$usuario_id}
+					AND vg.status = 1
+					AND ug.status = 1;";
+		$query = $this->db->query($sql);
+		$result = $query->getResult();
+
+		return $result;
+	}
 }

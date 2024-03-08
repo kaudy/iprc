@@ -37,9 +37,10 @@ $routes->group('votacao', static function ($routes) {
 	$routes->match(['get', 'post'], '(:num)/fiscais/(:num)/remover', 'VotacaoC::removerFiscal/$1/$2', ['as' => 'votacao_remover_fiscal']);
 	//Acoes
 	$routes->match(['get', 'post'], '(:num)/alterar', 'VotacaoC::alterarVotacao/$1', ['as' => 'votacao_alterar']);
-	$routes->match(['get', 'post'], 'visualizar/(:num)', 'VotacaoC::visualizar/$1', ['as' => 'votacao_visualizar']);
-	$routes->match(['get', 'post'], 'cancelar/(:num)', 'VotacaoC::cancelarVotacao/$1', ['as' => 'votacao_cancelar']);
-	$routes->match(['get', 'post'], 'ativar/(:num)', 'VotacaoC::ativarVotacao/$1', ['as' => 'votacao_ativar']);
+	$routes->match(['get', 'post'], '(:num)/visualizar', 'VotacaoC::visualizar/$1', ['as' => 'votacao_visualizar']);
+	$routes->match(['get', 'post'], '(:num)/cancelar', 'VotacaoC::cancelarVotacao/$1', ['as' => 'votacao_cancelar']);
+	$routes->match(['get', 'post'], '(:num)/ativar', 'VotacaoC::ativarVotacao/$1', ['as' => 'votacao_ativar']);
+	$routes->match(['get', 'post'], '(:num)/votar', 'VotacaoC::votar/$1', ['as' => 'votacao_votar']);
 });
 
 $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');

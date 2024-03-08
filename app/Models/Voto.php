@@ -9,7 +9,7 @@ class Voto extends Model
     protected $table            = 'votos';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
-    protected $returnType       = 'array';
+    protected $returnType       = 'object';
     protected $useSoftDeletes   = false;
     protected $protectFields    = false;
     protected $allowedFields    = [];

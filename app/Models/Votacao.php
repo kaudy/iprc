@@ -98,7 +98,7 @@ class Votacao extends Model
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null, $titulo=null, $status=null) {
+	public function listar($id=null, $titulo=null, $status=null, $votante_usuario_id=null) {
 		$sqlCpl = "";
 
 		if($id != null) {
@@ -125,7 +125,8 @@ class Votacao extends Model
 						FROM
 							votacoes_opcoes AS vo
 						WHERE
-							vo.votacao_id = v.id) AS qtde_opcoes
+							vo.votacao_id = v.id) AS qtde_opcoes,
+					FALSE as permite_votar
 				FROM
 					votacoes AS v
 						INNER JOIN
