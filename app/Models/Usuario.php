@@ -286,7 +286,16 @@ class Usuario extends Model {
 
 				$usuario_atualizado = $this->update($dados->usuario_id, $dados_usuario);
 				if($usuario_atualizado) {
-					if(count($dados->usuario_grupos) > 0) {
+					if($dados->usuario_grupos == null) {
+						// Inativa todos os grupos do usuário que não estiverem na lista
+						$usuario_grupo_inativar = $this->usuarioGrupo->where('status', 1)->findAll();
+						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {
+							$usuario_grupo->status = 4; // Excluido
+							$usuario_grupo->data_alteracao = $dados->data_alteracao;
+							$usuario_grupo->usuario_alteracao_id = $dados->usuario_alteracao_id;
+							$this->usuarioGrupo->update($usuario_grupo->id, $usuario_grupo);
+						}
+					}else if(count($dados->usuario_grupos) > 0) {
 						// Inativa todos os grupos do usuário que não estiverem na lista
 						$usuario_grupo_inativar = $this->usuarioGrupo->whereNotIn('grupo_id', $dados->usuario_grupos)->where('status', 1)->findAll();
 						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {

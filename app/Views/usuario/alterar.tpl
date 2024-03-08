@@ -8,7 +8,7 @@
 			verificaTipoDocumento();
 			// Carrega os grupos do usuário
 			{foreach from=$usuario_grupos item=usuario_grupo}
-				gruposSelecionados.push({$usuario_grupo->id});
+				gruposSelecionados.push({$usuario_grupo->grupo_id});
 				gruposSelecionadosNomes.push('{$usuario_grupo->grupo_nome}');
 			{/foreach}
 			atualizaListaGrupos();
@@ -188,7 +188,7 @@
 			<div class="row">
 				<div class="col-md-{if $usuario->status != 3}4{else}12{/if}">
 					<div class="form-outline">
-						<label for="perfil_id" class="form-label">Status</label>
+						<label for="perfil_id" class="form-label">Perfil</label>
 						<select class="form-control" name="perfil_id" id="perfil_id" required>
 							<option value="">Selecione</option>
 							{foreach from=$perfis item=perfil}
