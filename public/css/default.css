@@ -1,0 +1,17 @@
+
+.nav-color {
+	background-color: #00448b;
+	color:white;
+}
+
+.btn-sm.btn-votar {
+	background-color: #00448b;
+	color:white;
+	border-color: #00448b;
+}
+
+.btn-sm.btn-votar:hover {
+	background-color: white;
+	border-color: #00448b;
+	color: #00448b;
+}

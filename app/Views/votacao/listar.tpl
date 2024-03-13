@@ -6,7 +6,7 @@
 				<h2>Votações</h2>
 			</div>
 			<div class="col-md-1">
-			<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_cadastar')}">Cadastrar</a>
+				<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_cadastar')}">Cadastrar</a>
 			</div>
 		</div>
 		<br>
@@ -31,20 +31,22 @@
 						<div class="row">
 							<div class="col-md-6">
 								<label for="titulo">Titulo</label>
-								<input type="text" class="form-control" id="titulo" name="titulo" placeholder="Titulo" value="{if $smarty.post}{$smarty.post.titulo}{/if}">
+								<input type="text" class="form-control" id="titulo" name="titulo" placeholder="Titulo"
+									value="{if $smarty.post}{$smarty.post.titulo}{/if}">
 							</div>
 							<div class="col-md-3">
 								<label for="titulo">Status</label>
 								<select class="form-control" name="tipo_status_id" id="tipo_status_id">
 									<option value="">Selecione</option>
 									{foreach from=$tipos_status item=tipo_status}
-										<option value="{$tipo_status->id}" {if $smarty.post}{if $smarty.post.tipo_status_id == $tipo_status->id}selected{/if}{/if}>{$tipo_status->nome|ucfirst}</option>
+										<option value="{$tipo_status->id}"
+											{if $smarty.post}{if $smarty.post.tipo_status_id == $tipo_status->id}selected{/if}{/if}>
+											{$tipo_status->nome|ucfirst}</option>
 									{/foreach}
 								</select>
 							</div>
-							<div class="col-md-3 row">
-								<label for="titulo"></label>
-								<button class="btn btn-primary btn-sm" type="submit">Pesquisar</button>
+							<div class="col-md-2 row p-1">
+								<button class="btn btn-primary btn-sm p-1" type="submit">Pesquisar</button>
 							</div>
 						</div>
 					</div>
@@ -52,11 +54,12 @@
 			</div>
 		</form>
 		<br>
-			<div style="height: 1px;background-color:grey"></div>
+		<div style="height: 1px;background-color:grey"></div>
 		<br>
 		<div class="row">
-			<table cellspacing="1" summary="Listagem de todos usuários" class="table table-sm table-responsive table-striped">
-				<thead  class="thead-light">
+			<table cellspacing="1" summary="Listagem de todos usuários"
+				class="table table-sm table-responsive table-striped">
+				<thead class="thead-light">
 					<tr>
 						<th scope="col">
 							#
@@ -98,16 +101,25 @@
 								{$registro->status|ucfirst}
 							</td>
 							<td data-title="Ações">
+								{if $registro->permite_resultado == true}
+									<a class="btn btn-sm btn-votar" href="{url_to('votacao_resultado', $registro->id)}">Resultado</a>
+								{/if}
 								{if $registro->permite_votar == true}
 									<a class="btn btn-primary btn-sm" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
 								{/if}
 								{if $registro->status_id == 3}
 									<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $registro->id)}">Ativar</a>
-									<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_alterar', $registro->id)}">Alterar</a>
-									<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_cadastar_opcoes', $registro->id)}">Opções</a>
+									<a class="btn btn-outline-primary btn-sm"
+										href="{url_to('votacao_alterar', $registro->id)}">Alterar</a>
+									<a class="btn btn-outline-primary btn-sm"
+										href="{url_to('votacao_cadastar_opcoes', $registro->id)}">Opções</a>
 								{/if}
-								<a class="btn btn-outline-secondary btn-sm" href="{url_to('votacao_visualizar', $registro->id)}">Visualizar</a>
-								<a class="btn btn-outline-danger btn-sm" href="{url_to('votacao_cancelar', $registro->id)}">Cancelar</a>
+								<a class="btn btn-outline-secondary btn-sm"
+									href="{url_to('votacao_visualizar', $registro->id)}">Visualizar</a>
+								{if $registro->permite_cancelar == true}
+									<a class="btn btn-outline-danger btn-sm"
+									href="{url_to('votacao_cancelar', $registro->id)}">Cancelar</a>
+								{/if}
 							</td>
 						</tr>
 					{foreachelse}

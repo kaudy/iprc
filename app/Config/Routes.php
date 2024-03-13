@@ -41,6 +41,7 @@ $routes->group('votacao', static function ($routes) {
 	$routes->match(['get', 'post'], '(:num)/cancelar', 'VotacaoC::cancelarVotacao/$1', ['as' => 'votacao_cancelar']);
 	$routes->match(['get', 'post'], '(:num)/ativar', 'VotacaoC::ativarVotacao/$1', ['as' => 'votacao_ativar']);
 	$routes->match(['get', 'post'], '(:num)/votar', 'VotacaoC::votar/$1', ['as' => 'votacao_votar']);
+	$routes->match(['get', 'post'], '(:num)/resultado', 'VotacaoC::resultado/$1', ['as' => 'votacao_resultado']);
 });
 
 $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');

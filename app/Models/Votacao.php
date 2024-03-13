@@ -69,22 +69,8 @@ class Votacao extends Model
 			);
 			$nova_votacao_id = $this->insert($dados_votacao);
 			if($nova_votacao_id) {
-				// Adiciona os Grupos na votação
-				if(count($dados->votacao_grupos) > 0) {
-					foreach($dados->votacao_grupos as $c => $v) {
-						$dados_votacao_grupo = array(
-							"votacao_id" => $nova_votacao_id,
-							"grupo_id" => $v,
-							"status" => 1,
-							"data_cadastro" => $dados->data_cadastro,
-							"usuario_cadastro_id" => $dados->usuario_cadastro_id
-						);
-						$this->votacaoGrupo->insert($dados_votacao_grupo);
-					}
-				}
 				$this->db->transComplete();
 				return $nova_votacao_id;
-
 			}else {
 				$this->db->transRollback();
 				return false;
@@ -126,7 +112,9 @@ class Votacao extends Model
 							votacoes_opcoes AS vo
 						WHERE
 							vo.votacao_id = v.id) AS qtde_opcoes,
-					FALSE as permite_votar
+					FALSE as permite_votar,
+					FALSE as permite_resultado,
+					FALSE as permite_cancelar
 				FROM
 					votacoes AS v
 						INNER JOIN

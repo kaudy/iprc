@@ -62,17 +62,26 @@ class VotacaoC extends BaseController {
 		}
 		// Verifica permissões das votações
 		foreach($votacoes as $c => $votacao) {
-			//echo "<pre>";var_dump($votacao->permite_votar);exit;
 			$permissao_grupo = $this->votacaoGrupo->verificaPermissaoGrupo($votacao->id, $usuario_sessao->usuario->id);
 			$voto_realizado = $this->voto->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
-
+			// Permite votar
 			if($votacao->status_id == 1 && $permissao_grupo && !$voto_realizado) {
 				$votacoes[$c]->permite_votar = true;
+			}
+			// Fiscal da votação
+			$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+			// Permite ver resultado
+			if($fiscal_votacao || $votacao->status == 5) { // status 5 - finalizado
+				$votacoes[$c]->permite_resultado = true;
+			}
+			// Permite Cancelar
+			if($fiscal_votacao || $votacao->status == 3) { // status 3 - pendente
+				$votacoes[$c]->permite_cancelar = true;
 			}
 		}
 
 		// Carrega os tipos de status
-		$tipos_status = $this->tipoStatus->whereIn('id', array('1','3'))->findAll();
+		$tipos_status = $this->tipoStatus->whereIn('id', array('1','3', '5'))->findAll();
 
 		$this->smarty->assign("tipos_status", $tipos_status);
 		$this->smarty->assign("votacoes", $votacoes);
@@ -103,11 +112,6 @@ class VotacaoC extends BaseController {
 			$titulo = $this->request->getPost('titulo');
 			$texto = $this->request->getPost('texto');
 			$qtd_escolhas = $this->request->getPost('qtd_escolhas') != '' ? $this->request->getPost('qtd_escolhas') : 1;
-			// Grupos usuario
-			$votacao_grupos = $this->request->getPost('votacao_grupos') != '' ? $this->request->getPost('votacao_grupos') : null;
-			if($votacao_grupos != null) {
-				$votacao_grupos = explode(",", $votacao_grupos);
-			}
 
 			if($status) {
 				// Cria nova votação
@@ -115,7 +119,6 @@ class VotacaoC extends BaseController {
 					"titulo" => $titulo,
 					"texto" => $texto,
 					"qtd_escolhas" => $qtd_escolhas,
-					"votacao_grupos" => $votacao_grupos,
 					"data_cadastro" => date('Y-m-d H:i:s'),
 					"usuario_cadastro_id" => $usuario_sessao->usuario->id
 				);
@@ -133,10 +136,6 @@ class VotacaoC extends BaseController {
 			}
 		}
 
-		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
-
-		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/votacao/cadastrar_votacao.tpl');
@@ -598,7 +597,7 @@ class VotacaoC extends BaseController {
 	}
 
 	/**
-	 *
+	 * Ação de Votar
 	 */
 	public function votar($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
@@ -666,5 +665,51 @@ class VotacaoC extends BaseController {
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/votacao/votar.tpl');
+	}
+
+	/**
+	 * Resultado da votação
+	 */
+	public function resultado($votacao_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega votacao
+		$votacao = $this->votacao->find($votacao_id);
+		if(!$votacao) {
+			return redirect()->route('votacao');
+		}
+		// verifica se usuário é fiscal
+		$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao_id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+		if(!$votacao) {
+			return redirect()->route('votacao');
+		}
+
+		// Carrega todas as opçoes de votacao ativas
+		$votacao_opcoes = $this->votacaoOpcao->where('votacao_id', $votacao_id)->orderBy('titulo', 'asc')->findAll();
+		// Carrega os grupos vinculados a votação
+		$votacao_grupos = $this->votacaoGrupo->listar(null, $votacao_id, null, 1);
+		// Carrega os fiscais vinculados a votação
+		$votacao_fiscais = $this->votacaoFiscal->listar(null, $votacao_id, null, 1);
+		// Carrega o resultado da votação
+		$resultado_opcoes = $this->votacaoOpcao->listarResultadoOpcoes($votacao_id);
+
+		$this->smarty->assign("votacao", $votacao);
+		$this->smarty->assign("votacao_opcoes", $votacao_opcoes);
+		$this->smarty->assign("votacao_grupos", $votacao_grupos);
+		$this->smarty->assign("votacao_fiscais", $votacao_fiscais);
+		$this->smarty->assign("resultado_opcoes", $resultado_opcoes);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/votacao/resultado.tpl');
 	}
 }

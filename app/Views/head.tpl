@@ -10,17 +10,19 @@
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+	<link href="/css/default.css" rel="stylesheet">
 	<title>{if $usuario_sessao}{$usuario_sessao->titulo}-{$usuario_sessao->subtitulo}{else}iPRC{/if}</title>
 </head>
 
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
 	<div>
-		<nav class="navbar fixed-top navbar-expand-lg" style="background-color: #2f5b7a;color:white;">
+		<nav class="navbar fixed-top navbar-expand-lg nav-color">
 			<div class="container-fluid">
-				<a class="navbar-brand" style="color:white;" href="{base_url()}">iPRC</a>
+				<a class="navbar-brand p-1" style="color:white;" href="{base_url()}">iPRC</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
 					aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation" style="background-color:white; color:white;">
-					<span class="navbar-toggler-icon white" style="background-color:white; color:white;"></span>
+					<span class="navbar-toggler-icon white"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarScroll">
 					<ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
@@ -84,9 +86,9 @@
 					</form>
 					!-->
 					{if $usuario_sessao && $usuario_sessao->logado}
-					<a class="btn btn-outline-light" type="submit" href="{base_url()}logout">Sair</a>
+					<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}logout">Sair</a>
 					{else}
-					<a class="btn btn-outline-light" type="submit" href="{base_url()}login">Entrar</a>
+					<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}login">Entrar</a>
 					{/if}
 				</div>
 			</div>
