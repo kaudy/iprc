@@ -112,9 +112,11 @@ class Votacao extends Model
 							votacoes_opcoes AS vo
 						WHERE
 							vo.votacao_id = v.id) AS qtde_opcoes,
-					FALSE as permite_votar,
-					FALSE as permite_resultado,
-					FALSE as permite_cancelar
+					FALSE AS permite_votar,
+					FALSE AS permite_resultado,
+					FALSE AS permite_cancelar,
+					FALSE AS permite_alterar,
+					FALSE AS permite_ativar
 				FROM
 					votacoes AS v
 						INNER JOIN

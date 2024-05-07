@@ -6,7 +6,9 @@
 				<h2>Votações</h2>
 			</div>
 			<div class="col-md-1">
-				<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_cadastar')}">Cadastrar</a>
+				{if $permite_cadastrar_votacao == true}
+					<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_cadastar')}">Cadastrar</a>
+				{/if}
 			</div>
 		</div>
 		<br>
@@ -45,7 +47,8 @@
 									{/foreach}
 								</select>
 							</div>
-							<div class="col-md-2 row p-1">
+							<div class="row col-md-2">
+								<label for=""></label>
 								<button class="btn btn-primary btn-sm p-1" type="submit">Pesquisar</button>
 							</div>
 						</div>
@@ -107,8 +110,10 @@
 								{if $registro->permite_votar == true}
 									<a class="btn btn-primary btn-sm" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
 								{/if}
-								{if $registro->status_id == 3}
+								{if $registro->permite_alterar == true}
 									<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $registro->id)}">Ativar</a>
+								{/if}
+								{if $registro->permite_alterar == true}
 									<a class="btn btn-outline-primary btn-sm"
 										href="{url_to('votacao_alterar', $registro->id)}">Alterar</a>
 									<a class="btn btn-outline-primary btn-sm"

@@ -12,6 +12,7 @@ use App\Models\VotacaoOpcao;
 use App\Models\VotacaoGrupo;
 use App\Models\VotacaoFiscal;
 use App\Models\Voto;
+use App\Models\Regra;
 
 class VotacaoC extends BaseController {
 
@@ -23,6 +24,7 @@ class VotacaoC extends BaseController {
 	protected $voto;
 	protected $grupo;
 	protected $tipoStatus;
+	protected $regra;
 
 	public function __construct() {
 		$this->usuario = model(Usuario::class);
@@ -33,6 +35,7 @@ class VotacaoC extends BaseController {
 		$this->tipoStatus = model(TipoStatus::class);
 		$this->votacaoFiscal = model(VotacaoFiscal::class);
 		$this->voto = model(Voto::class);
+		$this->regra = model(Regra::class);
 	}
 
 	/**
@@ -71,18 +74,29 @@ class VotacaoC extends BaseController {
 			// Fiscal da votação
 			$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
 			// Permite ver resultado
-			if($fiscal_votacao || $votacao->status == 5) { // status 5 - finalizado
+			if($fiscal_votacao || $votacao->status_id == 5) { // status 5 - finalizado
 				$votacoes[$c]->permite_resultado = true;
 			}
 			// Permite Cancelar
-			if($fiscal_votacao || $votacao->status == 3) { // status 3 - pendente
+			if(($fiscal_votacao || $this->regra->possuiRegra($usuario_sessao->usuario->id, 3)) && $votacao->status_id == 3) { // status 3 - pendente
 				$votacoes[$c]->permite_cancelar = true;
+			}
+			// Permite Alterar
+			if(($fiscal_votacao || $this->regra->possuiRegra($usuario_sessao->usuario->id, 4)) && $votacao->status_id == 3) { // status 3 - pendente
+				$votacoes[$c]->permite_alterar = true;
+			}
+			// Permite Alterar
+			if($fiscal_votacao && $votacao->status_id == 3) { // status 3 - pendente
+				$votacoes[$c]->permite_ativar = true;
 			}
 		}
 
 		// Carrega os tipos de status
 		$tipos_status = $this->tipoStatus->whereIn('id', array('1','3', '5'))->findAll();
+		// Permite cadastrar votação
+		$permite_cadastrar_votacao = $this->regra->possuiRegra($usuario_sessao->usuario->id, 2);
 
+		$this->smarty->assign("permite_cadastrar_votacao", $permite_cadastrar_votacao);
 		$this->smarty->assign("tipos_status", $tipos_status);
 		$this->smarty->assign("votacoes", $votacoes);
 		$this->smarty->assign("data", $data);
@@ -95,7 +109,7 @@ class VotacaoC extends BaseController {
 	 */
 	public function cadastrarVotacao() {
 		$usuario_sessao = $this->session->get('usuario');
-		if(is_null($usuario_sessao)) {
+		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 2)) {
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -146,7 +160,7 @@ class VotacaoC extends BaseController {
 	 */
 	public function alterarVotacao($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
-		if(is_null($usuario_sessao)) {
+		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 4)) {
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
