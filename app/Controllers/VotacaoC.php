@@ -74,7 +74,7 @@ class VotacaoC extends BaseController {
 			// Fiscal da votação
 			$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
 			// Permite ver resultado
-			if($fiscal_votacao || $votacao->status_id == 5) { // status 5 - finalizado
+			if(($fiscal_votacao && $votacao->status_id != 3) || $votacao->status_id == 5) { // status 5 - finalizado
 				$votacoes[$c]->permite_resultado = true;
 			}
 			// Permite Cancelar
@@ -561,6 +561,24 @@ class VotacaoC extends BaseController {
 		if($this->request->getMethod() === 'post') {
 		}
 
+		// Permissões
+		// Fiscal da votação
+		$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+		// Permite confirmar
+		$permite_confirmar = $votacao->status == 3 && $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false;
+		// Permite ativar votação
+		$permite_ativar = false;
+		if($votacao->status == 3 && ($fiscal_votacao || $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id)) {
+			$permite_ativar = true;
+		}
+		$permite_alterar = false;
+		if($votacao->status == 3 && ($fiscal_votacao || $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id)) {
+			$permite_alterar = true;
+		}
+
+		$this->smarty->assign("permite_alterar", $permite_alterar);
+		$this->smarty->assign("permite_ativar", $permite_ativar);
+		$this->smarty->assign("permite_confirmar", $permite_confirmar);
 		$this->smarty->assign("votacao", $votacao);
 		$this->smarty->assign("votacao_opcoes", $votacao_opcoes);
 		$this->smarty->assign("votacao_grupos", $votacao_grupos);
