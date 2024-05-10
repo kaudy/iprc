@@ -4,13 +4,14 @@
 	$(document).ready(function() {
 	});
 
-	function submit(elemento, acao) {
+	function submit() {
 		//elemento.preventDefault();
 		// elemento.setAttribute('disabled', true);
 		// console.log(acao);
 		// $('#acao').val(acao);
 		//$( "#formulario" ).submit();
 		//$( "#formulario" ).trigger( "submit" );
+		console.log("aaaa");
 	}
 	</script>
 	<div class="container">
@@ -80,6 +81,7 @@
 											{if $votacao->qtd_escolhas == 1}
 												<input class="form-check-input" type="radio" name="voto" id="voto" value="{$opcao->id}" required>
 											{else}
+												<input class="form-check-input" type="checkbox" name="voto[]" id="voto" value="{$opcao->id}">
 											{/if}
 										</td>
 									</tr>

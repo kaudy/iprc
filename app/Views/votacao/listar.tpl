@@ -107,6 +107,9 @@
 								{if $registro->permite_resultado == true}
 									<a class="btn btn-sm btn-votar" href="{url_to('votacao_resultado', $registro->id)}">Resultado</a>
 								{/if}
+								{if $registro->permite_finalizar == true}
+									<a class="btn btn-sm btn-votar" href="{url_to('votacao_finalizar', $registro->id)}">Finalizar</a>
+								{/if}
 								{if $registro->permite_votar == true}
 									<a class="btn btn-primary btn-sm" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
 								{/if}

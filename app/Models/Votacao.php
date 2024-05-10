@@ -84,8 +84,9 @@ class Votacao extends Model
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null, $titulo=null, $status=null, $votante_usuario_id=null) {
+	public function listar($id=null, $titulo=null, $status=null, $votante_usuario_id=null, $usuario_fiscal_id=null, $usuario_cadastro_id=null) {
 		$sqlCpl = "";
+		$sqlCpl2 = "";
 
 		if($id != null) {
 			$sqlCpl .= " AND v.id='{$id}' ";
@@ -96,9 +97,21 @@ class Votacao extends Model
 		if($titulo != null) {
 			$sqlCpl .= "AND v.titulo like '%{$titulo}%' ";
 		}
+		if($usuario_fiscal_id != null) {
+			$sqlCpl2 .= " AND ( ({$usuario_fiscal_id} IS NULL OR vf.usuario_id={$usuario_fiscal_id}) ";
+		}
+		if($usuario_cadastro_id != null) {
+			$sqlCpl2 .= ($sqlCpl2 == null ? "AND ( " : " OR ") . " ({$usuario_fiscal_id} IS NULL OR v.usuario_cadastro_id={$usuario_cadastro_id}) ";
+		}
+		if($votante_usuario_id != null) {
+			$sqlCpl2 .= ($sqlCpl2 == null ? "AND ( " : "OR ") . " ({$votante_usuario_id} IS NULL OR ug.usuario_id={$votante_usuario_id}) ";
+		}
+		if($sqlCpl2 != null) {
+			$sqlCpl2 .= ")";
+		}
 
 		$sql = "SELECT
-					v.id,
+					DISTINCT v.id,
 					v.titulo,
 					v.texto,
 					v.qtd_escolhas,
@@ -116,14 +129,24 @@ class Votacao extends Model
 					FALSE AS permite_resultado,
 					FALSE AS permite_cancelar,
 					FALSE AS permite_alterar,
-					FALSE AS permite_ativar
+					FALSE AS permite_ativar,
+					FALSE AS permite_finalizar
 				FROM
 					votacoes AS v
-						INNER JOIN
-					tipos_status ts ON ts.id = v.status
+					INNER JOIN
+						tipos_status ts ON ts.id = v.status
+					INNER JOIN
+						votacoes_fiscais vf ON vf.votacao_id = v.id
+					INNER JOIN
+						votacoes_grupos vg ON vg.votacao_id = v.id
+						AND vg.status = 1
+					LEFT JOIN
+						usuarios_grupos ug ON ug.grupo_id = vg.grupo_id
+						AND ug.status = 1
 				WHERE
 					v.status != 4
 					{$sqlCpl}
+					{$sqlCpl2}
 				ORDER BY v.titulo , v.id ASC;";
 		$query = $this->db->query($sql);
 		$result = $query->getResult();

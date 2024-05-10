@@ -58,10 +58,17 @@ class VotacaoC extends BaseController {
 			$titulo = $this->request->getPost('titulo') != '' ? $this->request->getPost('titulo') : null;
 			$tipo_status_id = $this->request->getPost('tipo_status_id') != '' ? $this->request->getPost('tipo_status_id') : null;
 			// Carrega lista de votacoes
-			$votacoes = $this->votacao->listar(null, $titulo, $tipo_status_id, $usuario_sessao->usuario->id);
+			if($this->regra->possuiRegra($usuario_sessao->usuario->id, 7)) {
+				$votacoes = $this->votacao->listar(null, $titulo, $tipo_status_id);
+			}else {
+				$votacoes = $this->votacao->listar(null, $titulo, $tipo_status_id, $usuario_sessao->usuario->id, $usuario_sessao->usuario->id, $usuario_sessao->usuario->id);
+			}
 		}else {
-			// Carrega lista de votacoes
-			$votacoes = $this->votacao->listar(null, null, 1);
+			if($this->regra->possuiRegra($usuario_sessao->usuario->id, 7)) {
+				$votacoes = $this->votacao->listar(null, null, 1);
+			}else {
+				$votacoes = $this->votacao->listar(null, null, 1, $usuario_sessao->usuario->id, $usuario_sessao->usuario->id, $usuario_sessao->usuario->id);
+			}
 		}
 		// Verifica permissões das votações
 		foreach($votacoes as $c => $votacao) {
@@ -74,7 +81,7 @@ class VotacaoC extends BaseController {
 			// Fiscal da votação
 			$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
 			// Permite ver resultado
-			if(($fiscal_votacao && $votacao->status_id != 3) || $votacao->status_id == 5) { // status 5 - finalizado
+			if(($fiscal_votacao && $votacao->status_id != 3) || $votacao->status_id == 5 || $this->regra->possuiRegra($usuario_sessao->usuario->id, 6)) { // status 5 - finalizado
 				$votacoes[$c]->permite_resultado = true;
 			}
 			// Permite Cancelar
@@ -88,6 +95,10 @@ class VotacaoC extends BaseController {
 			// Permite Alterar
 			if($fiscal_votacao && $votacao->status_id == 3) { // status 3 - pendente
 				$votacoes[$c]->permite_ativar = true;
+			}
+			// Permite finalizar votação
+			if($votacao->status_id == 1 && ($this->regra->possuiRegra($usuario_sessao->usuario->id, 5) || $fiscal_votacao)) { // status 1 - ativo
+				$votacoes[$c]->permite_finalizar = true;
 			}
 		}
 
@@ -657,22 +668,37 @@ class VotacaoC extends BaseController {
 		// Carrega voto do usuário
 		$voto_realizado = $this->voto->where('votacao_id', $votacao_id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
 		if($voto_realizado) {
-			$data['msg'] = "Voto já computado para o usuário!";
+			$data['msg'] = "Voto já foi computado para o usuário!";
 			$data['msg_type'] = "warning";
 			return redirect()->route('votacao')->with('data', $data);
 		}
 
 		if($this->request->getMethod() === 'post') {
 			$voto = $this->request->getPost('voto');
-			if($voto != null & $voto != '') {
-				$dados = (object) array(
-					"votacao_id" => $votacao_id,
-					"usuario_id" => $usuario_sessao->usuario->id,
-					"voto" => $voto,
-					"data_voto" => date('Y-m-d H:i:s'),
-					"ip_usuario" => getIpClient()
-				);
-				$status = $this->voto->insert($dados);
+			if(($voto != null && $voto != '') || count($voto) > 0) {
+				$status = false;
+				if($votacao->qtd_escolhas == 1) {
+					$dados = (object) array(
+						"votacao_id" => $votacao_id,
+						"usuario_id" => $usuario_sessao->usuario->id,
+						"voto" => $voto,
+						"data_voto" => date('Y-m-d H:i:s'),
+						"ip_usuario" => getIpClient()
+					);
+					$status = $this->voto->insert($dados);
+				}elseif($votacao->qtd_escolhas > 1 && $votacao->qtd_escolhas == count($voto)) {
+					foreach($voto as $c => $v) {
+						$dados = (object) array(
+							"votacao_id" => $votacao_id,
+							"usuario_id" => $usuario_sessao->usuario->id,
+							"voto" => $v,
+							"data_voto" => date('Y-m-d H:i:s'),
+							"ip_usuario" => getIpClient()
+						);
+						$status = $this->voto->insert($dados);
+					}
+				}
+
 				if($status) {
 					$data['msg'] = "Voto efetuado com sucesso!";
 					$data['msg_type'] = "primary";
@@ -743,5 +769,50 @@ class VotacaoC extends BaseController {
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/votacao/resultado.tpl');
+	}
+
+	/**
+	 * Finaliza a votação ativa
+	 */
+	public function finalizar($votacao_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega votacao
+		$votacao = $this->votacao->find($votacao_id);
+		if(!$votacao || $votacao->status != 1) {
+			return redirect()->route('votacao');
+		}
+		// Fiscal da votação
+		$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+		if(!$fiscal_votacao && !$this->regra->possuiRegra($usuario_sessao->usuario->id, 5)) {
+			return redirect()->route('votacao');
+		}
+
+		$dados = (object) array(
+			"status" => 5, // finalizado
+			"data_finalizacao" => date('Y-m-d H:i:s'),
+			"usuario_finalizacao_id" => $usuario_sessao->usuario->id
+		);
+		$status = $this->votacao->update($votacao_id, $dados);
+		if($status) {
+			$data['msg'] = "Votação Finalizada!";
+			$data['msg_type'] = "primary";
+			return redirect()->route('votacao')->with('data', $data);
+		}else {
+			$data['msg'] = "Erro ao tentar finalizar a votação #{$votacao_id}!";
+			$data['msg_type'] = "danger";
+			array_push($data['errors'], $status);
+			return redirect()->route('votacao')->with('data', $data);
+		}
 	}
 }
