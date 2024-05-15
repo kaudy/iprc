@@ -4,14 +4,189 @@
 	color:white;
 }
 
+.div-pesquisar {
+	align-self:self-end;
+	align-items:baseline;
+	vertical-align: bottom;
+}
+
+.btn-pesquisar {
+	background-color: #00448b;
+	border-color: #00448b;
+	align-self: center;
+	width: 200px;
+	height: 38px;
+	vertical-align: bottom;
+}
+
 .btn-sm.btn-votar {
 	background-color: #00448b;
 	color:white;
 	border-color: #00448b;
+	min-width: 80px;
 }
 
 .btn-sm.btn-votar:hover {
 	background-color: white;
 	border-color: #00448b;
 	color: #00448b;
+	min-width: 80px;
+}
+
+.btn-sm.btn-ativar {
+	background-color: #046fe1;
+	color:white;
+	border-color: #046fe1;
+	min-width: 80px;
+}
+
+.btn-sm.btn-ativar:hover {
+	background-color: white;
+	border-color: #046fe1;
+	color: #046fe1;
+	min-width: 80px;
+}
+
+.btn-sm.btn-alterar {
+	background-color: #e19004;
+	color:white;
+	border-color: #e19004;
+	min-width: 80px;
+}
+
+.btn-sm.btn-alterar:hover {
+	background-color: white;
+	border-color: #e19004;
+	color: #e19004;
+	min-width: 80px;
+}
+
+.btn-sm.btn-visualizar {
+	background-color: white;
+	color:gray;
+	border-color: gray;
+	min-width: 80px;
+}
+
+.btn-sm.btn-visualizar:hover {
+	background-color: gray;
+	border-color: gray;
+	color: white;
+	min-width: 80px;
+}
+
+.btn-sm.btn-cancelar {
+	background-color: white;
+	color:#f41737;
+	border-color: #f41737;
+	min-width: 80px;
+}
+
+.btn-sm.btn-cancelar:hover {
+	background-color: #f41737;
+	border-color: #f41737;
+	color: white;
+	width: 100%;
+	min-width: 80px;
+}
+
+@media screen and (max-width: 1225px) and (min-width: 1045px) {
+	.priority-5{
+		display:none;
+	}
+}
+
+@media screen and (max-width: 1045px) and (min-width: 835px) {
+	.priority-5{
+		display:none;
+	}
+	.priority-4{
+		display:none;
+	}
+}
+
+@media screen and (max-width: 565px) and (min-width: 300px) {
+	.priority-5{
+		display:none;
+	}
+	.priority-4{
+		display:none;
+	}
+	.priority-3{
+		display:none;
+	}
+	.btn-pesquisar {
+		width: 100%;
+	}
+
+	/*.btn-sm.btn-votar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-votar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-votar:hover {
+		min-width: 100px;
+	}
+	.btn-sm.btn-ativar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-ativar:hover {
+		min-width: 100px;
+	}
+	.btn-sm.btn-alterar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-alterar:hover {
+		min-width: 100px;
+	}
+	.btn-sm.btn-cancelar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-votar:cancelar {
+		min-width: 100px;
+	} */
+}
+
+@media screen and (max-width: 300px) {
+	.priority-5{
+		display:none;
+	}
+	.priority-4{
+		display:none;
+	}
+	.priority-3{
+		display:none;
+	}
+	.priority-2{
+		display:none;
+	}
+	.btn-pesquisar {
+		width: 100%;
+	}
+	/*.btn-sm.btn-votar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-votar:hover {
+		min-width: 100px;
+	}
+	.btn-sm.btn-ativar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-ativar:hover {
+		min-width: 100px;
+	}
+	.btn-sm.btn-alterar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-alterar:hover {
+		min-width: 100px;
+	}
+	.btn-sm.btn-cancelar {
+		min-width: 100px;
+	}
+	.btn-sm.btn-votar:cancelar {
+		min-width: 100px;
+	} */
+
 }

@@ -47,9 +47,8 @@
 									{/foreach}
 								</select>
 							</div>
-							<div class="row col-md-2">
-								<label for=""></label>
-								<button class="btn btn-primary btn-sm p-1" type="submit">Pesquisar</button>
+							<div class="col-md-2 div-pesquisar">
+								<button class="btn btn-primary btn-sm btn-pesquisar" type="submit">Pesquisar</button>
 							</div>
 						</div>
 					</div>
@@ -70,16 +69,16 @@
 						<th scope="col">
 							Votação
 						</th>
-						<th scope="col">
+						<th scope="col" class="priority-5">
 							Escolhas
 						</th>
-						<th scope="col">
+						<th scope="col" class="priority-4">
 							Opções
 						</th>
 						<th scope="col">
 							Status
 						</th>
-						<th scope="col">
+						<th scope="col" class="center">
 							Ações
 						</th>
 					</tr>
@@ -93,10 +92,10 @@
 							<td data-title="Título">
 								{$registro->titulo}
 							</td>
-							<td data-title="Qtde. Escolhas" class="center">
+							<td data-title="Qtde. Escolhas" class="priority-5">
 								{$registro->qtd_escolhas}
 							</td>
-							<td data-title="Qtde. Opções">
+							<td data-title="Qtde. Opções" class="priority-4">
 								{$registro->qtde_opcoes}
 							</td>
 
@@ -111,21 +110,21 @@
 									<a class="btn btn-sm btn-votar" href="{url_to('votacao_finalizar', $registro->id)}">Finalizar</a>
 								{/if}
 								{if $registro->permite_votar == true}
-									<a class="btn btn-primary btn-sm" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
+									<a class="btn btn-sm btn-votar" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
 								{/if}
 								{if $registro->permite_alterar == true}
-									<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $registro->id)}">Ativar</a>
+									<a class="btn btn-sm btn-ativar" href="{url_to('votacao_ativar', $registro->id)}">Ativar</a>
 								{/if}
 								{if $registro->permite_alterar == true}
-									<a class="btn btn-outline-primary btn-sm"
+									<a class="btn btn-sm btn-alterar"
 										href="{url_to('votacao_alterar', $registro->id)}">Alterar</a>
-									<a class="btn btn-outline-primary btn-sm"
+									<a class="btn btn-sm btn-alterar priority-5"
 										href="{url_to('votacao_cadastar_opcoes', $registro->id)}">Opções</a>
 								{/if}
-								<a class="btn btn-outline-secondary btn-sm"
+								<a class="btn btn-sm btn-outline-secondary btn-visualizar"
 									href="{url_to('votacao_visualizar', $registro->id)}">Visualizar</a>
 								{if $registro->permite_cancelar == true}
-									<a class="btn btn-outline-danger btn-sm"
+									<a class="btn btn-sm btn-outline-danger btn-cancelar"
 									href="{url_to('votacao_cancelar', $registro->id)}">Cancelar</a>
 								{/if}
 							</td>
