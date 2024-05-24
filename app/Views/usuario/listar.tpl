@@ -6,7 +6,7 @@
 				<h2>Usuários</h2>
 			</div>
 			<div class="col-md-1">
-			<a class="btn btn-outline-primary btn-sm" href="{url_to('usuario_cadastar')}">Cadastrar</a>
+			<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('usuario_cadastar')}">Cadastrar</a>
 			</div>
 		</div>
 		<br>
@@ -53,10 +53,10 @@
 								{$registro->status}
 							</td>
 							<td data-title="Ações">
-								<a class="btn btn-outline-primary btn-sm"
-									href="{url_to('usuario_alterar', $registro->id)}">Alterar</a>
-								<a class="btn btn-outline-secondary btn-sm"
-									href="{url_to('usuario_visualizar', $registro->id)}">Visualizar</a>
+								<a class="btn btn-sm btn-ativar"
+									href="#">Alterar</a>
+								<a class="btn btn-sm btn-outline-secondary btn-visualizar"
+									href="#">Visualizar</a>
 							</td>
 						</tr>
 					{foreachelse}

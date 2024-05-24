@@ -45,7 +45,6 @@ class UsuarioC extends BaseController {
 			$data['msg_type'] = "";
 			$data['errors'] = [];
 		}
-		//echo "<pre>";var_dump($data);exit;
 
 		// Carrega lista de usuários
 		$usuarios = $this->usuario->listar();

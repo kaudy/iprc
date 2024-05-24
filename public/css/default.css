@@ -1,9 +1,28 @@
+/* Login  *************************************************/
+.login-card {
+	border-radius: 1rem;
+	background-color: #00448b;
+}
+.btn-login {
+	background-color: white;
+	color:#00448b;
+	border-color: #f41737;
+}
 
+.btn-login:hover {
+	background-color: white;
+	border-color: white;
+	color: #00448b;
+}
+
+
+/* Navbar *************************************************/
 .nav-color {
 	background-color: #00448b;
 	color:white;
 }
 
+/* Botões */
 .div-pesquisar {
 	align-self:self-end;
 	align-items:baseline;
@@ -23,63 +42,63 @@
 	background-color: #00448b;
 	color:white;
 	border-color: #00448b;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-votar:hover {
 	background-color: white;
 	border-color: #00448b;
 	color: #00448b;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-ativar {
 	background-color: #046fe1;
 	color:white;
 	border-color: #046fe1;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-ativar:hover {
 	background-color: white;
 	border-color: #046fe1;
 	color: #046fe1;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-alterar {
 	background-color: #e19004;
 	color:white;
 	border-color: #e19004;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-alterar:hover {
 	background-color: white;
 	border-color: #e19004;
 	color: #e19004;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-visualizar {
 	background-color: white;
 	color:gray;
 	border-color: gray;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-visualizar:hover {
 	background-color: gray;
 	border-color: gray;
 	color: white;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-cancelar {
 	background-color: white;
 	color:#f41737;
 	border-color: #f41737;
-	min-width: 80px;
+	min-width: 84px;
 }
 
 .btn-sm.btn-cancelar:hover {
@@ -87,8 +106,23 @@
 	border-color: #f41737;
 	color: white;
 	width: 100%;
-	min-width: 80px;
+	min-width: 84px;
 }
+
+.btn-sm.btn-cadastrar {
+	background-color: #046fe1;
+	color:white;
+	border-color: #046fe1;
+	min-width: 84px;
+}
+
+.btn-sm.btn-cadastrar:hover {
+	background-color: white;
+	border-color: #046fe1;;
+	color: #046fe1;
+	min-width: 84px;
+}
+
 
 @media screen and (max-width: 1225px) and (min-width: 1045px) {
 	.priority-5{

@@ -7,7 +7,7 @@
 			</div>
 			<div class="col-md-1">
 				{if $permite_cadastrar_votacao == true}
-					<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_cadastar')}">Cadastrar</a>
+					<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('votacao_cadastar')}">Cadastrar</a>
 				{/if}
 			</div>
 		</div>

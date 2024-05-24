@@ -6,7 +6,7 @@
 			<div class="container py-5 h-700">
 				<div class="row d-flex justify-content-center align-items-center h-90">
 					<div class="col-12 col-md-8 col-lg-6 col-xl-5">
-						<div class="card  text-white" style="border-radius: 1rem;background-color: #2f5b7a;">
+						<div class="card text-white login-card">
 							<div class="card-body p-5 text-center">
 								<div class="mb-md-4 mt-md-4 pb-3">
 									<h2 class="fw-bold mb-2 text-uppercase">Login</h2>
@@ -37,7 +37,7 @@
 
 									<a class="text-white-50" href="{url_to('usuario_recuperar_senha')}">Esqueceu a senha?</a>
 									</p>
-									<button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+									<button class="btn btn-outline-light btn-lg px-5 btn-login" type="submit">Entrar</button>
 								</div>
 								<!--
 								<div>

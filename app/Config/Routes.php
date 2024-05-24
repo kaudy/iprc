@@ -21,7 +21,7 @@ $routes->match(['get', 'post'], 'registrar', 'UsuarioC::registrar');
 $routes->match(['get', 'post'], 'ativacao/(:num)/(:segment)', 'UsuarioC::ativarUsuario/$1/$2', ['as' => 'usuario_ativar']);
 $routes->match(['get', 'post'], 'recuperar_senha', 'UsuarioC::recuperarSenha',  ['as' => 'usuario_recuperar_senha']);
 
-// Votacao
+// Votacão
 $routes->group('votacao', static function ($routes) {
 	$routes->get('', 'VotacaoC::index');
 	$routes->post('', 'VotacaoC::index');
@@ -43,6 +43,13 @@ $routes->group('votacao', static function ($routes) {
 	$routes->match(['get', 'post'], '(:num)/votar', 'VotacaoC::votar/$1', ['as' => 'votacao_votar']);
 	$routes->match(['get', 'post'], '(:num)/resultado', 'VotacaoC::resultado/$1', ['as' => 'votacao_resultado']);
 	$routes->match(['get', 'post'], '(:num)/finalizar', 'VotacaoC::finalizar/$1', ['as' => 'votacao_finalizar']);
+});
+
+// Reunião
+$routes->group('reuniao', static function ($routes) {
+	$routes->get('', 'ReuniaoC::index');
+	$routes->post('', 'ReuniaoC::index');
+	$routes->match(['get', 'post'], 'cadastrar', 'ReuniaoC::cadastrarReuniao', ['as' => 'reuniao_cadastar']);
 });
 
 $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');
