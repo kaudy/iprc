@@ -15,7 +15,7 @@
 	<title>{if $usuario_sessao}{$usuario_sessao->titulo}-{$usuario_sessao->subtitulo}{else}iPRC{/if}</title>
 </head>
 
-<body class="p-3 m-0 border-0 bd-example m-0 border-0">
+<body class="m-0 border-0 bd-example m-0 border-0">
 	<div>
 		<nav class="navbar fixed-top navbar-expand-lg nav-color">
 			<div class="container-fluid">
