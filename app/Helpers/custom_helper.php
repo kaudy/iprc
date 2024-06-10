@@ -37,6 +37,34 @@
 	}
 
 	/**
+	* Converte de yyyy-mm-dd 00:00:00 para dd/mm/aaaa 00:00
+	*/
+	function DataHoraConvertBrString($data) {
+		$aux = explode(' ', $data);
+		$d = explode('-', $aux[0]);
+		$h = explode(':', $aux[1]);
+		return "{$d[2]}/{$d[1]}/{$d[0]} às {$h[0]}:{$h[1]}h";
+	}
+
+	/**
+	* Converte de yyyy-mm-dd 00:00:00 para dd/mm/aaaa
+	*/
+	function DataConvertBrString($data) {
+		$aux = explode(' ', $data);
+		$d = explode('-', $aux[0]);
+		return "{$d[2]}/{$d[1]}/{$d[0]}";
+	}
+
+	/**
+	* Converte de yyyy-mm-dd 00:00:00 para 00:00
+	*/
+	function HoraConvertBrString($data) {
+		$aux = explode(' ', $data);
+		$h = explode(':', $aux[1]);
+		return "{$h[0]}:{$h[1]}";
+	}
+
+	/**
 	* Converte de dd/mm/yyyy  para  yyyy-mm-dd
 	*/
 	function DataConvertDB($data) {

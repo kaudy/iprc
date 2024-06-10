@@ -50,13 +50,12 @@
 								{$registro->nome}
 							</td>
 							<td data-title="Status">
-								{$registro->status}
+								<i class="bi bi-circle-fill {$registro->status}"></i>
+								{$registro->status|ucfirst}
 							</td>
 							<td data-title="Ações">
-								<a class="btn btn-sm btn-ativar"
-									href="#">Alterar</a>
-								<a class="btn btn-sm btn-outline-secondary btn-visualizar"
-									href="#">Visualizar</a>
+								<a class="btn btn-sm btn-ativar" href="{url_to('usuario_alterar', $registro->id)}">Alterar</a>
+								<a class="btn btn-sm btn-outline-secondary btn-visualizar" href="{url_to('usuario_visualizar', $registro->id)}">Visualizar</a>
 							</td>
 						</tr>
 					{foreachelse}

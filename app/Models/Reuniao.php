@@ -42,7 +42,73 @@ class Reuniao extends Model
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null) {
+	public function listar($id=null, $titulo=null, $status=null, $grupo_id=null, $data_reuniao=null, $usuario_cadastro_id=null) {
+		$sqlCpl = "";
+		$sqlCpl2 = "";
 
+		if($id != null) {
+			$sqlCpl .= " AND r.id='{$id}' ";
+		}
+		if($status != null) {
+			$sqlCpl .= "AND r.status={$status} ";
+		}
+		if($titulo != null) {
+			$sqlCpl .= "AND r.titulo like '%{$nome}%' ";
+		}
+		if($grupo_id != null) {
+			$sqlCpl .= " AND r.grupo_id='{$grupo_id}' ";
+		}
+
+		$sql = "SELECT
+					r.*,
+					g.nome as grupo_nome,
+					ts.id as status_id,
+					ts.nome AS status,
+					FALSE AS permite_cancelar,
+					FALSE AS permite_alterar,
+					FALSE AS permite_ativar,
+					FALSE AS permite_finalizar,
+					FALSE AS permite_justificar
+				FROM
+					reunioes r
+				INNER JOIN
+					grupos g ON g.id = r.grupo_id
+				INNER JOIN
+					tipos_status ts ON ts.id = r.status
+				ORDER BY r.data_reuniao ASC;";
+		$query = $this->db->query($sql);
+		$result = $query->getResult();
+
+		//echo "<pre>";var_dump($result);exit;
+		return $result;
+	}
+
+	/**
+	 * Adiciona nova reunião a base de dados
+	 */
+	public function adicionar($dados) {
+		try {
+			$this->db->transException(true)->transStart();
+			$dados_reuniao = array(
+				"titulo" => $dados->titulo,
+				"descricao" => $dados->descricao,
+				"grupo_id" => $dados->grupo_id,
+				"status" => 3, // pendente
+				"data_reuniao" => $dados->data_reuniao,
+				"data_cadastro" => $dados->data_cadastro,
+				"usuario_cadastro_id" => $dados->usuario_cadastro_id
+			);
+			$nova_reuniao_id = $this->insert($dados_reuniao);
+			if($nova_reuniao_id) {
+				$this->db->transComplete();
+				return $nova_reuniao_id;
+			}else {
+				$this->db->transRollback();
+				return false;
+			}
+		} catch (DatabaseException $e) {
+			$this->db->transRollback();
+			return $e;
+		}
 	}
 }

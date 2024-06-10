@@ -29,13 +29,13 @@
 				<div class="col">
 					<div class="form-outline">
 						<div class="row">
-							<div class="col-md-6">
-								<label for="titulo">Nome</label>
+							<div class="col-md-3">
+								<label for="titulo" class="label">Nome</label>
 								<input type="text" class="form-control" id="titulo" name="titulo" placeholder="Titulo"
 									value="{if $smarty.post}{$smarty.post.titulo}{/if}">
 							</div>
 							<div class="col-md-3">
-								<label for="titulo">Status</label>
+								<label for="titulo" class="label">Status</label>
 								<select class="form-control" name="tipo_status_id" id="tipo_status_id">
 									<option value="">Selecione</option>
 									{foreach from=$tipos_status item=tipo_status}
@@ -45,10 +45,29 @@
 									{/foreach}
 								</select>
 							</div>
+							<div class="col-md-3">
+								<label for="grupo_id" class="label">Grupo</label>
+								<select class="form-control" name="grupo_id" id="grupo_id">
+									<option value="">Selecione</option>
+									{foreach from=$grupos item=grupo}
+										<option value="{$grupo->id}">{$grupo->nome|ucfirst}</option>
+									{/foreach}
+								</select>
+							</div>
 							<div class="col-md-2 div-pesquisar">
 								<button class="btn btn-primary btn-sm btn-pesquisar" type="submit">Pesquisar</button>
 							</div>
+							<div class="col-md-1 div-pesquisar">
+								<button class="btn btn-sm bi btn-filtro bi-funnel" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros"  data-bs-placement="top" title="Mais filtros" aria-expanded="false" aria-controls="collapseExample"></button>
+							</div>
 						</div>
+					</div>
+				</div>
+			</div>
+			<div class="collapse" id="collapseFiltros">
+				<div class="row">
+					<div class="col">
+						Mais filtros
 					</div>
 				</div>
 			</div>
@@ -67,6 +86,9 @@
 							Reunião
 						</th>
 						<th scope="col">
+							Grupo
+						</th>
+						<th scope="col">
 							Status
 						</th>
 						<th scope="col">
@@ -81,24 +103,34 @@
 								{$registro->id}
 							</td>
 							<td data-title="Usuário">
-								{$registro->nome}
+								{$registro->titulo}
 							</td>
 							<td data-title="Grupo">
-								{$registro->nome}
+								{$registro->grupo_nome}
 							</td>
 							<td data-title="Status">
-								{$registro->status}
+								<i class="bi bi-circle-fill {$registro->status}"></i>
+								{$registro->status|ucfirst}
 							</td>
 							<td data-title="Ações">
-								<a class="btn btn-sm btn-ativar"
-									href="{url_to('usuario_alterar', $registro->id)}">Alterar</a>
-								<a class="btn btn-sm btn-outline-secondary btn-visualizar"
-									href="{url_to('usuario_visualizar', $registro->id)}">Visualizar</a>
+								{if $registro->permite_justificar == true}
+									<a class="btn btn-sm btn-justificar" href="{url_to('reuniao_justificar', $registro->id)}">Justificar</a>
+								{/if}
+								{if $registro->permite_alterar == true}
+									<a class="btn btn-sm btn-alterar" href="{url_to('reuniao_alterar', $registro->id)}">Alterar</a>
+								{/if}
+								{if $registro->permite_ativar == true}
+									<a class="btn btn-sm btn-ativar" href="{url_to('reuniao_ativar', $registro->id)}">Ativar</a>
+								{/if}
+								<a class="btn btn-sm btn-outline-secondary btn-visualizar" href="{url_to('reuniao_visualizar', $registro->id)}">Visualizar</a>
+								{if $registro->permite_cancelar == true}
+									<a class="btn btn-sm btn-outline-danger btn-cancelar" href="{url_to('reuniao_cancelar', $registro->id)}">Cancelar</a>
+								{/if}
 							</td>
 						</tr>
 					{foreachelse}
 						<tr>
-							<td colspan="4" class="null">
+							<td colspan="99" class="null">
 								<p>Registro indisponível</p>
 							</td>
 						</tr>

@@ -100,6 +100,7 @@
 							</td>
 
 							<td data-title="Status">
+								<i class="bi bi-circle-fill {$registro->status}"></i>
 								{$registro->status|ucfirst}
 							</td>
 							<td data-title="Ações">

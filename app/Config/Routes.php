@@ -49,7 +49,17 @@ $routes->group('votacao', static function ($routes) {
 $routes->group('reuniao', static function ($routes) {
 	$routes->get('', 'ReuniaoC::index');
 	$routes->post('', 'ReuniaoC::index');
+	//Grupos
+	$routes->match(['get', 'post'], '(:num)/grupos/cadastrar', 'ReuniaoC::cadastrarGrupos/$1', ['as' => 'reuniao_cadastar_grupos']);
+	$routes->match(['get', 'post'], '(:num)/grupos/(:num)/remover', 'ReuniaoC::removerGrupo/$1/$2', ['as' => 'reuniao_remover_grupo']);
+	//Acoes
 	$routes->match(['get', 'post'], 'cadastrar', 'ReuniaoC::cadastrarReuniao', ['as' => 'reuniao_cadastar']);
+	$routes->match(['get', 'post'], '(:num)/alterar', 'ReuniaoC::alterarReuniao/$1', ['as' => 'reuniao_alterar']);
+	$routes->match(['get', 'post'], '(:num)/visualizar', 'ReuniaoC::visualizar/$1', ['as' => 'reuniao_visualizar']);
+	$routes->match(['get', 'post'], '(:num)/ativar', 'ReuniaoC::ativarReuniao/$1', ['as' => 'reuniao_ativar']);
+	$routes->match(['get', 'post'], '(:num)/cancelar', 'ReuniaoC::cancelarReuniao/$1', ['as' => 'reuniao_cancelar']);
+	$routes->match(['get', 'post'], '(:num)/finalizar', 'ReuniaoC::finalizarReuniao/$1', ['as' => 'reuniao_finalizar']);
+	$routes->match(['get', 'post'], '(:num)/justificar', 'ReuniaoC::justificarReuniao/$1', ['as' => 'reuniao_justificar']);
 });
 
 $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');

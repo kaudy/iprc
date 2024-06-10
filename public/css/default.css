@@ -38,6 +38,26 @@
 	vertical-align: bottom;
 }
 
+.btn-filtro {
+	background-color: #00448b;
+	border-color: #00448b;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: bottom;
+}
+
+.btn-filtro:hover {
+	background-color: white;
+	border-color: #f41737;
+	align-self: center;
+	color: #f41737;
+	width: 40px;
+	height: 38px;
+	vertical-align: bottom;
+}
+
 .btn-sm.btn-votar {
 	background-color: #00448b;
 	color:white;
@@ -105,7 +125,6 @@
 	background-color: #f41737;
 	border-color: #f41737;
 	color: white;
-	width: 100%;
 	min-width: 84px;
 }
 
@@ -121,6 +140,37 @@
 	border-color: #046fe1;;
 	color: #046fe1;
 	min-width: 84px;
+}
+
+.btn-sm.btn-justificar {
+	background-color: #00448b;
+	color:white;
+	border-color: #00448b;
+	min-width: 84px;
+}
+
+.btn-sm.btn-justificar:hover {
+	background-color: white;
+	border-color: #00448b;;
+	color: #00448b;
+	min-width: 84px;
+}
+/* STATUS */
+
+.pendente {
+	color: #e19004;
+}
+
+.ativo {
+	color: #046fe1;
+}
+
+.cancelado {
+	color: #f41737;
+}
+
+.finalizado {
+	color: gray;
 }
 
 
@@ -150,36 +200,18 @@
 		display:none;
 	}
 	.btn-pesquisar {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
 		width: 100%;
 	}
 
-	/*.btn-sm.btn-votar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-votar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-votar:hover {
-		min-width: 100px;
-	}
-	.btn-sm.btn-ativar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-ativar:hover {
-		min-width: 100px;
-	}
-	.btn-sm.btn-alterar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-alterar:hover {
-		min-width: 100px;
-	}
-	.btn-sm.btn-cancelar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-votar:cancelar {
-		min-width: 100px;
-	} */
 }
 
 @media screen and (max-width: 300px) {
@@ -196,31 +228,15 @@
 		display:none;
 	}
 	.btn-pesquisar {
+		margin-top: 2px;
 		width: 100%;
 	}
-	/*.btn-sm.btn-votar {
-		min-width: 100px;
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
 	}
-	.btn-sm.btn-votar:hover {
-		min-width: 100px;
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
 	}
-	.btn-sm.btn-ativar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-ativar:hover {
-		min-width: 100px;
-	}
-	.btn-sm.btn-alterar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-alterar:hover {
-		min-width: 100px;
-	}
-	.btn-sm.btn-cancelar {
-		min-width: 100px;
-	}
-	.btn-sm.btn-votar:cancelar {
-		min-width: 100px;
-	} */
-
 }
