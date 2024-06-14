@@ -52,6 +52,9 @@ $routes->group('reuniao', static function ($routes) {
 	//Grupos
 	$routes->match(['get', 'post'], '(:num)/grupos/cadastrar', 'ReuniaoC::cadastrarGrupos/$1', ['as' => 'reuniao_cadastar_grupos']);
 	$routes->match(['get', 'post'], '(:num)/grupos/(:num)/remover', 'ReuniaoC::removerGrupo/$1/$2', ['as' => 'reuniao_remover_grupo']);
+	// Presenças
+	$routes->match(['get', 'post'], '(:num)/presenca/gerenciar', 'ReuniaoC::gerenciarPresencasReuniao/$1', ['as' => 'reuniao_presenca_gerenciar']);
+	$routes->match(['get', 'post'], '(:num)/presenca/(:num)/justificar', 'ReuniaoC::justificarReuniao/$1/$2', ['as' => 'reuniao_presenca_justificar']);
 	//Acoes
 	$routes->match(['get', 'post'], 'cadastrar', 'ReuniaoC::cadastrarReuniao', ['as' => 'reuniao_cadastar']);
 	$routes->match(['get', 'post'], '(:num)/alterar', 'ReuniaoC::alterarReuniao/$1', ['as' => 'reuniao_alterar']);

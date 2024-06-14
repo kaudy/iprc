@@ -2,12 +2,19 @@
 {block name=main}
 	<div class="container">
 		<div class="row">
-			<div class="col-md-11">
+			<div class="col-md-9">
 				<h2>Reuniões</h2>
 			</div>
-			<div class="col-md-1">
-			<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('reuniao_cadastar')}">Cadastrar</a>
+			{if $permite_gerenciar_presencas == true}
+			<div class="col-md-2">
+				<a class="btn btn-sm btn-outline-primary btn-gerenciar" href="{url_to('reuniao_cadastar')}">Gerenciar Presenças</a>
 			</div>
+			{/if}
+			{if $permite_cadastrar_reuniao == true}
+				<div class="col-md-1">
+					<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('reuniao_cadastar')}">Cadastrar</a>
+				</div>
+			{/if}
 		</div>
 		<br>
 		{if $data['msg'] != null && $data['msg'] != ''}
@@ -102,8 +109,8 @@
 							<td data-title="ID">
 								{$registro->id}
 							</td>
-							<td data-title="Usuário">
-								{$registro->titulo}
+							<td data-title="Reunião">
+								{$registro->titulo|textoEncurtado:50}
 							</td>
 							<td data-title="Grupo">
 								{$registro->grupo_nome}
@@ -113,6 +120,9 @@
 								{$registro->status|ucfirst}
 							</td>
 							<td data-title="Ações">
+								{if $permite_gerenciar_presencas == true}
+									<a class="btn btn-sm btn-justificar" href="{url_to('reuniao_presenca_gerenciar', $registro->id)}">Gerenciar</a>
+								{/if}
 								{if $registro->permite_justificar == true}
 									<a class="btn btn-sm btn-justificar" href="{url_to('reuniao_justificar', $registro->id)}">Justificar</a>
 								{/if}

@@ -108,4 +108,49 @@ class ReuniaoPresenca extends Model {
 
 		return $result;
 	}
+
+	/**
+	 * Lista todos os participantes da reunião com status de presença e justificativas
+	 * Caso a presença status esteva vazio é que não foi lançado a presença/justificativa ainda
+	 */
+	public function listaTodosParticipantes($reuniao_id) {
+		$sql = "SELECT DISTINCT
+					u.id,
+					p.nome AS pessoa_nome,
+					IFNULL(rp.status, 3) AS presenca_status_id,
+					IFNULL(ts.nome, 'pendente') AS presenca_status_nome,
+					rp.justificativa
+				FROM
+					usuarios u
+						INNER JOIN
+					usuarios_grupos ug ON ug.usuario_id = u.id
+						INNER JOIN
+					pessoas p ON p.id = u.pessoa_id
+						LEFT JOIN
+					reunioes_presencas rp ON rp.usuario_id = u.id
+						AND rp.reuniao_id = {$reuniao_id}
+						LEFT JOIN
+					tipos_status ts ON ts.id = rp.status
+				WHERE
+					u.status = 1
+					AND ug.grupo_id IN (SELECT
+							r.grupo_id
+						FROM
+							reunioes r
+						WHERE
+							r.id = {$reuniao_id}
+						UNION SELECT
+							rg.grupo_id
+						FROM
+							reunioes r
+								INNER JOIN
+							reunioes_grupos rg ON rg.reuniao_id = r.id
+						WHERE
+							r.id = {$reuniao_id});";
+
+		$query = $this->db->query($sql);
+		$result = $query->getResult();
+
+		return $result;
+	}
 }

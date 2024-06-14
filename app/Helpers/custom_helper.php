@@ -138,7 +138,24 @@
 					ts.id = {$tipo_status_id};";
 		$query = $db->query($sql);
 		$result = $query->getRow();
-		return ucfirst($result->nome);
+		if($result->nome != '' && $result->nome != null) {
+			return ucfirst($result->nome);
+		}else {
+			return ucfirst("Não Identificado(ERR-01)");
+		}
+	}
+
+	/**
+	 *	Verifica o texto e abrevia o texto para quantidade
+	 *  de caracteres informado
+	 */
+	function textoEncurtado($texto, $max_caracteres=50) {
+		if(strlen($texto) > $max_caracteres) {
+			$texto_reduzido = substr($texto, 0, 50);
+			return "{$texto_reduzido}...";
+		}else {
+			return $texto;
+		}
 	}
 
 	/**

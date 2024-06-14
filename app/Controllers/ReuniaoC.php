@@ -31,6 +31,9 @@ class ReuniaoC extends BaseController {
 		$this->reuniaoPresenca = model(ReuniaoPresenca::class);
 	}
 
+	/**
+	 * Lista as reuniões cadastradas
+	 */
 	public function index() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
@@ -82,11 +85,22 @@ class ReuniaoC extends BaseController {
 			}
 		}
 
+		// Permite cadastrar reuniões
+		// TODO: Criar regra para permissões de cadastro de reuniões
+		$permite_cadastrar_reuniao = true;
+
+		// Permite gerenciar presenças
+		$permite_gerenciar_presencas = true;
+
 		// Carrega os tipos de status
 		$tipos_status = $this->tipoStatus->whereIn('id', array('1','3', '5', '6'))->findAll();
 		// Carrega todos os grupos ativos
 		$grupos = $this->grupo->where('status', 1)->findAll();
 
+		//Permissões
+		$this->smarty->assign("permite_cadastrar_reuniao", $permite_cadastrar_reuniao);
+		$this->smarty->assign("permite_gerenciar_presencas", $permite_gerenciar_presencas);
+		// Dados
 		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("tipos_status", $tipos_status);
 		$this->smarty->assign("reunioes", $reunioes);
@@ -483,7 +497,7 @@ class ReuniaoC extends BaseController {
 	/**
 	 * Justificar reunião
 	 */
-	public function justificarReuniao($reuniao_id) {
+	public function justificarReuniao($reuniao_id, $usuario_id=null) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
 			return redirect()->route('login');
@@ -501,33 +515,36 @@ class ReuniaoC extends BaseController {
 		if(!$reuniao) {
 			return redirect()->route('reuniao');
 		}
+		// Usuario da justificativa
+		$usuario_justificativa_id = $usuario_id != null ? $usuario_id : $usuario_sessao->usuario->id;
+
 		if($reuniao->status == 1) { // Status = 1: Ativo
 			// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
-			$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+			$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_justificativa_id)->find();
 			if(count($presencas) == 0) {
-				$grupos_permitidos = $this->reuniaoPresenca->verificaPermissaoJustificativaUsuario($reuniao->id, $usuario_sessao->usuario->id);
+				$grupos_permitidos = $this->reuniaoPresenca->verificaPermissaoJustificativaUsuario($reuniao->id, $usuario_justificativa_id);
 				if(count($grupos_permitidos) > 0) {
 					// Verifica horario maximo para justificativa da reunião
 					$data_max_justificativa = date_sub(date_create($reuniao->data_reuniao), date_interval_create_from_date_string("10 minutes"));
 					if(date('Y-m-d H:i:s') <= $data_max_justificativa->format('Y-m-d H:i:s')) {
 						//$reunioes[$c]->permite_justificar = true;
 					}else {
-						return redirect()->route('reuniao');
+						return redirect()->to(previous_url());
 					}
 				}else {
-					return redirect()->route('reuniao');
+					return redirect()->to(previous_url());
 				}
 			}else {
-				return redirect()->route('reuniao');
+				return redirect()->to(previous_url());
 			}
 		}else {
-			return redirect()->route('reuniao');
+			return redirect()->to(previous_url());
 		}
 
 		if($this->request->getMethod() === 'post') {
 			$dados = (object) array(
 				"reuniao_id" => $reuniao->id,
-				"usuario_id" => $usuario_sessao->usuario->id,
+				"usuario_id" => $usuario_justificativa_id,
 				"justificativa" => $this->request->getPost('justificativa'),
 				"status" => 9, // justificado
 				"data_cadastro" => date('Y-m-d H:i:s'),
@@ -537,13 +554,13 @@ class ReuniaoC extends BaseController {
 			if($status) {
 				$data['msg'] = "Justificativa Adicionada!";
 				$data['msg_type'] = "primary";
-				return redirect()->route('reuniao')->with('data', $data);
+				return redirect()->to(previous_url())->with('data', $data);
 
 			}else {
 				$data['msg'] = "Erro ao tentar justificar a reunião selecionada(#{$reuniao_id})!";
 				$data['msg_type'] = "danger";
 				array_push($data['errors'], $status);
-				return redirect()->route('reuniao')->with('data', $data);
+				return redirect()->to(previous_url())->with('data', $data);
 			}
 		}
 
@@ -555,5 +572,64 @@ class ReuniaoC extends BaseController {
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/reuniao/justificar_reuniao.tpl');
+	}
+
+	/**
+	 * Gerenciar presenças de uma reunião
+	 */
+	public function gerenciarPresencasReuniao($reuniao_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+		// Carrega reuniao
+		$reuniao = $this->reuniao->find($reuniao_id);
+		if(!$reuniao) {
+			return redirect()->route('reuniao');
+		}
+
+		$participantes_reuniao = $this->reuniaoPresenca->listaTodosParticipantes($reuniao_id);
+
+		// Grupo proprietário
+		$grupo_proprietario = $this->grupo->find($reuniao->grupo_id);
+
+
+		$this->smarty->assign("participantes_reuniao", $participantes_reuniao);
+		$this->smarty->assign("grupo_proprietario", $grupo_proprietario);
+		$this->smarty->assign("reuniao", $reuniao);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/reuniao/gerenciar_presenca_reuniao.tpl');
+	}
+
+	/**
+	 *  Confirmação de presença ou ausencia do usuário na reunião
+	 */
+	public function confirmarPresencaReuniao($reuniao, $usuario_id, $acao='presente') {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega reuniao
+		$reuniao = $this->reuniao->find($reuniao_id);
+		if(!$reuniao) {
+			return redirect()->route('reuniao');
+		}
+
 	}
 }

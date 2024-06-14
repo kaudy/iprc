@@ -142,6 +142,20 @@
 	min-width: 84px;
 }
 
+.btn-sm.btn-gerenciar {
+	background-color: #00448b;
+	color:white;
+	border-color: #00448b;
+	min-width: 84px;
+}
+
+.btn-sm.btn-gerenciar:hover {
+	background-color: white;
+	border-color: #00448b;;
+	color: #00448b;
+	min-width: 84px;
+}
+
 .btn-sm.btn-justificar {
 	background-color: #00448b;
 	color:white;
@@ -155,7 +169,7 @@
 	color: #00448b;
 	min-width: 84px;
 }
-/* STATUS */
+/* STATUS *************************************************/
 
 .pendente {
 	color: #e19004;
@@ -173,6 +187,19 @@
 	color: gray;
 }
 
+.sim {
+	color: #046fe1;
+}
+
+.não {
+	color: #f41737;
+}
+
+.justificado {
+	color: gray;
+}
+
+/* *************************************************/
 
 @media screen and (max-width: 1225px) and (min-width: 1045px) {
 	.priority-5{
