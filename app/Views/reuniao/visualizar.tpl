@@ -186,10 +186,11 @@
 												{$presenca->pessoa_nome}
 											</td>
 											<td>
-												{$presenca->justificativa}
+												{$presenca->justificativa|textoEncurtado:50}
 											</td>
 											<td>
-												{$presenca->status_nome}
+												<i class="bi bi-circle-fill {if $presenca->status_nome}{$presenca->status_nome}{/if}"></i>
+												{if $presenca->status_nome}{$presenca->status_nome|capitalize}{/if}
 											</td>
 										</tr>
 									{/foreach}

@@ -50,7 +50,17 @@
 							<div class="col-md-2 div-pesquisar">
 								<button class="btn btn-primary btn-sm btn-pesquisar" type="submit">Pesquisar</button>
 							</div>
+							<div class="col-md-1 div-pesquisar">
+								<button class="btn btn-sm bi btn-filtro bi-funnel" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFiltros"  data-bs-placement="top" title="Mais filtros" aria-expanded="false" aria-controls="collapseExample"></button>
+							</div>
 						</div>
+					</div>
+				</div>
+			</div>
+			<div class="collapse" id="collapseFiltros">
+				<div class="row">
+					<div class="col">
+						Mais filtros
 					</div>
 				</div>
 			</div>
@@ -100,8 +110,8 @@
 							</td>
 
 							<td data-title="Status">
-								<i class="bi bi-circle-fill {$registro->status}"></i>
-								{$registro->status|ucfirst}
+								<i class="bi bi-circle-fill {$registro->status_nome}"></i>
+								{$registro->status_nome|ucfirst}
 							</td>
 							<td data-title="Ações">
 								{if $registro->permite_resultado == true}

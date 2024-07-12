@@ -86,7 +86,8 @@
 					</form>
 					!-->
 					{if $usuario_sessao && $usuario_sessao->logado}
-					<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}logout">Sair</a>
+						<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}meus_dados">Meus Dados</a>
+						<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}logout">Sair</a>
 					{else}
 					<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}login">Entrar</a>
 					{/if}

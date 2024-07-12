@@ -73,7 +73,7 @@
 						<div class="outline">
 							<label for="status" class="label">Status</label>
 							<p>
-								<strong class="infoTxt">{$votacao->status|statusNome}</strong>
+								<strong class="infoTxt">{$votacao->status_id|statusNome}</strong>
 							</p>
 						</div>
 					</div>
@@ -188,7 +188,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-6">
-						{if $votacao->status == 3}
+						{if $votacao->status_id == 3}
 							<a class="btn btn-primary btn-sm" href="{base_url()}votacao">Confirmar</a>
 							<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $votacao->id)}">Ativar</a>
 							<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_alterar', $votacao->id)}">Alterar</a>

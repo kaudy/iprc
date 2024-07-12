@@ -545,6 +545,44 @@ class UsuarioC extends BaseController {
 		return redirect()->route('usuario')->with('data', $data);
 	}
 
+	/**
+	 * Visualizar os dados do usuário logado
+	 */
+	public function meus_dados() {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		$data['msg'] = "";
+		$data['msg_type'] = "";
+		$data['errors'] = [];
+
+		// Usuário
+		$usuario = $this->usuario->where('id', $usuario_sessao->usuario->id)->first();
+		if(!isset($usuario) || $usuario == '' || $usuario == null) {
+			$data['msg'] = "Usuário não encontrado!";
+			$data['msg_type'] = "danger";
+			return redirect()->route('/')->with('data', $data);
+		}
+
+		// Pessoa
+		$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
+		// Carrega perfil do usuario
+		$perfil_usuario = $this->perfil->where('id', $usuario->perfil_id)->first();
+		// Usuario Grupos
+		$usuario_grupos = $this->usuarioGrupo->listar($usuario->id);
+
+		if($this->request->getMethod() === 'post') {
+		}
+
+		$this->smarty->assign("usuario", $usuario);
+		$this->smarty->assign("pessoa", $pessoa);
+		$this->smarty->assign("perfil_usuario", $perfil_usuario);
+		$this->smarty->assign("usuario_grupos", $usuario_grupos);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/meus_dados.tpl');
+	}
 
 	/**
 	 * Teste de envio de email

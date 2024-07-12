@@ -63,7 +63,7 @@ class Votacao extends Model
 				"titulo" => $dados->titulo,
 				"texto" => $dados->texto,
 				"qtd_escolhas" => $dados->qtd_escolhas,
-				"status" => 3, // pendente
+				"status_id" => 3, // pendente
 				"data_cadastro" => $dados->data_cadastro,
 				"usuario_cadastro_id" => $dados->usuario_cadastro_id
 			);
@@ -84,15 +84,15 @@ class Votacao extends Model
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null, $titulo=null, $status=null, $votante_usuario_id=null, $usuario_fiscal_id=null, $usuario_cadastro_id=null) {
+	public function listar($id=null, $titulo=null, $status_id=null, $votante_usuario_id=null, $usuario_fiscal_id=null, $usuario_cadastro_id=null) {
 		$sqlCpl = "";
 		$sqlCpl2 = "";
 
 		if($id != null) {
 			$sqlCpl .= " AND v.id='{$id}' ";
 		}
-		if($status != null) {
-			$sqlCpl .= "AND v.status={$status} ";
+		if($status_id != null) {
+			$sqlCpl .= "AND v.status_id={$status_id} ";
 		}
 		if($titulo != null) {
 			$sqlCpl .= "AND v.titulo like '%{$titulo}%' ";
@@ -118,7 +118,7 @@ class Votacao extends Model
 					v.data_cadastro,
 					v.usuario_cadastro_id,
 					ts.id as status_id,
-					ts.nome AS status,
+					ts.nome AS status_nome,
 					(SELECT
 							COUNT(id)
 						FROM
@@ -134,7 +134,7 @@ class Votacao extends Model
 				FROM
 					votacoes AS v
 					INNER JOIN
-						tipos_status ts ON ts.id = v.status
+						tipos_status ts ON ts.id = v.status_id
 					INNER JOIN
 						votacoes_fiscais vf ON vf.votacao_id = v.id
 					INNER JOIN
@@ -144,7 +144,7 @@ class Votacao extends Model
 						usuarios_grupos ug ON ug.grupo_id = vg.grupo_id
 						AND ug.status = 1
 				WHERE
-					v.status != 4
+					v.status_id != 4
 					{$sqlCpl}
 					{$sqlCpl2}
 				ORDER BY v.titulo , v.id ASC;";

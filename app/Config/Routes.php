@@ -20,6 +20,7 @@ $routes->match(['get', 'post'], 'logout', 'UsuarioC::logout');
 $routes->match(['get', 'post'], 'registrar', 'UsuarioC::registrar');
 $routes->match(['get', 'post'], 'ativacao/(:num)/(:segment)', 'UsuarioC::ativarUsuario/$1/$2', ['as' => 'usuario_ativar']);
 $routes->match(['get', 'post'], 'recuperar_senha', 'UsuarioC::recuperarSenha',  ['as' => 'usuario_recuperar_senha']);
+$routes->match(['get', 'post'], 'meus_dados', 'UsuarioC::meus_dados',  ['as' => 'usuario_meus_dados']);
 
 // Votacão
 $routes->group('votacao', static function ($routes) {
@@ -55,6 +56,7 @@ $routes->group('reuniao', static function ($routes) {
 	// Presenças
 	$routes->match(['get', 'post'], '(:num)/presenca/gerenciar', 'ReuniaoC::gerenciarPresencasReuniao/$1', ['as' => 'reuniao_presenca_gerenciar']);
 	$routes->match(['get', 'post'], '(:num)/presenca/(:num)/justificar', 'ReuniaoC::justificarReuniao/$1/$2', ['as' => 'reuniao_presenca_justificar']);
+	$routes->match(['get', 'post'], '(:num)/presenca/(:num)/confirmar/(:segment)', 'ReuniaoC::confirmarPresencaReuniao/$1/$2/$3', ['as' => 'reuniao_presenca_confirmar']);
 	//Acoes
 	$routes->match(['get', 'post'], 'cadastrar', 'ReuniaoC::cadastrarReuniao', ['as' => 'reuniao_cadastar']);
 	$routes->match(['get', 'post'], '(:num)/alterar', 'ReuniaoC::alterarReuniao/$1', ['as' => 'reuniao_alterar']);

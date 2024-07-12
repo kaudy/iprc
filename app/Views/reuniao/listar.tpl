@@ -2,14 +2,9 @@
 {block name=main}
 	<div class="container">
 		<div class="row">
-			<div class="col-md-9">
+			<div class="col-md-11">
 				<h2>Reuniões</h2>
 			</div>
-			{if $permite_gerenciar_presencas == true}
-			<div class="col-md-2">
-				<a class="btn btn-sm btn-outline-primary btn-gerenciar" href="{url_to('reuniao_cadastar')}">Gerenciar Presenças</a>
-			</div>
-			{/if}
 			{if $permite_cadastrar_reuniao == true}
 				<div class="col-md-1">
 					<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('reuniao_cadastar')}">Cadastrar</a>

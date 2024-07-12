@@ -90,7 +90,7 @@ class ReuniaoC extends BaseController {
 		$permite_cadastrar_reuniao = true;
 
 		// Permite gerenciar presenças
-		$permite_gerenciar_presencas = true;
+		$permite_gerenciar_presencas = $this->regra->possuiRegra($usuario_sessao->usuario->id, 12);
 
 		// Carrega os tipos de status
 		$tipos_status = $this->tipoStatus->whereIn('id', array('1','3', '5', '6'))->findAll();
@@ -515,19 +515,24 @@ class ReuniaoC extends BaseController {
 		if(!$reuniao) {
 			return redirect()->route('reuniao');
 		}
-		// Usuario da justificativa
-		$usuario_justificativa_id = $usuario_id != null ? $usuario_id : $usuario_sessao->usuario->id;
+		$permite_gerenciar_presencas = $this->regra->possuiRegra($usuario_sessao->usuario->id, 12);
 
+		// Usuario da justificativa
+		$usuario_justificativa_id = $usuario_id != null && $permite_gerenciar_presencas ? $usuario_id : $usuario_sessao->usuario->id;
+		// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
+		$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_justificativa_id)->find();
 		if($reuniao->status == 1) { // Status = 1: Ativo
-			// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
-			$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_justificativa_id)->find();
-			if(count($presencas) == 0) {
-				$grupos_permitidos = $this->reuniaoPresenca->verificaPermissaoJustificativaUsuario($reuniao->id, $usuario_justificativa_id);
-				if(count($grupos_permitidos) > 0) {
-					// Verifica horario maximo para justificativa da reunião
-					$data_max_justificativa = date_sub(date_create($reuniao->data_reuniao), date_interval_create_from_date_string("10 minutes"));
-					if(date('Y-m-d H:i:s') <= $data_max_justificativa->format('Y-m-d H:i:s')) {
-						//$reunioes[$c]->permite_justificar = true;
+			if(!$permite_gerenciar_presencas) {
+				if(count($presencas) == 0) {
+					$grupos_permitidos = $this->reuniaoPresenca->verificaPermissaoJustificativaUsuario($reuniao->id, $usuario_justificativa_id);
+					if(count($grupos_permitidos) > 0) {
+						// Verifica horario maximo para justificativa da reunião
+						$data_max_justificativa = date_sub(date_create($reuniao->data_reuniao), date_interval_create_from_date_string("10 minutes"));
+						if(date('Y-m-d H:i:s') <= $data_max_justificativa->format('Y-m-d H:i:s')) {
+							//$reunioes[$c]->permite_justificar = true;
+						}else {
+							return redirect()->to(previous_url());
+						}
 					}else {
 						return redirect()->to(previous_url());
 					}
@@ -535,32 +540,54 @@ class ReuniaoC extends BaseController {
 					return redirect()->to(previous_url());
 				}
 			}else {
-				return redirect()->to(previous_url());
+				if($presencas[0]->status == 9) {
+					return redirect()->to(previous_url());
+				}
 			}
 		}else {
 			return redirect()->to(previous_url());
 		}
 
 		if($this->request->getMethod() === 'post') {
-			$dados = (object) array(
-				"reuniao_id" => $reuniao->id,
-				"usuario_id" => $usuario_justificativa_id,
-				"justificativa" => $this->request->getPost('justificativa'),
-				"status" => 9, // justificado
-				"data_cadastro" => date('Y-m-d H:i:s'),
-				"usuario_cadastro_id" => $usuario_sessao->usuario->id
-			);
-			$status = $this->reuniaoPresenca->insert($dados);
-			if($status) {
-				$data['msg'] = "Justificativa Adicionada!";
-				$data['msg_type'] = "primary";
-				return redirect()->to(previous_url())->with('data', $data);
+			if(!$presencas || count($presencas) == 0) {
+				$dados = (object) array(
+					"reuniao_id" => $reuniao->id,
+					"usuario_id" => $usuario_justificativa_id,
+					"justificativa" => $this->request->getPost('justificativa'),
+					"status" => 9, // justificado
+					"data_cadastro" => date('Y-m-d H:i:s'),
+					"usuario_cadastro_id" => $usuario_sessao->usuario->id
+				);
+				$status = $this->reuniaoPresenca->insert($dados);
+				if($status) {
+					$data['msg'] = "Justificativa Adicionada!";
+					$data['msg_type'] = "primary";
+					return redirect()->to(previous_url())->with('data', $data);
 
+				}else {
+					$data['msg'] = "Erro ao tentar justificar a reunião selecionada(#{$reuniao_id})!";
+					$data['msg_type'] = "danger";
+					array_push($data['errors'], $status);
+					return redirect()->to(previous_url())->with('data', $data);
+				}
 			}else {
-				$data['msg'] = "Erro ao tentar justificar a reunião selecionada(#{$reuniao_id})!";
-				$data['msg_type'] = "danger";
-				array_push($data['errors'], $status);
-				return redirect()->to(previous_url())->with('data', $data);
+				$dados = (object) array(
+					"justificativa" => $this->request->getPost('justificativa'),
+					"status" => 9, // justificado
+					"data_alteracao" => date('Y-m-d H:i:s'),
+					"usuario_alteracao_id" => $usuario_sessao->usuario->id
+				);
+				$status = $this->reuniaoPresenca->update($presencas[0]->id, $dados);
+				if($status) {
+					$data['msg'] = "Presença alterada!";
+					$data['msg_type'] = "primary";
+				}else {
+					$data['msg'] = "Presença não alterada. Erros encontrados:";
+					$data['msg_type'] = "danger";
+					array_push($data['errors'], $presencas[0]->id);
+					$status = false;
+				}
+				return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
 			}
 		}
 
@@ -589,9 +616,11 @@ class ReuniaoC extends BaseController {
 			$data['msg_type'] = "";
 			$data['errors'] = [];
 		}
+		$permite_gerenciar_presencas = $this->regra->possuiRegra($usuario_sessao->usuario->id, 12);
+
 		// Carrega reuniao
 		$reuniao = $this->reuniao->find($reuniao_id);
-		if(!$reuniao) {
+		if(!$reuniao || !$permite_gerenciar_presencas) {
 			return redirect()->route('reuniao');
 		}
 
@@ -612,7 +641,7 @@ class ReuniaoC extends BaseController {
 	/**
 	 *  Confirmação de presença ou ausencia do usuário na reunião
 	 */
-	public function confirmarPresencaReuniao($reuniao, $usuario_id, $acao='presente') {
+	public function confirmarPresencaReuniao($reuniao_id, $usuario_id, $acao='presente') {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
 			return redirect()->route('login');
@@ -631,5 +660,47 @@ class ReuniaoC extends BaseController {
 			return redirect()->route('reuniao');
 		}
 
+		$presenca = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_id)->find();
+		if($acao == 'presente' && count($presenca) > 0 && $presenca[0]->status != 7) {
+			$dados = (object) array(
+				"justificativa" => null,
+				"status" => 7,
+				"data_alteracao" => date('Y-m-d H:i:s'),
+				"usuario_alteracao_id" => $usuario_sessao->usuario->id
+			);
+			$status = $this->reuniaoPresenca->update($presenca[0]->id, $dados);
+			if($status) {
+				$data['msg'] = "Presença alterada!";
+				$data['msg_type'] = "primary";
+			}else {
+				$data['msg'] = "Presença não alterada. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $presenca[0]->id);
+				$status = false;
+			}
+			return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+
+		}else if($acao == 'ausente' && count($presenca) > 0 && $presenca[0]->status != 8) {
+			$dados = (object) array(
+				"justificativa" => null,
+				"status" => 8,
+				"data_alteracao" => date('Y-m-d H:i:s'),
+				"usuario_alteracao_id" => $usuario_sessao->usuario->id
+			);
+			$status = $this->reuniaoPresenca->update($presenca[0]->id, $dados);
+			if($status) {
+				$data['msg'] = "Presença alterada!";
+				$data['msg_type'] = "primary";
+			}else {
+				$data['msg'] = "Presença não alterada. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $presenca[0]->id);
+				$status = false;
+			}
+			return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+
+		}else {
+			return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id));
+		}
 	}
 }

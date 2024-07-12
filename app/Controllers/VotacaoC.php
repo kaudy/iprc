@@ -576,14 +576,14 @@ class VotacaoC extends BaseController {
 		// Fiscal da votação
 		$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
 		// Permite confirmar
-		$permite_confirmar = $votacao->status == 3 && $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false;
+		$permite_confirmar = $votacao->status_id == 3 && $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false;
 		// Permite ativar votação
 		$permite_ativar = false;
-		if($votacao->status == 3 && ($fiscal_votacao || $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id)) {
+		if($votacao->status_id == 3 && ($fiscal_votacao || $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id)) {
 			$permite_ativar = true;
 		}
 		$permite_alterar = false;
-		if($votacao->status == 3 && ($fiscal_votacao || $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id)) {
+		if($votacao->status_id == 3 && ($fiscal_votacao || $votacao->usuario_cadastro_id == $usuario_sessao->usuario->id)) {
 			$permite_alterar = true;
 		}
 
@@ -813,6 +813,53 @@ class VotacaoC extends BaseController {
 			$data['msg_type'] = "danger";
 			array_push($data['errors'], $status);
 			return redirect()->route('votacao')->with('data', $data);
+		}
+	}
+
+	/**
+	 * Cancelar a votação
+	 */
+	public function cancelarVotacao($votacao_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega votacao
+		$votacao = $this->votacao->find($votacao_id);
+		if(!$votacao) {
+			return redirect()->route('votacao');
+		}
+		// Fiscal da votação
+		$fiscal_votacao = $this->votacaoFiscal->where('votacao_id', $votacao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+
+		// Permite Cancelar
+		if(($fiscal_votacao || $this->regra->possuiRegra($usuario_sessao->usuario->id, 3)) && $votacao->status_id == 3) { // status 3 - pendente
+			$dados = (object) array(
+				"status" => 6, // cancelado
+				"data_alteracao" => date('Y-m-d H:i:s'),
+				"usuario_alteracao_id" => $usuario_sessao->usuario->id
+			);
+			$status = $this->votacao->update($votacao_id, $dados);
+			if($status) {
+				$data['msg'] = "Votação Cancelada!";
+				$data['msg_type'] = "primary";
+				return redirect()->route('votacao')->with('data', $data);
+			}else {
+				$data['msg'] = "Erro ao tentar cancelar a votação #{$votacao_id}!";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $status);
+				return redirect()->route('votacao')->with('data', $data);
+			}
+		}else {
+			return redirect()->route('votacao');
 		}
 	}
 }

@@ -205,6 +205,39 @@
 	.priority-5{
 		display:none;
 	}
+	.btn-pesquisar {
+		margin-top: 2px;
+		width: 90%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 1399px) and (min-width: 1045px) {
+	.priority-5{
+		display:none;
+	}
+	.priority-4{
+		display:none;
+	}
+	.btn-pesquisar {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
+	}
 }
 
 @media screen and (max-width: 1045px) and (min-width: 835px) {
@@ -214,9 +247,42 @@
 	.priority-4{
 		display:none;
 	}
+	.btn-pesquisar {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
+	}
 }
 
-@media screen and (max-width: 565px) and (min-width: 300px) {
+@media screen and (max-width: 835px) and (min-width: 721px) {
+	.priority-5{
+		display:none;
+	}
+	.priority-4{
+		display:none;
+	}
+	.btn-pesquisar {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
+	}
+}
+
+@media screen and (max-width: 720px) and (min-width: 300px) {
 	.priority-5{
 		display:none;
 	}
@@ -238,7 +304,18 @@
 		margin-top: 2px;
 		width: 100%;
 	}
-
+	.btn-pesquisar {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
+	}
 }
 
 @media screen and (max-width: 300px) {
