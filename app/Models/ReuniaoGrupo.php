@@ -40,7 +40,7 @@ class ReuniaoGrupo extends Model {
 	/**
 	 * Lista todos os grupos vinculados a reunião
 	 */
-	public function listar($id=null, $reuniao_id=null, $grupo_id=null, $status=null) {
+	public function listar($id=null, $reuniao_id=null, $grupo_id=null, $status_id=null) {
 		$sqlCpl = "";
 
 		if($id != null) {
@@ -52,8 +52,8 @@ class ReuniaoGrupo extends Model {
 		if($grupo_id != null) {
 			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" rg.grupo_id={$grupo_id} ");
 		}
-		if($status != null) {
-			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" rg.status={$status} ");
+		if($status_id != null) {
+			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" rg.status_id={$status_id} ");
 		}
 
 		$sql = "SELECT
@@ -62,7 +62,7 @@ class ReuniaoGrupo extends Model {
 					r.titulo AS reuniao_titulo,
 					rg.grupo_id,
 					g.nome AS grupo_nome,
-					rg.status
+					rg.status_id
 				FROM
 					reunioes_grupos AS rg
 						INNER JOIN
@@ -86,7 +86,7 @@ class ReuniaoGrupo extends Model {
 					vg.votacao_id,
 					vg.grupo_id,
 					g.nome AS grupo_nome,
-					vg.status
+					vg.status_id
 				FROM
 					votacoes_grupos AS vg
 						INNER JOIN
@@ -96,8 +96,8 @@ class ReuniaoGrupo extends Model {
 				WHERE
 					vg.votacao_id = {$votacao_id}
 					AND ug.usuario_id = {$usuario_id}
-					AND vg.status = 1
-					AND ug.status = 1;";
+					AND vg.status_id = 1
+					AND ug.status_id = 1;";
 		$query = $this->db->query($sql);
 		$result = $query->getResult();
 

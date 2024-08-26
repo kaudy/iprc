@@ -102,7 +102,7 @@
 					<div class="outline">
 						<label for="perfil_id" class="label">Status</label>
 						<p>
-							<strong class="infoTxt">{$usuario->status|statusNome}</strong>
+							<strong class="infoTxt">{$usuario->status_id|statusNome}</strong>
 						</p>
 					</div>
 				</div>

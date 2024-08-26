@@ -111,8 +111,8 @@
 								{$registro->grupo_nome}
 							</td>
 							<td data-title="Status">
-								<i class="bi bi-circle-fill {$registro->status}"></i>
-								{$registro->status|ucfirst}
+								<i class="bi bi-circle-fill {$registro->status_nome}"></i>
+								{$registro->status_nome|ucfirst}
 							</td>
 							<td data-title="Ações">
 								{if $permite_gerenciar_presencas == true}

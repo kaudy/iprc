@@ -102,7 +102,7 @@
 					<div class="outline">
 						<label for="perfil_id" class="label">Status</label>
 						<p>
-							<strong class="infoTxt">{$usuario->status|statusNome}</strong>
+							<strong class="infoTxt">{$usuario->status_id|statusNome}</strong>
 						</p>
 					</div>
 				</div>
@@ -149,7 +149,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					{if $usuario->status == 3}
+					{if $usuario->status_id == 3}
 						<a class="btn btn-outline-primary btn-sm" href="{url_to('usuario_reenviar_ativacao',$usuario->id)}">Reenviar Email Ativação</a>
 					{/if}
 					<a class="btn btn-outline-warning btn-sm" href="{base_url()}usuario">Voltar</a>

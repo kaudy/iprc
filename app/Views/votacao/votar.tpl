@@ -92,7 +92,7 @@
 				</div>
 				<div class="row">
 					<div class="col-md-6">
-						{if $votacao->status == 1}
+						{if $votacao->status_id == 1}
 							<button class="btn btn-primary" type="submit">Votar</button>
 						{/if}
 					</div>

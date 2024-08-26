@@ -12,7 +12,7 @@ class Usuario extends Model {
 	protected $returnType       = 'object';
 	protected $useSoftDeletes   = false;
 	protected $protectFields    = false;
-	protected $allowedFields    = ['pessoa_id','perfil_id', 'senha', 'status', 'chave_ativacao', 'data_cadastro', 'usuario_cadastro_id', 'data_ultimo_login', 'ip_ultimo_login'];
+	protected $allowedFields    = ['pessoa_id','perfil_id', 'senha', 'status_id', 'chave_ativacao', 'data_cadastro', 'usuario_cadastro_id', 'data_ultimo_login', 'ip_ultimo_login'];
 
 	// Dates
 	protected $useTimestamps = false;
@@ -63,7 +63,7 @@ class Usuario extends Model {
 	 * Transforma a chave de ativacao em hash, sha256, antes de ser gravado na base de dados
 	 */
 	protected function hashChaveAtivacao($data) {
-		//&& $data['data']['status'] == 3
+		//&& $data['data']['status_id'] == 3
 		if($data && isset($data['data']['chave_ativacao']) && $data['data']['chave_ativacao'] != null && $data['data']['chave_ativacao'] != '') {
 			// Se for novo cadastro e estiver no status pendente, gera chave para ativacao
 			$data['data']['chave_ativacao'] = hash('sha256', $data['data']['chave_ativacao']);
@@ -92,7 +92,8 @@ class Usuario extends Model {
 						p.email,
 						p.documento,
 						u.senha,
-						ts.nome AS status,
+						u.status_id,
+						ts.nome AS status_nome,
 						u.data_cadastro,
 						u.perfil_id,
 						pf.nome AS nome_perfil
@@ -101,7 +102,7 @@ class Usuario extends Model {
 							INNER JOIN
 						pessoas p ON p.id = u.pessoa_id
 							INNER JOIN
-						tipos_status ts ON ts.id = u.status
+						tipos_status ts ON ts.id = u.status_id
 							INNER JOIN
 						perfis pf ON pf.id = u.perfil_id
 					WHERE
@@ -169,14 +170,15 @@ class Usuario extends Model {
 					p.email,
 					u.senha,
 					p.documento,
-					ts.nome AS status,
+					u.status_id,
+					ts.nome AS status_nome,
 					u.data_cadastro
 				FROM
 					usuarios u
 						INNER JOIN
 					pessoas p ON p.id = u.pessoa_id
 						INNER JOIN
-					tipos_status ts ON ts.id = u.status
+					tipos_status ts ON ts.id = u.status_id
 				{$sqlCpl}
 				ORDER BY p.nome ASC;";
 		$query = $this->db->query($sql);
@@ -201,7 +203,7 @@ class Usuario extends Model {
 				"estado_civil" => $dados->estado_civil,
 				"telefone" => $dados->telefone,
 				"email" => $dados->email,
-				"status" => 1, // ativo
+				"status_id" => 1, // ativo
 				"data_cadastro" => $dados->data_cadastro,
 				"usuario_cadastro_id" => $dados->usuario_cadastro_id
 			);
@@ -212,7 +214,7 @@ class Usuario extends Model {
 					"pessoa_id" => $nova_pessoa_id,
 					"perfil_id" => $dados->perfil_id,
 					"senha" => $dados->senha,
-					"status" => 3, // pendente
+					"status_id" => 3, // pendente
 					"chave_ativacao" => "{$dados->chave_ativacao}{$timestamp}",
 					"data_cadastro" => $dados->data_cadastro,
 					"usuario_cadastro_id" => $dados->usuario_cadastro_id
@@ -225,7 +227,7 @@ class Usuario extends Model {
 							$dados_usuario_grupo = array(
 								"usuario_id" => $novo_usuario_id,
 								"grupo_id" => $v,
-								"status" => 1,
+								"status_id" => 1,
 								"data_cadastro" => $dados->data_cadastro,
 								"usuario_cadastro_id" => $dados->usuario_cadastro_id
 							);
@@ -282,39 +284,39 @@ class Usuario extends Model {
 				if(isset($dados->senha) && $dados->senha != null) {
 					$dados_usuario['senha'] = $dados->senha;
 				}
-				if(isset($dados->status) && $dados->status != null) {
-					$dados_usuario['status'] = $dados->status;
+				if(isset($dados->status_id) && $dados->status_id != null) {
+					$dados_usuario['status_id'] = $dados->status_id;
 				}
 
 				$usuario_atualizado = $this->update($dados->usuario_id, $dados_usuario);
 				if($usuario_atualizado) {
 					if($dados->usuario_grupos == null) {
 						// Inativa todos os grupos do usuário que não estiverem na lista
-						$usuario_grupo_inativar = $this->usuarioGrupo->where('status', 1)->findAll();
+						$usuario_grupo_inativar = $this->usuarioGrupo->where('status_id', 1)->findAll();
 						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {
-							$usuario_grupo->status = 4; // Excluido
+							$usuario_grupo->status_id = 4; // Excluido
 							$usuario_grupo->data_alteracao = $dados->data_alteracao;
 							$usuario_grupo->usuario_alteracao_id = $dados->usuario_alteracao_id;
 							$this->usuarioGrupo->update($usuario_grupo->id, $usuario_grupo);
 						}
 					}else if(count($dados->usuario_grupos) > 0) {
 						// Inativa todos os grupos do usuário que não estiverem na lista
-						$usuario_grupo_inativar = $this->usuarioGrupo->whereNotIn('grupo_id', $dados->usuario_grupos)->where('status', 1)->findAll();
+						$usuario_grupo_inativar = $this->usuarioGrupo->whereNotIn('grupo_id', $dados->usuario_grupos)->where('status_id', 1)->findAll();
 						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {
-							$usuario_grupo->status = 4; // Excluido
+							$usuario_grupo->status_id = 4; // Excluido
 							$usuario_grupo->data_alteracao = $dados->data_alteracao;
 							$usuario_grupo->usuario_alteracao_id = $dados->usuario_alteracao_id;
 							$this->usuarioGrupo->update($usuario_grupo->id, $usuario_grupo);
 						}
 						// Verifica todos os grupos ativos vinculados ao usuário
 						foreach($dados->usuario_grupos as $c => $v) {
-							$usuario_grupo_ativo = $this->usuarioGrupo->where('usuario_id', $dados->usuario_id)->where('grupo_id', $v)->where('status', 1)->find();
+							$usuario_grupo_ativo = $this->usuarioGrupo->where('usuario_id', $dados->usuario_id)->where('grupo_id', $v)->where('status_id', 1)->find();
 							if(count($usuario_grupo_ativo) == 0) {
 								// Adiciona novo grupo ao usuário
 								$dados_usuario_grupo = array(
 									"usuario_id" => $dados->usuario_id,
 									"grupo_id" => $v,
-									"status" => 1,
+									"status_id" => 1,
 									"data_cadastro" => $dados->data_alteracao,
 									"usuario_cadastro_id" => $dados->usuario_alteracao_id
 								);
@@ -349,7 +351,7 @@ class Usuario extends Model {
 				"data_alteracao" => $dados->data_alteracao,
 				"usuario_alteracao_id" => $dados->usuario_alteracao_id,
 				"senha" => $dados->senha,
-				"status" => $dados->status
+				"status_id" => $dados->status_id
 			);
 			$usuario_atualizado = $this->update($dados->usuario_id, $dados_usuario);
 			if($usuario_atualizado) {

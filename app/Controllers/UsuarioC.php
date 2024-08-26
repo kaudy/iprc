@@ -226,9 +226,9 @@ class UsuarioC extends BaseController {
 		}
 
 		// Carrega todos os perfis ativos
-		$perfis = $this->perfil->where('status', 1)->findAll();
+		$perfis = $this->perfil->where('status_id', 1)->findAll();
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		$this->smarty->assign("perfis", $perfis);
 		$this->smarty->assign("grupos", $grupos);
@@ -334,13 +334,13 @@ class UsuarioC extends BaseController {
 		}
 
 		// Carrega todos os perfis ativos
-		$perfis = $this->perfil->where('status', 1)->findAll();
+		$perfis = $this->perfil->where('status_id', 1)->findAll();
 		// Carrega os tipos de status
 		$tipos_status = $this->tipoStatus->whereIn('id', array('1','2'))->findAll();
 		// Usuario Grupos
 		$usuario_grupos = $this->usuarioGrupo->listar($usuario->id);
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		//echo "<pre>";var_dump($usuario);exit;
 
@@ -437,7 +437,7 @@ class UsuarioC extends BaseController {
 					"data_alteracao" => date('Y-m-d H:i:s'),
 					"usuario_alteracao_id" => $usuario->id,
 					"senha" => $senha,
-					"status" => 1
+					"status_id" => 1
 				);
 
 				$usuario_alterado = $this->usuario->ativarUsuario((object) $dados);

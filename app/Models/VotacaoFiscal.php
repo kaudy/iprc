@@ -40,7 +40,7 @@ class VotacaoFiscal extends Model {
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null, $votacao_id=null, $usuario_id=null, $status=null) {
+	public function listar($id=null, $votacao_id=null, $usuario_id=null, $status_id=null) {
 		$sqlCpl = "";
 
 		if($id != null) {
@@ -52,8 +52,8 @@ class VotacaoFiscal extends Model {
 		if($usuario_id != null) {
 			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" vf.usuario_id={$grupo_id} ");
 		}
-		if($status != null) {
-			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" vf.status={$status} ");
+		if($status_id != null) {
+			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" vf.status_id={$status_id} ");
 		}
 
 		$sql = "SELECT
@@ -61,7 +61,7 @@ class VotacaoFiscal extends Model {
 					vf.votacao_id,
 					vf.usuario_id,
 					p.nome,
-					vf.status AS status_id,
+					vf.status_id,
 					ts.nome AS status_nome,
 					vf.data_cadastro
 				FROM
@@ -71,7 +71,7 @@ class VotacaoFiscal extends Model {
 						INNER JOIN
 					pessoas p ON p.id = u.pessoa_id
 						INNER JOIN
-					tipos_status ts ON ts.id = vf.status
+					tipos_status ts ON ts.id = vf.status_id
 				{$sqlCpl}
 				ORDER BY p.nome ASC;";
 		$query = $this->db->query($sql);

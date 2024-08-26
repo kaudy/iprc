@@ -66,7 +66,7 @@
 					<div class="outline">
 						<label for="status" class="label">Status</label>
 						<p>
-							<strong class="infoTxt">{$reuniao->status|statusNome}</strong>
+							<strong class="infoTxt">{$reuniao->status_id|statusNome}</strong>
 						</p>
 					</div>
 				</div>

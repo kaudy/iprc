@@ -52,7 +52,9 @@ class Modulo extends Model
 			WHERE
 				mp.perfil_id = {$perfil_id}
 			AND
-				m.modulo_pai IS NULL;";
+				m.modulo_pai IS NULL
+			AND
+				m.status_id = 1;";
 		$query = $this->db->query($sql);
 		$modulos = $query->getResult();
 		// verifica os modulos filhos
@@ -62,7 +64,9 @@ class Modulo extends Model
 			FROM
 				modulos m
 			WHERE
-				m.modulo_pai = {$v->id};";
+				m.modulo_pai = {$v->id}
+			AND
+				m.status_id = 1;";
 			$query = $this->db->query($sql);
 			$result = $query->getResult();
 			if($result && count($result) >0) {

@@ -186,7 +186,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) {
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -246,7 +246,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) {
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -258,7 +258,7 @@ class VotacaoC extends BaseController {
 			$dados = (object) array(
 				"votacao_id" => $votacao->id,
 				"grupo_id" => $grupo_id,
-				"status" => 1,
+				"status_id" => 1,
 				"data_cadastro" => date('Y-m-d H:i:s'),
 				"usuario_cadastro_id" => $usuario_sessao->usuario->id
 			);
@@ -278,7 +278,7 @@ class VotacaoC extends BaseController {
 		$votacao_grupos = $this->votacaoGrupo->listar(null, $votacao_id, null, 1);
 
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 		foreach($grupos as $c => $v) {
 			foreach($votacao_grupos as $c2 => $v2) {
 				if($v->id == $v2->grupo_id) {
@@ -314,7 +314,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) {
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -357,7 +357,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) { // Status 3 - Pendente
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -413,7 +413,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) { // Status 3 - Pendente
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -456,7 +456,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) {
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -468,7 +468,7 @@ class VotacaoC extends BaseController {
 			$dados = (object) array(
 				"usuario_id" => $usuario_id,
 				"votacao_id" => $votacao_id,
-				"status"	 => 1,
+				"status_id"	 => 1,
 				"data_cadastro" => date('Y-m-d H:i:s'),
 				"usuario_cadastro_id" => $usuario_sessao->usuario->id
 			);
@@ -517,7 +517,7 @@ class VotacaoC extends BaseController {
 		$votacao = $this->votacao->find($votacao_id);
 		if(!$votacao) {
 			return redirect()->route('votacao');
-		}else if($votacao->status != 3) {
+		}else if($votacao->status_id != 3) {
 			$data['msg'] = "Votação não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('votacao')->with('data', $data);
@@ -617,12 +617,12 @@ class VotacaoC extends BaseController {
 
 		// Carrega votacao
 		$votacao = $this->votacao->find($votacao_id);
-		if(!$votacao || $votacao->status != 3) {
+		if(!$votacao || $votacao->status_id != 3) {
 			return redirect()->route('votacao');
 		}
 
 		$dados = (object) array(
-			"status" => 1, // ativo
+			"status_id" => 1, // ativo
 			"data_ativacao" => date('Y-m-d H:i:s'),
 			"usuario_ativacao_id" => $usuario_sessao->usuario->id
 		);
@@ -789,7 +789,7 @@ class VotacaoC extends BaseController {
 
 		// Carrega votacao
 		$votacao = $this->votacao->find($votacao_id);
-		if(!$votacao || $votacao->status != 1) {
+		if(!$votacao || $votacao->status_id != 1) {
 			return redirect()->route('votacao');
 		}
 		// Fiscal da votação
@@ -799,7 +799,7 @@ class VotacaoC extends BaseController {
 		}
 
 		$dados = (object) array(
-			"status" => 5, // finalizado
+			"status_id" => 5, // finalizado
 			"data_finalizacao" => date('Y-m-d H:i:s'),
 			"usuario_finalizacao_id" => $usuario_sessao->usuario->id
 		);
@@ -843,7 +843,7 @@ class VotacaoC extends BaseController {
 		// Permite Cancelar
 		if(($fiscal_votacao || $this->regra->possuiRegra($usuario_sessao->usuario->id, 3)) && $votacao->status_id == 3) { // status 3 - pendente
 			$dados = (object) array(
-				"status" => 6, // cancelado
+				"status_id" => 6, // cancelado
 				"data_alteracao" => date('Y-m-d H:i:s'),
 				"usuario_alteracao_id" => $usuario_sessao->usuario->id
 			);

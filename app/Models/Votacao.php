@@ -139,10 +139,10 @@ class Votacao extends Model
 						votacoes_fiscais vf ON vf.votacao_id = v.id
 					INNER JOIN
 						votacoes_grupos vg ON vg.votacao_id = v.id
-						AND vg.status = 1
+						AND vg.status_id = 1
 					LEFT JOIN
 						usuarios_grupos ug ON ug.grupo_id = vg.grupo_id
-						AND ug.status = 1
+						AND ug.status_id = 1
 				WHERE
 					v.status_id != 4
 					{$sqlCpl}

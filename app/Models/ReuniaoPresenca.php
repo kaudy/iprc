@@ -40,7 +40,7 @@ class ReuniaoPresenca extends Model {
 	/**
 	 * Lista todos os grupos vinculados a reunião
 	 */
-	public function listar($id=null, $reuniao_id=null, $grupo_id=null, $status=null, $usuario_id=null) {
+	public function listar($id=null, $reuniao_id=null, $grupo_id=null, $status_id=null, $usuario_id=null) {
 		$sqlCpl = "";
 
 		if($id != null) {
@@ -55,8 +55,8 @@ class ReuniaoPresenca extends Model {
 		/*if($grupo_id != null) {
 			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" rg.grupo_id={$grupo_id} ");
 		}*/
-		if($status != null) {
-			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" rp.status={$status} ");
+		if($status_id != null) {
+			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" rp.status_id={$status_id} ");
 		}
 
 		$sql = "SELECT
@@ -64,7 +64,7 @@ class ReuniaoPresenca extends Model {
 				FROM
 					reunioes_presencas rp
 				INNER JOIN
-					tipos_status ts ON ts.id = rp.status
+					tipos_status ts ON ts.id = rp.status_id
 				INNER JOIN
 					usuarios u ON u.id = rp.usuario_id
 				INNER JOIN
@@ -86,7 +86,7 @@ class ReuniaoPresenca extends Model {
 					usuarios_grupos ug
 				WHERE
 					ug.usuario_id = {$usuario_id}
-					AND status = 1
+					AND status_id = 1
 					AND ug.grupo_id IN (
 						SELECT
 							r.grupo_id
@@ -117,7 +117,7 @@ class ReuniaoPresenca extends Model {
 		$sql = "SELECT DISTINCT
 					u.id,
 					p.nome AS pessoa_nome,
-					IFNULL(rp.status, 3) AS presenca_status_id,
+					IFNULL(rp.status_id, 3) AS presenca_status_id,
 					IFNULL(ts.nome, 'pendente') AS presenca_status_nome,
 					rp.justificativa
 				FROM
@@ -130,9 +130,9 @@ class ReuniaoPresenca extends Model {
 					reunioes_presencas rp ON rp.usuario_id = u.id
 						AND rp.reuniao_id = {$reuniao_id}
 						LEFT JOIN
-					tipos_status ts ON ts.id = rp.status
+					tipos_status ts ON ts.id = rp.status_id
 				WHERE
-					u.status = 1
+					u.status_id = 1
 					AND ug.grupo_id IN (SELECT
 							r.grupo_id
 						FROM

@@ -71,7 +71,7 @@
 					</div>
 					<div class="col-md-3">
 						<div class="outline">
-							<label for="status" class="label">Data e Hora</label>
+							<label for="data_hora" class="label">Data e Hora</label>
 							<p>
 								<strong class="infoTxt">{$reuniao->data_reuniao|DataHoraConvertBrString}</strong>
 							</p>
@@ -81,16 +81,16 @@
 						<div class="outline">
 							<label for="status" class="label">Status</label>
 							<p>
-								<strong class="infoTxt">{$reuniao->status|statusNome}</strong>
+								<strong class="infoTxt">{$reuniao->status_id|statusNome}</strong>
 							</p>
 						</div>
 					</div>
 					{if $presenca_usuario|@count > 0}
 					<div class="col-md-3">
 						<div class="outline">
-							<label for="status" class="label">Sua Presença</label>
+							<label for="presenca_status" class="label">Sua Presença</label>
 							<p>
-								<strong class="infoTxt">{$presenca_usuario[0]->status|statusNome}</strong>
+								<strong class="infoTxt">{$presenca_usuario[0]->status_id|statusNome}</strong>
 							</p>
 						</div>
 					</div>

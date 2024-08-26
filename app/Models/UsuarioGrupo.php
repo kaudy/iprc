@@ -59,7 +59,7 @@ class UsuarioGrupo extends Model
 						INNER JOIN
 					usuarios u ON u.id = ug.usuario_id
 				WHERE
-					ug.status = 1
+					ug.status_id = 1
 					{$sqlCpl}
 				ORDER BY g.nome ASC;";
 		$query = $this->db->query($sql);

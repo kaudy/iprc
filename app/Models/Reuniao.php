@@ -42,15 +42,15 @@ class Reuniao extends Model
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null, $titulo=null, $status=null, $grupo_id=null, $data_reuniao=null, $usuario_cadastro_id=null) {
+	public function listar($id=null, $titulo=null, $status_id=null, $grupo_id=null, $data_reuniao=null, $usuario_cadastro_id=null) {
 		$sqlCpl = "";
 		$sqlCpl2 = "";
 
 		if($id != null) {
 			$sqlCpl .= " AND r.id='{$id}' ";
 		}
-		if($status != null) {
-			$sqlCpl .= "AND r.status={$status} ";
+		if($status_id != null) {
+			$sqlCpl .= "AND r.status_id={$status_id} ";
 		}
 		if($titulo != null) {
 			$sqlCpl .= "AND r.titulo like '%{$nome}%' ";
@@ -63,7 +63,7 @@ class Reuniao extends Model
 					r.*,
 					g.nome as grupo_nome,
 					ts.id as status_id,
-					ts.nome AS status,
+					ts.nome AS status_nome,
 					FALSE AS permite_cancelar,
 					FALSE AS permite_alterar,
 					FALSE AS permite_ativar,
@@ -74,7 +74,7 @@ class Reuniao extends Model
 				INNER JOIN
 					grupos g ON g.id = r.grupo_id
 				INNER JOIN
-					tipos_status ts ON ts.id = r.status
+					tipos_status ts ON ts.id = r.status_id
 				ORDER BY r.data_reuniao ASC;";
 		$query = $this->db->query($sql);
 		$result = $query->getResult();
@@ -93,7 +93,7 @@ class Reuniao extends Model
 				"titulo" => $dados->titulo,
 				"descricao" => $dados->descricao,
 				"grupo_id" => $dados->grupo_id,
-				"status" => 3, // pendente
+				"status_id" => 3, // pendente
 				"data_reuniao" => $dados->data_reuniao,
 				"data_cadastro" => $dados->data_cadastro,
 				"usuario_cadastro_id" => $dados->usuario_cadastro_id

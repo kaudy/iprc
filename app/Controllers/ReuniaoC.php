@@ -95,7 +95,7 @@ class ReuniaoC extends BaseController {
 		// Carrega os tipos de status
 		$tipos_status = $this->tipoStatus->whereIn('id', array('1','3', '5', '6'))->findAll();
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		//Permissões
 		$this->smarty->assign("permite_cadastrar_reuniao", $permite_cadastrar_reuniao);
@@ -159,7 +159,7 @@ class ReuniaoC extends BaseController {
 		}
 
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("data", $data);
@@ -219,7 +219,7 @@ class ReuniaoC extends BaseController {
 		}
 
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		$this->smarty->assign("reuniao", $reuniao);
 		$this->smarty->assign("grupos", $grupos);
@@ -255,7 +255,7 @@ class ReuniaoC extends BaseController {
 			$dados = (object) array(
 				"reuniao_id" => $reuniao->id,
 				"grupo_id" => $grupo_id,
-				"status" => 1,
+				"status_id" => 1,
 				"data_cadastro" => date('Y-m-d H:i:s'),
 				"usuario_cadastro_id" => $usuario_sessao->usuario->id
 			);
@@ -275,7 +275,7 @@ class ReuniaoC extends BaseController {
 		$reuniao_grupos = $this->reuniaoGrupo->listar(null, $reuniao_id, null, 1);
 
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 		foreach($grupos as $c => $v) {
 			foreach($reuniao_grupos as $c2 => $v2) {
 				if($v->id == $v2->grupo_id) {
@@ -311,7 +311,7 @@ class ReuniaoC extends BaseController {
 		$reuniao = $this->reuniao->find($reuniao_id);
 		if(!$reuniao) {
 			return redirect()->route('reuniao');
-		}else if($reuniao->status != 3) {
+		}else if($reuniao->status_id != 3) {
 			$data['msg'] = "Reunião não pode ser mais alterada!";
 			$data['msg_type'] = "primary";
 			return redirect()->route('reuniao')->with('data', $data);
@@ -378,14 +378,14 @@ class ReuniaoC extends BaseController {
 
 		// Permissões
 		// Permite confirmar
-		$permite_confirmar = $reuniao->status == 3 && $reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false; // TODO: ADICIONAR REGRA
+		$permite_confirmar = $reuniao->status_id == 3 && $reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false; // TODO: ADICIONAR REGRA
 		// Permite ativar votação
 		$permite_ativar = false;
-		if($reuniao->status == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
+		if($reuniao->status_id == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
 			$permite_ativar = true;
 		}
 		$permite_alterar = false;
-		if($reuniao->status == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
+		if($reuniao->status_id == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
 			$permite_alterar = true;
 		}
 
@@ -423,7 +423,7 @@ class ReuniaoC extends BaseController {
 
 		// Carrega reuniao
 		$reuniao = $this->reuniao->find($reuniao_id);
-		if(!$reuniao || $reuniao->status != 3) {
+		if(!$reuniao || $reuniao->status_id != 3) {
 			return redirect()->route('reuniao');
 		}
 
@@ -472,7 +472,7 @@ class ReuniaoC extends BaseController {
 		}
 
 		$dados = (object) array(
-			"status" => 6, // cancelado
+			"status_id" => 6, // cancelado
 			"data_cancelamento" => date('Y-m-d H:i:s'),
 			"usuario_cancelamento_id" => $usuario_sessao->usuario->id
 		);
@@ -521,7 +521,7 @@ class ReuniaoC extends BaseController {
 		$usuario_justificativa_id = $usuario_id != null && $permite_gerenciar_presencas ? $usuario_id : $usuario_sessao->usuario->id;
 		// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
 		$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_justificativa_id)->find();
-		if($reuniao->status == 1) { // Status = 1: Ativo
+		if($reuniao->status_id == 1) { // Status = 1: Ativo
 			if(!$permite_gerenciar_presencas) {
 				if(count($presencas) == 0) {
 					$grupos_permitidos = $this->reuniaoPresenca->verificaPermissaoJustificativaUsuario($reuniao->id, $usuario_justificativa_id);
@@ -540,7 +540,7 @@ class ReuniaoC extends BaseController {
 					return redirect()->to(previous_url());
 				}
 			}else {
-				if($presencas[0]->status == 9) {
+				if($presencas[0]->status_id == 9) {
 					return redirect()->to(previous_url());
 				}
 			}
@@ -554,7 +554,7 @@ class ReuniaoC extends BaseController {
 					"reuniao_id" => $reuniao->id,
 					"usuario_id" => $usuario_justificativa_id,
 					"justificativa" => $this->request->getPost('justificativa'),
-					"status" => 9, // justificado
+					"status_id" => 9, // justificado
 					"data_cadastro" => date('Y-m-d H:i:s'),
 					"usuario_cadastro_id" => $usuario_sessao->usuario->id
 				);
@@ -573,7 +573,7 @@ class ReuniaoC extends BaseController {
 			}else {
 				$dados = (object) array(
 					"justificativa" => $this->request->getPost('justificativa'),
-					"status" => 9, // justificado
+					"status_id" => 9, // justificado
 					"data_alteracao" => date('Y-m-d H:i:s'),
 					"usuario_alteracao_id" => $usuario_sessao->usuario->id
 				);
@@ -661,10 +661,10 @@ class ReuniaoC extends BaseController {
 		}
 
 		$presenca = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_id)->find();
-		if($acao == 'presente' && count($presenca) > 0 && $presenca[0]->status != 7) {
+		if($acao == 'presente' && count($presenca) > 0 && $presenca[0]->status_id != 7) {
 			$dados = (object) array(
 				"justificativa" => null,
-				"status" => 7,
+				"status_id" => 7, // status_id = sim
 				"data_alteracao" => date('Y-m-d H:i:s'),
 				"usuario_alteracao_id" => $usuario_sessao->usuario->id
 			);
@@ -680,10 +680,10 @@ class ReuniaoC extends BaseController {
 			}
 			return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
 
-		}else if($acao == 'ausente' && count($presenca) > 0 && $presenca[0]->status != 8) {
+		}else if($acao == 'ausente' && count($presenca) > 0 && $presenca[0]->status_id != 8) {
 			$dados = (object) array(
 				"justificativa" => null,
-				"status" => 8,
+				"status_id" => 8, // status_id = não
 				"data_alteracao" => date('Y-m-d H:i:s'),
 				"usuario_alteracao_id" => $usuario_sessao->usuario->id
 			);

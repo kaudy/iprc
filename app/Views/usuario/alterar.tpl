@@ -186,7 +186,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-{if $usuario->status != 3}4{else}12{/if}">
+				<div class="col-md-{if $usuario->status_id != 3}4{else}12{/if}">
 					<div class="form-outline">
 						<label for="perfil_id" class="form-label">Perfil</label>
 						<select class="form-control" name="perfil_id" id="perfil_id" required>
@@ -198,15 +198,15 @@
 						</select>
 					</div>
 				</div>
-				{if $usuario->status != 3}
+				{if $usuario->status_id != 3}
 					<div class="col-md-8">
 						<div class="form-outline">
 							<label for="tipo_status_id" class="form-label">Status</label>
 							<select class="form-control" name="tipo_status_id" id="tipo_status_id" required>
 								<option value="">Selecione</option>
 								{foreach from=$tipos_status item=tipo_status}
-									<option value="{$tipo_status->id}" {if $usuario->status == $tipo_status->id}selected {/if}>
-										{$tipo_status->nome}</option>
+									<option value="{$tipo_status->id}" {if $usuario->status_id == $tipo_status->id}selected {/if}>
+										{$tipo_status->nome|ucfirst}</option>
 								{/foreach}
 							</select>
 						</div>
