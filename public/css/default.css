@@ -157,16 +157,30 @@
 }
 
 .btn-sm.btn-justificar {
-	background-color: #00448b;
+	background-color: gray;
 	color:white;
-	border-color: #00448b;
+	border-color: gray;
 	min-width: 84px;
 }
 
 .btn-sm.btn-justificar:hover {
 	background-color: white;
-	border-color: #00448b;;
-	color: #00448b;
+	border-color: gray;
+	color: gray;
+	min-width: 84px;
+}
+
+.btn-sm.btn-voltar {
+	background-color: white;
+	color:#e19004;
+	border-color: #e19004;
+	min-width: 84px;
+}
+
+.btn-sm.btn-voltar:hover {
+	background-color: #e19004;
+	border-color: #e19004;
+	color: white;
 	min-width: 84px;
 }
 /* STATUS *************************************************/

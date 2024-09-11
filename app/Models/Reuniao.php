@@ -42,7 +42,7 @@ class Reuniao extends Model
 	/**
 	 * Lista todas as votações cadastradas
 	 */
-	public function listar($id=null, $titulo=null, $status_id=null, $grupo_id=null, $data_reuniao=null, $usuario_cadastro_id=null) {
+	public function listar($id=null, $titulo = null, $status_id = null, $grupo_id = null, $filtros = null) {
 		$sqlCpl = "";
 		$sqlCpl2 = "";
 
@@ -53,10 +53,18 @@ class Reuniao extends Model
 			$sqlCpl .= "AND r.status_id={$status_id} ";
 		}
 		if($titulo != null) {
-			$sqlCpl .= "AND r.titulo like '%{$nome}%' ";
+			$sqlCpl .= "AND r.titulo like '%{$titulo}%' ";
 		}
 		if($grupo_id != null) {
 			$sqlCpl .= " AND r.grupo_id='{$grupo_id}' ";
+		}
+		if($filtros != null) {
+			if($filtros["data_reuniao_inicial"] != null) {
+				$sqlCpl .= " AND r.data_reuniao >='{$filtros["data_reuniao_inicial"]}' ";
+			}
+			if($filtros["data_reuniao_final"] != null) {
+				$sqlCpl .= " AND r.data_reuniao <='{$filtros["data_reuniao_final"]}' ";
+			}
 		}
 
 		$sql = "SELECT
@@ -75,6 +83,7 @@ class Reuniao extends Model
 					grupos g ON g.id = r.grupo_id
 				INNER JOIN
 					tipos_status ts ON ts.id = r.status_id
+				{$sqlCpl}
 				ORDER BY r.data_reuniao ASC;";
 		$query = $this->db->query($sql);
 		$result = $query->getResult();

@@ -49,11 +49,19 @@ class ReuniaoC extends BaseController {
 		}
 
 		if($this->request->getMethod() === 'post') {
-
-			//$reunioes = $this->reuniao->listar();
-			//$this->smarty->assign("reunioes", $reunioes);
+			$titulo = $this->request->getPost('titulo');
+			$status_id = $this->request->getPost('tipo_status_id');
+			$grupo_id = $this->request->getPost('grupo_id');
+			$data_reuniao_inicial = $this->request->getPost('data_reuniao_inicial');
+			$data_reuniao_final = $this->request->getPost('data_reuniao_final');
+			$filtros = array(
+				"data_reuniao_inicial" => $data_reuniao_inicial,
+				"data_reuniao_final" => $data_reuniao_final
+			);
+			$reunioes = $this->reuniao->listar(null, $titulo, $status_id, $grupo_id, $filtros);
+		}else {
+			$reunioes = $this->reuniao->listar(null, null, 1);
 		}
-		$reunioes = $this->reuniao->listar();
 
 		// Verifica permissões das votações
 		foreach($reunioes as $c => $reuniao) {
@@ -428,7 +436,7 @@ class ReuniaoC extends BaseController {
 		}
 
 		$dados = (object) array(
-			"status" => 1, // ativo
+			"status_id" => 1, // ativo
 			"data_ativacao" => date('Y-m-d H:i:s'),
 			"usuario_ativacao_id" => $usuario_sessao->usuario->id
 		);
@@ -497,7 +505,7 @@ class ReuniaoC extends BaseController {
 	/**
 	 * Justificar reunião
 	 */
-	public function justificarReuniao($reuniao_id, $usuario_id=null) {
+	public function justificarReuniao($reuniao_id, $usuario_id=null, $redirect=null) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
 			return redirect()->route('login');
@@ -540,7 +548,7 @@ class ReuniaoC extends BaseController {
 					return redirect()->to(previous_url());
 				}
 			}else {
-				if($presencas[0]->status_id == 9) {
+				if(count($presencas) > 0 && $presencas[0]->status_id == 9) {
 					return redirect()->to(previous_url());
 				}
 			}
@@ -562,13 +570,26 @@ class ReuniaoC extends BaseController {
 				if($status) {
 					$data['msg'] = "Justificativa Adicionada!";
 					$data['msg_type'] = "primary";
-					return redirect()->to(previous_url())->with('data', $data);
-
+					if($redirect != null) {
+						if($redirect == "gerenciar") {
+							return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+						}
+						return redirect()->to('reuniao')->with('data', $data);
+					}else {
+						return redirect()->to('reuniao')->with('data', $data);
+					}
 				}else {
 					$data['msg'] = "Erro ao tentar justificar a reunião selecionada(#{$reuniao_id})!";
 					$data['msg_type'] = "danger";
 					array_push($data['errors'], $status);
-					return redirect()->to(previous_url())->with('data', $data);
+					if($redirect != null) {
+						if($redirect == "gerenciar") {
+							return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+						}
+						return redirect()->to('reuniao')->with('data', $data);
+					}else {
+						return redirect()->to('reuniao')->with('data', $data);
+					}
 				}
 			}else {
 				$dados = (object) array(
@@ -661,14 +682,29 @@ class ReuniaoC extends BaseController {
 		}
 
 		$presenca = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_id)->find();
-		if($acao == 'presente' && count($presenca) > 0 && $presenca[0]->status_id != 7) {
-			$dados = (object) array(
-				"justificativa" => null,
-				"status_id" => 7, // status_id = sim
-				"data_alteracao" => date('Y-m-d H:i:s'),
-				"usuario_alteracao_id" => $usuario_sessao->usuario->id
-			);
-			$status = $this->reuniaoPresenca->update($presenca[0]->id, $dados);
+		if($acao == 'presente') {
+			if($presenca && count($presenca) > 0 && $presenca[0]->status_id != 7) {
+				$dados = (object) array(
+					"justificativa" => null,
+					"status_id" => 7, // status_id = sim
+					"data_alteracao" => date('Y-m-d H:i:s'),
+					"usuario_alteracao_id" => $usuario_sessao->usuario->id
+				);
+				$status = $this->reuniaoPresenca->update($presenca[0]->id, $dados);
+			}else if(count($presenca) == 0) {
+				$dados = (object) array(
+					"reuniao_id" => $reuniao->id,
+					"usuario_id" => $usuario_id,
+					"justificativa" => null,
+					"status_id" => 7, // status_id = sim
+					"data_cadastro" => date('Y-m-d H:i:s'),
+					"usuario_cadastro_id" => $usuario_sessao->usuario->id
+				);
+				$status = $this->reuniaoPresenca->insert($dados);
+			}else {
+				return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+			}
+
 			if($status) {
 				$data['msg'] = "Presença alterada!";
 				$data['msg_type'] = "primary";
@@ -680,14 +716,29 @@ class ReuniaoC extends BaseController {
 			}
 			return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
 
-		}else if($acao == 'ausente' && count($presenca) > 0 && $presenca[0]->status_id != 8) {
-			$dados = (object) array(
-				"justificativa" => null,
-				"status_id" => 8, // status_id = não
-				"data_alteracao" => date('Y-m-d H:i:s'),
-				"usuario_alteracao_id" => $usuario_sessao->usuario->id
-			);
-			$status = $this->reuniaoPresenca->update($presenca[0]->id, $dados);
+		}else if($acao == 'ausente') {
+			if($presenca && count($presenca) > 0 && $presenca[0]->status_id != 8) {
+				$dados = (object) array(
+					"justificativa" => null,
+					"status_id" => 8, // status_id = não
+					"data_alteracao" => date('Y-m-d H:i:s'),
+					"usuario_alteracao_id" => $usuario_sessao->usuario->id
+				);
+				$status = $this->reuniaoPresenca->update($presenca[0]->id, $dados);
+			}else if(count($presenca) == 0) {
+				$dados = (object) array(
+					"reuniao_id" => $reuniao->id,
+					"usuario_id" => $usuario_id,
+					"justificativa" => null,
+					"status_id" => 8, //  status_id = não
+					"data_cadastro" => date('Y-m-d H:i:s'),
+					"usuario_cadastro_id" => $usuario_sessao->usuario->id
+				);
+				$status = $this->reuniaoPresenca->insert($dados);
+			}else {
+				return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+			}
+
 			if($status) {
 				$data['msg'] = "Presença alterada!";
 				$data['msg_type'] = "primary";

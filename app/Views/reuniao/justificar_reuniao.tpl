@@ -85,8 +85,8 @@
 			<br>
 			<div style="height: 1px;background-color:grey"></div>
 			<br>
-			<button class="btn btn-primary btn-sm" type="submit">Cadastrar</button>
-			<a class="btn btn-outline-warning btn-sm" href="{base_url()}reuniao">Voltar</a>
+			<button class="btn btn-sm btn-cadastrar" type="submit">Cadastrar</button>
+			<a class="btn btn-sm btn-voltar" href="{previous_url()}">Voltar</a>
 		</form>
 	</div>
 {/block}

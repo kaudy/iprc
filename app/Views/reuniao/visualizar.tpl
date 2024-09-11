@@ -221,7 +221,7 @@
 							{if $permite_alterar == true}
 								<a class="btn btn-outline-primary btn-sm" href="{url_to('reuniao_alterar', $reuniao->id)}">Alterar</a>
 							{/if}
-						<a class="btn btn-outline-warning btn-sm" href="{base_url()}reuniao">Voltar</a>
+						<a class="btn btn-sm btn-voltar" href="{base_url()}reuniao">Voltar</a>
 					</div>
 				</div>
 			</div>

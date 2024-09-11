@@ -85,7 +85,7 @@
 			<br>
 			<div style="height: 1px;background-color:grey"></div>
 			<br>
-			<a class="btn btn-outline-warning btn-sm" href="{url_to('reuniao_alterar', $reuniao->id)}">Voltar</a>
+			<a class="btn btn-sm btn-voltar" href="{url_to('reuniao_alterar', $reuniao->id)}">Voltar</a>
 			<a class="btn btn-outline-primary btn-sm" href="{url_to('reuniao_visualizar', $reuniao->id)}">Próximo >></a>
 		</form>
 	</div>

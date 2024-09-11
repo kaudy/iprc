@@ -43,7 +43,8 @@
 									{foreach from=$tipos_status item=tipo_status}
 										<option value="{$tipo_status->id}"
 											{if $smarty.post}{if $smarty.post.tipo_status_id == $tipo_status->id}selected{/if}{/if}>
-											{$tipo_status->nome|ucfirst}</option>
+											{$tipo_status->nome|ucfirst}
+										</option>
 									{/foreach}
 								</select>
 							</div>
@@ -52,7 +53,9 @@
 								<select class="form-control" name="grupo_id" id="grupo_id">
 									<option value="">Selecione</option>
 									{foreach from=$grupos item=grupo}
-										<option value="{$grupo->id}">{$grupo->nome|ucfirst}</option>
+										<option value="{$grupo->id}" {if $smarty.post}{if $smarty.post.grupo_id == $grupo->id}selected{/if}{/if}>
+										{$grupo->nome|ucfirst}
+									</option>
 									{/foreach}
 								</select>
 							</div>
@@ -66,10 +69,23 @@
 					</div>
 				</div>
 			</div>
-			<div class="collapse" id="collapseFiltros">
+			<div class="collapse" id="collapseFiltros" name="collapseFiltros">
 				<div class="row">
 					<div class="col">
-						Mais filtros
+						<div class="col-md-3">
+							<div class="form-outline">
+								<label for="data_reuniao_inicial" class="form-label">Data Inicial</label>
+								<input id="data_reuniao_inicial" name="data_reuniao_inicial" class="form-control" type="date" value="{if $smarty.post}{if $smarty.post.data_reuniao_inicial}{$smarty.post.data_reuniao_inicial}{/if}{/if}"/>
+							</div>
+						</div>
+					</div>
+					<div class="col">
+						<div class="col-md-3">
+							<div class="form-outline">
+								<label for="data_reuniao_final" class="form-label">Data Final</label>
+								<input id="data_reuniao_final" name="data_reuniao_final" class="form-control" type="date" value="{if $smarty.post}{if $smarty.post.data_reuniao_final}{$smarty.post.data_reuniao_final}{/if}{/if}"/>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
