@@ -6,7 +6,7 @@
 				<a href="{url_to('reuniao')}" style="text-decoration: none">
 					<div class="card col-xl-7 col-sm-12 col-12 rounded p-5 text-white" style="background-color: #00448b;color:white;">
 						<i class="bi-calendar-date" style="font-size: 3rem;"></i>
-						<h5 class="title" style="font-size: 20px; font-size-adjust:1.5";>Reuniões</h4>
+						<h5 class="title" style="font-size: max(2em, 12px);font-size-adjust:0.5;";>Reuniões</h4>
 					</div>
 				</a>
 			</div>
@@ -14,7 +14,7 @@
 				<a href="{url_to('votacao')}" style="text-decoration: none">
 					<div class="card card col-xl-7 col-sm-12 col-12 rounded p-5 text-white" style="background-color: #00448b;color:white;">
 						<i class="bi-check2-square" style="font-size: 3rem;"></i>
-						<h5 class="title" style="font-size: 20px; font-size-adjust:1.5">Votações</h4>
+						<h5 class="title" style="font-size: max(2em, 12px);font-size-adjust:0.5;">Votações</h4>
 					</div>
 				</a>
 			</div>
@@ -22,7 +22,7 @@
 				<a href="{url_to('votacao')}" style="text-decoration: none">
 					<div class="card card col-xl-7 col-sm-12 col-12 rounded p-5 text-white" style="background-color: #00448b;color:white;">
 						<i class="bi-check2-square" style="font-size: 3rem;"></i>
-						<h5 class="title" style="font-size: 20px; font-size-adjust:1.5">Votações</h4>
+						<h5 class="title" style="font-size: max(2em, 12px);font-size-adjust:0.5;">Votações</h4>
 					</div>
 				</a>
 			</div>
