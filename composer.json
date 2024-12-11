@@ -11,7 +11,7 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
-        "codeigniter4/framework": "^4.0",
+        "codeigniter4/framework": "4.4.4",
         "codeigniter4/translations": "^4.4",
         "igorescobar/jquery-mask-plugin": "^1.14",
         "phpmailer/phpmailer": "^6.9",

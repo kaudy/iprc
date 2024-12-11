@@ -25,3 +25,4 @@ application/logs/*
 /app/Templates_c/*
 
 *.DS_Store
+composer.lock

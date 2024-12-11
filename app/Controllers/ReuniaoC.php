@@ -10,6 +10,9 @@ use App\Models\TipoStatus;
 use App\Models\Grupo;
 use App\Models\ReuniaoGrupo;
 use App\Models\ReuniaoPresenca;
+use App\Models\Documento;
+
+use CodeIgniter\Files\File;
 
 class ReuniaoC extends BaseController {
 
@@ -20,6 +23,7 @@ class ReuniaoC extends BaseController {
 	protected $grupo;
 	protected $reuniaoGrupo;
 	protected $reuniaoPresenca;
+	protected $documento;
 
 	public function __construct() {
 		$this->reuniao = model(Reuniao::class);
@@ -29,6 +33,7 @@ class ReuniaoC extends BaseController {
 		$this->grupo = model(Grupo::class);
 		$this->reuniaoGrupo = model(ReuniaoGrupo::class);
 		$this->reuniaoPresenca = model(ReuniaoPresenca::class);
+		$this->documento = model(Documento::class);
 	}
 
 	/**
@@ -365,6 +370,56 @@ class ReuniaoC extends BaseController {
 			return redirect()->route('reuniao');
 		}
 
+		//var_dump($this->request->getFiles());exit;
+		if(count($this->request->getFiles()) > 0) {
+			$validationRule = [
+				'userfile' => [
+					'rules' => [
+						'uploaded[userfile]',
+						'mime_in[userfile,image/jpg,image/jpeg,image/gif,image/png,image/webp,application/pdf]',
+						'max_size[userfile,102400]',
+					],
+				],
+			];
+			if (! $this->validateData([], $validationRule)) {
+				$data = ['errors' => $this->validator->getErrors()];
+
+				$data['msg'] = "Ocorreu um problema ao tentar adicionar o documento.";
+				$data['msg_type'] = "danger";
+				return redirect()->route('reuniao_visualizar', array($reuniao_id))->with('data', $data);
+			}
+			$file = $this->request->getFile('userfile');
+			$nome_arquivo = $file->getName();
+			$ext = $file->getClientExtension();
+			$timestamp = time();
+			$newName = "reuniao_{$reuniao_id}_{$timestamp}.{$ext}";
+			$file->move( './documentos/', $newName);
+
+			// Persistir o documento e caminho no banco de dados
+			// TODO: PREPARAR OS DADOS DO DOCUMENTO
+			$dados = (object) array(
+				"nome" => $nome_arquivo,
+				"tipo" => 'edital',
+				"vinculo" => 'reunião',
+				"referencia_id" => $reuniao_id,
+				"status_id" => 1,
+				"arquivo" => $newName,
+				"data_cadastro" => date('Y-m-d H:i:s'),
+				"usuario_cadastro_id" => $usuario_sessao->usuario->id
+			);
+			$novo_documento = $this->documento->insert($dados);
+			if($novo_documento) {
+				$data['msg'] = "Documento adicionado com sucesso";
+				$data['msg_type'] = "primary";
+				//return redirect()->route('reuniao_visualizar', array($reuniao_id))->with('data', $data);
+			} else {
+				$data['msg'] = "Ocorreu um problema ao tentar adicionar o documento. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $novo_documento);
+				$status = false;
+			}
+		}
+
 		// Grupo proprietário
 		$grupo_proprietario = $this->grupo->find($reuniao->grupo_id);
 
@@ -372,7 +427,7 @@ class ReuniaoC extends BaseController {
 		$reuniao_grupos = $this->reuniaoGrupo->listar(null, $reuniao_id, null, 1);
 
 		// Carrega os documentos vinculados a votação
-		$reuniao_documentos = [];
+		$reuniao_documentos = $this->documento->where('vinculo', 'reunião')->where('referencia_id', $reuniao_id)->where('status_id', '1')->find();
 
 		// Justificativa Usuario
 		$presenca_usuario = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();

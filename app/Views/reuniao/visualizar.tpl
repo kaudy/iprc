@@ -16,7 +16,7 @@
 	}
 	</script>
 	<div class="container">
-		<form method="post" id="formulario">
+		<form method="post" id="formulario" enctype="multipart/form-data">
 			<input type="hidden" name="acao" id="acao" value="" required>
 			{csrf_field()}
 			<div class="title">
@@ -145,6 +145,7 @@
 									<tr>
 										<th scope="col">#</th>
 										<th scope="col">Documento</th>
+										<th scope="col">ações</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -156,10 +157,19 @@
 											<td>
 												{$reuniao_documento->nome}
 											</td>
+											<td>
+												<a href="/documentos/{$reuniao_documento->arquivo}" >Link</a>
+											</td>
 										</tr>
 									{/foreach}
 								</tbody>
 							</table>
+							<br>
+							<div class="mb-3">
+								<label for="formFileSm" class="form-label">Adicionar documento a reunião</label>
+								<input type="file" class="form-control form-control-sm" name="userfile">
+								<input type="submit" value="upload" class="btn btn-primary btn-sm">
+							</div>
 						</div>
 					</div>
 				</div>
