@@ -66,5 +66,8 @@ $routes->group('reuniao', static function ($routes) {
 	$routes->match(['get', 'post'], '(:num)/finalizar', 'ReuniaoC::finalizarReuniao/$1', ['as' => 'reuniao_finalizar']);
 	$routes->match(['get', 'post'], '(:num)/justificar', 'ReuniaoC::justificarReuniao/$1', ['as' => 'reuniao_justificar']);
 });
-
+// Email
 $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');
+
+// Download Documentos
+$routes->get('download/(:segment)', 'DocumentoC::download/$1', ['as' => 'documento_download']);

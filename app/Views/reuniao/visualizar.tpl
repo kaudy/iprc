@@ -158,7 +158,7 @@
 												{$reuniao_documento->nome}
 											</td>
 											<td>
-												<a href="/documentos/{$reuniao_documento->arquivo}" >Link</a>
+												<a href="{url_to('documento_download', $reuniao_documento->hash)}" target="_blank">Link</a>
 											</td>
 										</tr>
 									{/foreach}

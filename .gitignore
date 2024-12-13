@@ -26,3 +26,6 @@ application/logs/*
 
 *.DS_Store
 composer.lock
+
+#arquivos
+/public/documentos/*

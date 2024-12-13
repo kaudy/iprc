@@ -392,7 +392,8 @@ class ReuniaoC extends BaseController {
 			$nome_arquivo = $file->getName();
 			$ext = $file->getClientExtension();
 			$timestamp = time();
-			$newName = "reuniao_{$reuniao_id}_{$timestamp}.{$ext}";
+			$arquivo_hash = hash('sha256', "reuniao_{$reuniao_id}_{$timestamp}");
+			$newName = "{$arquivo_hash}.{$ext}";
 			$file->move( './documentos/', $newName);
 
 			// Persistir o documento e caminho no banco de dados
