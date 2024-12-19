@@ -370,7 +370,6 @@ class ReuniaoC extends BaseController {
 			return redirect()->route('reuniao');
 		}
 
-		//var_dump($this->request->getFiles());exit;
 		if(count($this->request->getFiles()) > 0) {
 			$validationRule = [
 				'userfile' => [
@@ -412,7 +411,6 @@ class ReuniaoC extends BaseController {
 			if($novo_documento) {
 				$data['msg'] = "Documento adicionado com sucesso";
 				$data['msg_type'] = "primary";
-				//return redirect()->route('reuniao_visualizar', array($reuniao_id))->with('data', $data);
 			} else {
 				$data['msg'] = "Ocorreu um problema ao tentar adicionar o documento. Erros encontrados:";
 				$data['msg_type'] = "danger";
@@ -452,11 +450,19 @@ class ReuniaoC extends BaseController {
 		if($reuniao->status_id == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
 			$permite_alterar = true;
 		}
+		$permite_adicionar_documento = false;
+		$permite_remover_documento = false;
+		if($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id) { // TODO: ADICIONAR REGRA
+			$permite_adicionar_documento = true;
+			$permite_remover_documento = true;
+		}
 
 		// Permissões
 		$this->smarty->assign("permite_alterar", $permite_alterar);
 		$this->smarty->assign("permite_ativar", $permite_ativar);
 		$this->smarty->assign("permite_confirmar", $permite_confirmar);
+		$this->smarty->assign("permite_adicionar_documento", $permite_adicionar_documento);
+		$this->smarty->assign("permite_remover_documento", $permite_remover_documento);
 		// Dados
 		$this->smarty->assign("presenca_usuario", $presenca_usuario);
 		$this->smarty->assign("presencas", $presencas);
@@ -808,6 +814,52 @@ class ReuniaoC extends BaseController {
 
 		}else {
 			return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id));
+		}
+	}
+
+	/**
+	 * Remove o documento informado da reunião
+	 */
+	public function removerDocumento($reuniao_id, $documento_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega reuniao
+		$reuniao = $this->reuniao->find($reuniao_id);
+		if(!$reuniao) {
+			return redirect()->route('reuniao');
+		}
+
+		// Carrega documento
+		$documento = $this->documento->find($documento_id);
+		if(!$documento) {
+			return redirect()->route('reuniao');
+		}else {
+			$dados = (object) array(
+				"status_id" => 4, // excluido
+				"data_alteracao" => date('Y-m-d H:i:s'),
+				"usuario_alteracao_id" => $usuario_sessao->usuario->id
+			);
+			$status = $this->documento->update($documento_id, $dados);
+			if($status) {
+				$data['msg'] = "Documento removido!";
+				$data['msg_type'] = "primary";
+			}else {
+				$data['msg'] = "Documento não removido. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $documento_id);
+				$status = false;
+			}
+			return redirect()->route('reuniao_visualizar', array($reuniao_id))->with('data', $data);
 		}
 	}
 }

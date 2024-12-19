@@ -158,18 +158,30 @@
 												{$reuniao_documento->nome}
 											</td>
 											<td>
-												<a href="{url_to('documento_download', $reuniao_documento->hash)}" target="_blank">Link</a>
+												<a class="bi-box-arrow-down" href="{url_to('documento_download', $reuniao_documento->hash)}" target="_blank"></a>
+												{if $permite_remover_documento == true}
+													<a class="bi-x-square-fill" href="{url_to('reuniao_remover_documento', $reuniao->id, $reuniao_documento->id)}"></a>
+												{/if}
+											</td>
+										</tr>
+									{foreachelse}
+										<tr>
+											<td colspan="99" class="center" style="text-align: center;vertical-align: middle">
+												<p>Não existem documentos vinculados a essa reunião.</p>
 											</td>
 										</tr>
 									{/foreach}
 								</tbody>
 							</table>
-							<br>
-							<div class="mb-3">
-								<label for="formFileSm" class="form-label">Adicionar documento a reunião</label>
-								<input type="file" class="form-control form-control-sm" name="userfile">
-								<input type="submit" value="upload" class="btn btn-primary btn-sm">
-							</div>
+							{if $permite_adicionar_documento == true}
+								<br>
+								<hr>
+								<div class="mb-3">
+									<label for="formFileSm" class="form-label">Adicionar documento a reunião</label>
+									<input type="file" class="form-control form-control-sm" name="userfile" title="Adicionar documento">
+									<input type="submit" value="upload" class="btn btn-primary btn-sm">
+								</div>
+							{/if}
 						</div>
 					</div>
 				</div>
