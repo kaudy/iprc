@@ -71,7 +71,7 @@ class DocumentoC extends BaseController {
 			//$this->documento->where('hash', $arquivo_hash)->set('downloads', $documento->downloads + 1)->update();
 
 
-			return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->arquivo}");;
+			return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome}");;
 		}
 	}
 }

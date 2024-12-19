@@ -68,7 +68,7 @@ class ReuniaoC extends BaseController {
 			$reunioes = $this->reuniao->listar(null, null, 1);
 		}
 
-		// Verifica permissões das votações
+		// Verifica permissões das reuniões
 		foreach($reunioes as $c => $reuniao) {
 			// Permite Cancelar
 			if($this->regra->possuiRegra($usuario_sessao->usuario->id, 10) && $reuniao->status_id != 5 && $reuniao->status_id != 6) {
@@ -404,6 +404,8 @@ class ReuniaoC extends BaseController {
 				"referencia_id" => $reuniao_id,
 				"status_id" => 1,
 				"arquivo" => $newName,
+				"hash" => $arquivo_hash,
+				"extensao" => $ext,
 				"data_cadastro" => date('Y-m-d H:i:s'),
 				"usuario_cadastro_id" => $usuario_sessao->usuario->id
 			);
@@ -440,19 +442,26 @@ class ReuniaoC extends BaseController {
 
 		// Permissões
 		// Permite confirmar
-		$permite_confirmar = $reuniao->status_id == 3 && $reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false; // TODO: ADICIONAR REGRA
-		// Permite ativar votação
+		$permite_confirmar = $reuniao->status_id == 3 && $reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id ? true : false;
+		// Permite ativar reunião
 		$permite_ativar = false;
-		if($reuniao->status_id == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
+		if($reuniao->status_id == 3 && (($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id) || $this->regra->possuiRegra($usuario_sessao->usuario->id, 15))) {
 			$permite_ativar = true;
 		}
+		// Permite Altear
 		$permite_alterar = false;
-		if($reuniao->status_id == 3 && ($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id)) { // TODO: ADICIONAR REGRA
+		if($reuniao->status_id == 3 && $this->regra->possuiRegra($usuario_sessao->usuario->id, 9)) {
 			$permite_alterar = true;
 		}
+		// Permite adicionar documentos
 		$permite_adicionar_documento = false;
+		if($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id || $this->regra->possuiRegra($usuario_sessao->usuario->id, 13)) {
+			$permite_adicionar_documento = true;
+			$permite_remover_documento = true;
+		}
+		// Permite remover documentos
 		$permite_remover_documento = false;
-		if($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id) { // TODO: ADICIONAR REGRA
+		if($reuniao->usuario_cadastro_id == $usuario_sessao->usuario->id || $this->regra->possuiRegra($usuario_sessao->usuario->id, 14)) {
 			$permite_adicionar_documento = true;
 			$permite_remover_documento = true;
 		}
