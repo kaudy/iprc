@@ -67,6 +67,15 @@ $routes->group('reuniao', static function ($routes) {
 	$routes->match(['get', 'post'], '(:num)/justificar', 'ReuniaoC::justificarReuniao/$1', ['as' => 'reuniao_justificar']);
 	$routes->match(['get', 'post'], '(:num)/documentos/(:num)/remover', 'ReuniaoC::removerDocumento/$1/$2', ['as' => 'reuniao_remover_documento']);
 });
+
+// Documentos
+$routes->group('documento', static function ($routes) {
+	$routes->get('', 'DocumentoC::index');
+	$routes->post('', 'DocumentoC::index');
+	$routes->match(['get', 'post'], 'cadastrar', 'DocumentoC::cadastrarDocumento', ['as' => 'documento_cadastar']);
+	$routes->match(['get', 'post'], '(:num)/alterar', 'DocumentoC::alterarDocumento/$1', ['as' => 'documento_alterar']);
+});
+
 // Email
 $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');
 

@@ -21,16 +21,36 @@ class DocumentoC extends BaseController {
 		// mensagem temporaria da sessao
 		$data = $this->session->getFlashdata('data');
 
+		$documentos = array();
 		if(!isset($data)) {
 			$data['msg'] = "";
 			$data['msg_type'] = "";
 			$data['errors'] = [];
 		}
+
+		if($this->request->getMethod() === 'post') {
+			//echo "<pre>";var_dump($this->request->getPost());exit;
+			$nome = $this->request->getPost('nome');
+			$documentos = $this->documento->listar(array("nome" => $nome));
+		}
+
+		// TODO: Criar regra para permissões de cadastro de documentos
+		$permite_cadastrar_documento = true;
+
+
+
+		//Permissões
+		$this->smarty->assign("permite_cadastrar_documento", $permite_cadastrar_documento);
+		// Dados
+		$this->smarty->assign("documentos", $documentos);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/documento/listar.tpl');
 	}
 
 
 	/**
-	 *
+	 * Upload de arquivos
 	 */
 	public function upload() {
 		$usuario_sessao = $this->session->get('usuario');

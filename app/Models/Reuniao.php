@@ -87,8 +87,6 @@ class Reuniao extends Model
 				ORDER BY r.data_reuniao ASC;";
 		$query = $this->db->query($sql);
 		$result = $query->getResult();
-
-		//echo "<pre>";var_dump($result);exit;
 		return $result;
 	}
 

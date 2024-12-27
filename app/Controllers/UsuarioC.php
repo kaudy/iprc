@@ -590,7 +590,8 @@ class UsuarioC extends BaseController {
 	 * via sistema
 	 */
 	public function mail() {
-		$pessoa = $this->pessoa->where('email', 'djaene@gmail.com')->first();
+		$pessoa = $this->pessoa->where('email', 'williankaudy@gmail.com')->first();
+
 		$usuario = $this->usuario->where('pessoa_id', $pessoa->id)->first();
 		$link = url_to('usuario_ativar', $usuario->id, $usuario->chave_ativacao);
 
@@ -604,7 +605,7 @@ class UsuarioC extends BaseController {
 
 		// Monta os dados do email
 		$dados_email = (object) array(
-			'email_destinatario'=> 'williankaudy@gmail.com',
+			'email_destinatario'=> 'ti@paranaclube.com.br',
 			'nome_destinatario' => 'Willian Kaudy',
 			'titulo'			=> 'Email de teste 123',
 			'corpo'				=> 'Teste envio de email pelo custom helper sem template',
@@ -612,6 +613,7 @@ class UsuarioC extends BaseController {
 		);
 
 		$dados_email->template = $template;
+		//echo "<pre>";var_dump($dados_email);exit;
 		enviaEmail($dados_email);
 	}
 }

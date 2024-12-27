@@ -1,3 +1,6 @@
+
+
+
 /* Login  *************************************************/
 .login-card {
 	border-radius: 1rem;
@@ -20,6 +23,21 @@
 .nav-color {
 	background-color: #00448b;
 	color:white;
+}
+
+.nav-link {
+	--nav-link-color: rgb(214, 53, 53);
+	--bs-nav-link-color: #a23872;
+	--nav-link-color: #a23872;
+}
+
+.link-menu:hover {
+	color:rgb(205, 19, 19);
+}
+
+.navbar-toggler {
+	color:white;
+	background-color: #00448b;
 }
 
 /* Botões */

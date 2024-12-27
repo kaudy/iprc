@@ -166,15 +166,17 @@
 			// Configuações
 			$mail = new PHPMailer;
 			$mail->isSMTP();
-			$mail->SMTPDebug = 0; // 2-DEBUG TOTAL
+			$mail->SMTPDebug = 2; // 2-DEBUG TOTAL
 			$mail->Host = getenv('email.host') ? getenv('email.host') : 'sandbox.smtp.mailtrap.io';
 			$mail->Port = getenv('email.port') ? getenv('email.port') : 25;
 			$mail->SMTPAuth = getenv('email.smtpauth') ? getenv('email.smtpauth') : true;
+			$mail->SMTPAutoTLS = getenv('email.smtpautotls') ? getenv('email.smtpautotls') : false;
 			$mail->Username = getenv('email.username') ? getenv('email.username') : 'f28874ad168bc9';
 			$mail->Password = getenv('email.Password') ? getenv('email.Password') : '0aa6ba0dd16f30';
 			$mail->CharSet = getenv('email.CharSet') ? getenv('email.CharSet') : 'utf-8';
-			$mail->setFrom((getenv('email.fromemail') ? getenv('email.fromemail') : 'iprc@noreply.com'), (getenv('email.fromdescription') ? getenv('email.fromdescription') : 'iPRC'));
+			$mail->setFrom((getenv('email.fromemail') ? getenv('email.fromemail') : 'ti@paranaclube.com.br'), (getenv('email.fromdescription') ? getenv('email.fromdescription') : 'iPRC'));
 
+			var_dump($mail->Host, $mail->Port, $mail->Username, $mail->Password , $mail->SMTPAuth, $mail->SMTPAutoTLS);
 			// Monta os dados do email
 			$mail->addAddress($dados_email->email_destinatario, $dados_email->nome_destinatario);
 			$mail->Subject = "iPRC - {$dados_email->titulo}";
@@ -190,10 +192,15 @@
 				$mail->Body = $dados_email->corpo;
 			}
 
+			//echo('<pre>');
+			//var_dump($mail->Host, $mail->Port, $mail->Username, $mail->Password , $mail->SMTPAuth);
+			//exit();
+
 			if(!$mail->send()) {
 				echo 'Mailer Error: ' . $mail->ErrorInfo;
 			}else {
 				echo 'The email message was sent.';
+
 			}
 		}else {
 			return false;

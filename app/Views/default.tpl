@@ -19,7 +19,7 @@
 				</a>
 			</div>
 			<div class="col-xl-4 col-sm-4 col-12 m-sm-0 m-xl-0 m-1">
-				<a href="#" style="text-decoration: none">
+				<a href="{url_to('documento')}" style="text-decoration: none">
 					<div class="card card col-xl-7 col-sm-12 col-12 rounded p-5 text-white" style="background-color: #00448b;color:white;">
 						<i class="bi-file-earmark-text" style="font-size: 3rem;"></i>
 						<h5 class="title" style="font-size: max(2em, 12px);font-size-adjust:0.5;">Docs</h4>
