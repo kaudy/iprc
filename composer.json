@@ -14,8 +14,10 @@
         "codeigniter4/framework": "4.4.4",
         "codeigniter4/translations": "^4.4",
         "igorescobar/jquery-mask-plugin": "^1.14",
+        "mpdf/mpdf": "8.2.5",
         "phpmailer/phpmailer": "^6.9",
-        "smarty/smarty": "^4.3"
+        "smarty/smarty": "^4.3",
+        "xthiago/pdf-version-converter": "dev-master"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9",
