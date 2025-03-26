@@ -10,6 +10,8 @@ Plataforma de gerenciamento dos processos de conselhos para clubes associativos.
 - Bootstrap
 - jquery-mask-plugin
 - phpMailer
+- Ghostscript
+- mpdf
 
 ## Cores:
 - Vermelho: #f41737 - RGB (244,23,55)
@@ -18,4 +20,9 @@ Plataforma de gerenciamento dos processos de conselhos para clubes associativos.
 
 ## Desenvolvedores:
 - @kaudy
+
+---------------------------------------------------------------------------
+GhostScript Install
+- apt-get update
+- apt-get install -y ghostscript
 

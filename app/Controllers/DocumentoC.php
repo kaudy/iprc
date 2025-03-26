@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Models\Documento;
 use App\Models\DocumentoHistorico;
+use App\Models\Usuario;
+use App\Models\Pessoa;
 use CodeIgniter\Files\File;
 use Mpdf\Mpdf;
 use Symfony\Component\Filesystem\Filesystem;
@@ -15,10 +17,14 @@ class DocumentoC extends BaseController {
 
 	protected $documento;
 	protected $documentoHistorico;
+	protected $usuario;
+	protected $pessoa;
 
 	public function __construct() {
 		$this->documento = model(Documento::class);
 		$this->documentoHistorico = model(DocumentoHistorico::class);
+		$this->usuario = model(Usuario::class);
+		$this->pessoa = model(Pessoa::class);
 	}
 
 	public function index() {
@@ -93,55 +99,113 @@ class DocumentoC extends BaseController {
 			return redirect()->route('/');
 		}else {
 			$usuario_ip = getIpClient();
+			$usuario = $this->usuario->where('id', $usuario_sessao->usuario->id)->first();
+			$pessoa = $this->pessoa->where('id', $usuario->pessoa_id)->first();
+			if($usuario->status_id != 1) {
+				return redirect()->route('/');
+			}
+
+			/**
+			 * TODO:
+			 * - Validar qual tipo de arquivo está sendo feito download
+			 * - Se o arquivo for PDF validar se ghostscript esta instalado
+			 * - Se o arquivo for PDF converter para PDF 1.4
+			 * - Se for pdf coloca marca dagua em todas as paginas do pdf e informações de quem fez o download
+			 * - Salvar histórico de downloads
+			 */
 
 			//echo "<pre>";var_dump($usuario_sessao);exit;
 
 			// histórico de downloads
-			/*$dados = (object) array(
+			$dados = (object) array(
 				"documento_id" => $documento->id,
 				"tipo" => 'download',
 				"usuario_id" => $usuario_sessao->usuario->id,
 				"usuario_ip" => getIpClient(),
 				"data_cadastro" => date('Y-m-d H:i:s')
 			);
-			$this->documentoHistorico->insert($dados);*/
+			$this->documentoHistorico->insert($dados);
 
-			//return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome}");
+			// Valida qual tipo do arquivo está sendo feito download
+			if($documento->extensao != 'pdf') {
+				return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome}");
+
+			}else {
+				$guesser = new RegexGuesser();
+
+				// Verifica se precisa converter para PDF 1.4
+				if($guesser->guess(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}") > 1.4) {
+					// Se o arquivo for PDF validar se ghostscript esta instalado
+					system("which gs > /dev/null", $gs_instado);
+					$gs_version = shell_exec("gs --version");
+
+					// Se Ghostscript estiver instalado, converter para PDF 1.4
+					if($gs_instado == 0 && $gs_version > 8.0) {
+						$command = new GhostscriptConverterCommand();
+						$filesystem = new Filesystem();
+						$converter = new GhostscriptConverter($command, $filesystem, FCPATH."documentos/tmp");
+						$converter->convert(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}", '1.4');
+					}else {
+						$data['msg'] = "O arquivo precisa ser convertido para PDF 1.4 para ser baixado.";
+						$data['msg_type'] = "danger";
+						return redirect()->route('documento')->with('data', $data);
+					}
+				}
+
+				$this->response->setHeader('Content-Type', 'application/pdf');
+				$mpdf = new Mpdf;
+				// set the sourcefile
+				$total_paginas = $mpdf->setSourceFile(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}");
 
 
-			$guesser = new RegexGuesser();
-			if($guesser->guess(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}") > 1.4) {
-				$command = new GhostscriptConverterCommand();
-				$filesystem = new Filesystem();
-				$converter = new GhostscriptConverter($command, $filesystem, FCPATH."documentos/tmp");
-				$converter->convert(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}", '1.4');
+				for($i = 1; $i <= $total_paginas; $i++) {
+					// import page 1
+					$tplIdx = $mpdf->importPage($i);
+					$mpdf->SetDisplayMode('fullpage');
+
+					//$mpdf->useTemplate($tplIdx, 0, 0, 200);
+					$mpdf->useTemplate($tplIdx);
+
+					// Marca dagua
+					$mpdf->SetWatermarkText("Documento confidencial - {$pessoa->documento} - IP: {$usuario_ip}");
+					$mpdf->showWatermarkText = true;
+					$mpdf->SetWatermarkText(new \Mpdf\WatermarkText("Documento confidencial", 100, 45, 'red', 0.4));
+					$mpdf->showWatermarkText = true;
+					// Cabeçalho
+					$cabecalho_text = '	<div style="text-align: center; text-height: 16px; color: red">
+											Documento confidencial de responsabilidade de: '.$usuario_sessao->usuario->nome.'
+											de CPF/CNPJ '.$pessoa->documento.'. Download realizado pelo IP: '.$usuario_ip.'
+										</div>';
+					$mpdf->SetTextColor(0, 0, 255);
+					$mpdf->SetFont('Arial', 'B', 10);
+					$mpdf->SetXY(60, 10);
+					$mpdf->WriteHTML($cabecalho_text);
+					// Rodapé
+					$rodape_text = '	<div style="text-align: center; text-height: 16px; color: red">
+											Documento confidencial de responsabilidade de: '.$usuario_sessao->usuario->nome.'
+											de CPF/CNPJ '.$pessoa->documento.'. Download realizado pelo IP: '.$usuario_ip.'
+										</div>';
+					$mpdf->SetTextColor(0, 0, 255);
+					$mpdf->SetFont('Arial', 'B', 10);
+					$mpdf->SetXY(60, 270);
+					$mpdf->WriteHTML($rodape_text);
+					// meio do texto
+					$mpdf->SetTextColor(255, 0, 255);
+					$mpdf->SetAlpha(0.5);
+					$mpdf->SetXY(10, 100);
+					$html = '<div style="position: absolute; rotate: -90; text-rotate=45; text-align: center; color: red">
+								Documento confidencial de responsabilitade de: '.$usuario_sessao->usuario->nome.'<br>
+								de CPF/CNPJ '.$pessoa->documento.' e download pelo IP: '.$usuario_ip.'
+							</div>';
+					$mpdf->WriteHTML($html);
+
+					if($i <= $total_paginas) {
+            			$mpdf->AddPage();
+   					}
+				}
+
+				$mpdf->Output();
 			}
-
-			$this->response->setHeader('Content-Type', 'application/pdf');
-			$mpdf = new Mpdf;
-			// set the sourcefile
-			$mpdf->setSourceFile(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}");
-
-			// import page 1
-			$tplIdx = $mpdf->importPage(1);
-
-			//echo "<pre>";var_dump($tplIdx);exit;
-
-			// use the imported page and place it at point 10,10 with a width of 200 mm   (This is the image of the included pdf)
-			$mpdf->useTemplate($tplIdx, 10, 10, 200);
-
-			// now write some text above the imported page
-			$mpdf->SetTextColor(0, 0, 255);
-			$mpdf->SetFont('Arial', 'B', 8);
-			$mpdf->SetXY(90, 8);
-			$mpdf->Write(0, "Documento confidencial de responsabilitade de: {$usuario_sessao->usuario->nome} IP:$usuario_ip");
-
-			$mpdf->SetWatermarkText("Documento confidencial de responsabilitade de: {$usuario_sessao->usuario->nome}");
-			$mpdf->showWatermarkText = true;
-
-
-			$mpdf->Output();
-			//$mpdf->Output('newpdf.pdf');
 		}
 	}
 }
