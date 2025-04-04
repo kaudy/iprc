@@ -6,10 +6,9 @@
 				<h2>Documentos</h2>
 			</div>
 			{if $permite_cadastrar_documento == true}
-				<!--<div class="col-md-1">
-					<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('reuniao_cadastar')}">Cadastrar</a>
+				<div class="col-md-1">
+					<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('documento_cadastar')}">Cadastrar</a>
 				</div>
-				-->
 			{/if}
 		</div>
 		<br>
@@ -36,6 +35,28 @@
 								<label for="nome" class="label">Nome</label>
 								<input type="text" class="form-control" id="nome" name="nome" placeholder="Nome"
 									value="{if $smarty.post}{$smarty.post.nome}{/if}">
+							</div>
+							<div class="col-md-2">
+								<label for="grupo_id" class="label">Grupo</label>
+								<select class="form-control" name="grupo_id" id="grupo_id">
+									<option value="">Selecione</option>
+									{foreach from=$grupos item=grupo}
+										<option value="{$grupo->id}" {if $smarty.post}{if $smarty.post.grupo_id == $grupo->id}selected{/if}{/if}>
+											{$grupo->nome|ucfirst}
+										</option>
+									{/foreach}
+								</select>
+							</div>
+							<div class="col-md-2">
+								<label for="tipo_documento" class="label">Tipo de Documento</label>
+								<select class="form-control" name="tipo_documento" id="tipo_documento">
+									<option value="">Selecione</option>
+									{foreach from=$tipos_documento item=tipo_documento}
+										<option value="{$tipo_documento}" {if $smarty.post}{if $smarty.post.tipo_documento == $tipo_documento}selected{/if}{/if}>
+											{$tipo_documento|ucfirst}
+										</option>
+									{/foreach}
+								</select>
 							</div>
 							<div class="col-md-2 div-pesquisar">
 								<button class="btn btn-primary btn-sm btn-pesquisar" type="submit">Pesquisar</button>
@@ -116,8 +137,10 @@
 								</td>
 								<td data-title="Ações">
 									{if $registro->hash}
-										<a class="bi-box-arrow-down" href="{url_to('documento_download', $registro->hash)}" target="_blank"></a>
+										<a class="bi bi-cloud-download-fill" href="{url_to('documento_download', $registro->hash)}" target="_blank"></a>
 									{/if}
+									<a class="bi bi-pencil-square" href="{url_to('documento_alterar', $registro->id)}"></a>
+									<a class="bi bi-trash" href="{url_to('documento_remover', $registro->id)}"></a>
 								</td>
 							</tr>
 						{foreachelse}

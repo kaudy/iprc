@@ -159,6 +159,37 @@
 	}
 
 	/**
+	 *	Retorna a configuração do sistema
+	 */
+	function sistemaCFG($sistema_cfg_id) {
+		$db = db_connect();
+		$sql = "SELECT
+					sc.*
+				FROM
+					sistema_cfg sc
+				WHERE
+					sc.id = {$sistema_cfg_id}
+				AND status_id = 1;";
+		$query = $db->query($sql);
+		$result = $query->getRow();
+
+		switch (getenv('CI_ENVIRONMENT')) {
+			case 'development':
+				return $result->desenvolvimento;
+				break;
+			case 'test':
+				return $result->homologacao;
+				break;
+			case 'production':
+				return $result->producao;
+				break;
+			default:
+				return $result->desenvolvimento;
+				break;
+		}
+	}
+
+	/**
 	 * Envia email pelo PHPMailer
 	 */
 	function enviaEmail($dados_email) {

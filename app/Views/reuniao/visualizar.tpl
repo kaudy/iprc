@@ -159,10 +159,10 @@
 											</td>
 											<td>
 												{if $reuniao_documento->hash}
-													<a class="bi-box-arrow-down" href="{url_to('documento_download', $reuniao_documento->hash)}" target="_blank"></a>
+													<a class="bi bi-cloud-download-fill" href="{url_to('documento_download', $reuniao_documento->hash)}" target="_blank"></a>
 												{/if}
 												{if $permite_remover_documento == true}
-													<a class="bi-x-square-fill" href="{url_to('reuniao_remover_documento', $reuniao->id, $reuniao_documento->id)}"></a>
+													<a class="bi bi-trash" href="{url_to('reuniao_remover_documento', $reuniao->id, $reuniao_documento->id)}"></a>
 												{/if}
 											</td>
 										</tr>

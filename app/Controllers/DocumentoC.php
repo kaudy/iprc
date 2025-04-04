@@ -6,6 +6,8 @@ use App\Models\Documento;
 use App\Models\DocumentoHistorico;
 use App\Models\Usuario;
 use App\Models\Pessoa;
+use App\Models\Grupo;
+use App\Models\Regra;
 use CodeIgniter\Files\File;
 use Mpdf\Mpdf;
 use Symfony\Component\Filesystem\Filesystem;
@@ -19,14 +21,21 @@ class DocumentoC extends BaseController {
 	protected $documentoHistorico;
 	protected $usuario;
 	protected $pessoa;
+	protected $grupo;
+	protected $regra;
 
 	public function __construct() {
 		$this->documento = model(Documento::class);
 		$this->documentoHistorico = model(DocumentoHistorico::class);
 		$this->usuario = model(Usuario::class);
 		$this->pessoa = model(Pessoa::class);
+		$this->grupo = model(Grupo::class);
+		$this->regra = model(Regra::class);
 	}
 
+	/**
+	 * Listar os documentos
+	 */
 	public function index() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
@@ -43,23 +52,214 @@ class DocumentoC extends BaseController {
 		}
 
 		if($this->request->getMethod() === 'post') {
-			//echo "<pre>";var_dump($this->request->getPost());exit;
 			$nome = $this->request->getPost('nome');
-			$documentos = $this->documento->listar(array("nome" => $nome));
+			$tipo_documento = $this->request->getPost('tipo_documento');
+			$grupo_id = $this->request->getPost('grupo_id');
+			$documentos = $this->documento->listar(
+				array(
+					"nome" => $nome,
+					"tipo" => $tipo_documento,
+					"grupo_id" => $grupo_id
+				)
+			);
 		}
 
-		// TODO: Criar regra para permissões de cadastro de documentos
-		$permite_cadastrar_documento = true;
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
+
+		// permissões de cadastro de documentos
+		$permite_cadastrar_documento = $this->regra->possuiRegra($usuario_sessao->usuario->id, 16);
 
 		//Permissões
 		$this->smarty->assign("permite_cadastrar_documento", $permite_cadastrar_documento);
 		// Dados
+		$this->smarty->assign("tipos_documento", getEnum('documentos', 'tipo'));
+		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("documentos", $documentos);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/documento/listar.tpl');
 	}
 
+	/**
+	 * Cadastro da votação e grupo que poderao votar
+	 */
+	public function cadastrarDocumento() {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 16)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		if(count($this->request->getFiles()) > 0) {
+			$grupo_id = $this->request->getPost('grupo_id');
+			$tipo_documento = $this->request->getPost('tipo_documento');
+
+			$validationRule = [
+				'userfile' => [
+					'rules' => [
+						'uploaded[userfile]',
+						'mime_in[userfile,image/jpg,image/jpeg,image/gif,image/png,image/webp,application/pdf]',
+						'max_size[userfile,102400]',
+					],
+				],
+			];
+			if (! $this->validateData([], $validationRule)) {
+				$data = ['errors' => $this->validator->getErrors()];
+
+				$data['msg'] = "Ocorreu um problema ao tentar adicionar o documento.";
+				$data['msg_type'] = "danger";
+				return redirect()->route('documento')->with('data', $data);
+			}
+			$file = $this->request->getFile('userfile');
+			$nome_arquivo = $file->getName();
+			$ext = $file->getClientExtension();
+			$timestamp = time();
+			$arquivo_hash = hash('sha256', "grupo_{$grupo_id}_{$timestamp}");
+			$newName = "{$arquivo_hash}.{$ext}";
+			$file->move( './documentos/', $newName);
+
+			// Persistir o documento e caminho no banco de dados
+			$dados = (object) array(
+				"nome" => $nome_arquivo,
+				"tipo" => $tipo_documento,
+				"vinculo" => 'grupo',
+				"referencia_id" => $grupo_id,
+				"status_id" => 1,
+				"arquivo" => $newName,
+				"hash" => $arquivo_hash,
+				"extensao" => $ext,
+				"data_cadastro" => date('Y-m-d H:i:s'),
+				"usuario_cadastro_id" => $usuario_sessao->usuario->id
+			);
+			$novo_documento = $this->documento->insert($dados);
+			if($novo_documento) {
+				$data['msg'] = "Documento adicionado com sucesso";
+				$data['msg_type'] = "primary";
+				return redirect()->route('documento')->with('data', $data);
+			} else {
+				$data['msg'] = "Ocorreu um problema ao tentar adicionar o documento. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $novo_documento);
+				$status = false;
+			}
+		}
+
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
+
+		$this->smarty->assign("tipos_documento", getEnum('documentos', 'tipo'));
+		$this->smarty->assign("grupos", $grupos);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/documento/cadastrar_documento.tpl');
+	}
+
+	/**
+	 * Alterar os dados do documento
+	 */
+	public function alterarDocumento($documento_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 16)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega reuniao
+		$documento = $this->documento->find($documento_id);
+		if(!$documento) {
+			return redirect()->route('reuniao');
+		}
+
+		if($this->request->getMethod() === 'post') {
+			$grupo_id = $this->request->getPost('grupo_id');
+			$tipo_documento = $this->request->getPost('tipo_documento');
+			$vinculo_documento = $this->request->getPost('vinculo_documento');
+
+			// Persistir o documento e caminho no banco de dados
+			$dados = (object) array(
+				"tipo" => $tipo_documento,
+				"vinculo" => $vinculo_documento,
+				"referencia_id" => $grupo_id,
+				"data_alteracao" => date('Y-m-d H:i:s'),
+				"usuario_alteracao_id" => $usuario_sessao->usuario->id
+			);
+			$novo_documento = $this->documento->update($documento->id, $dados);
+			if($novo_documento) {
+				$data['msg'] = "Documento adicionado com sucesso";
+				$data['msg_type'] = "primary";
+				return redirect()->route('documento')->with('data', $data);
+			} else {
+				$data['msg'] = "Ocorreu um problema ao tentar adicionar o documento. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $novo_documento);
+				$status = false;
+			}
+		}
+
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
+
+		$this->smarty->assign("tipos_documento", getEnum('documentos', 'tipo'));
+		$this->smarty->assign("vinculos_documento", getEnum('documentos', 'vinculo'));
+		$this->smarty->assign("grupos", $grupos);
+		$this->smarty->assign("documento", $documento);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/documento/alterar_documento.tpl');
+	}
+
+	/**
+	 * Remove um documento
+	 */
+	public function removerDocumento($documento_id) {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		// Carrega documento
+		$documento = $this->documento->find($documento_id);
+		if(!$documento) {
+			return redirect()->route('reuniao');
+		}else {
+			$dados = (object) array(
+				"status_id" => 4, // excluido
+				"data_alteracao" => date('Y-m-d H:i:s'),
+				"usuario_alteracao_id" => $usuario_sessao->usuario->id
+			);
+			$status = $this->documento->update($documento_id, $dados);
+			if($status) {
+				$data['msg'] = "Documento removido!";
+				$data['msg_type'] = "primary";
+			}else {
+				$data['msg'] = "Documento não removido. Erros encontrados:";
+				$data['msg_type'] = "danger";
+				array_push($data['errors'], $documento_id);
+				$status = false;
+			}
+			return redirect()->route('documento')->with('data', $data);
+		}
+	}
 
 	/**
 	 * Upload de arquivos
@@ -105,17 +305,6 @@ class DocumentoC extends BaseController {
 				return redirect()->route('/');
 			}
 
-			/**
-			 * TODO:
-			 * - Validar qual tipo de arquivo está sendo feito download
-			 * - Se o arquivo for PDF validar se ghostscript esta instalado
-			 * - Se o arquivo for PDF converter para PDF 1.4
-			 * - Se for pdf coloca marca dagua em todas as paginas do pdf e informações de quem fez o download
-			 * - Salvar histórico de downloads
-			 */
-
-			//echo "<pre>";var_dump($usuario_sessao);exit;
-
 			// histórico de downloads
 			$dados = (object) array(
 				"documento_id" => $documento->id,
@@ -132,21 +321,28 @@ class DocumentoC extends BaseController {
 
 			}else {
 				$guesser = new RegexGuesser();
+				$permite_converter_pdf = sistemaCFG(1);
 
 				// Verifica se precisa converter para PDF 1.4
 				if($guesser->guess(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}") > 1.4) {
-					// Se o arquivo for PDF validar se ghostscript esta instalado
-					system("which gs > /dev/null", $gs_instado);
-					$gs_version = shell_exec("gs --version");
+					if($permite_converter_pdf == 1) {
+						// Se o arquivo for PDF validar se ghostscript esta instalado
+						system("which gs > /dev/null", $gs_instado);
+						$gs_version = shell_exec("gs --version");
 
-					// Se Ghostscript estiver instalado, converter para PDF 1.4
-					if($gs_instado == 0 && $gs_version > 8.0) {
-						$command = new GhostscriptConverterCommand();
-						$filesystem = new Filesystem();
-						$converter = new GhostscriptConverter($command, $filesystem, FCPATH."documentos/tmp");
-						$converter->convert(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}", '1.4');
+						// Se Ghostscript estiver instalado, converter para PDF 1.4
+						if($gs_instado == 0 && $gs_version > 8.0) {
+							$command = new GhostscriptConverterCommand();
+							$filesystem = new Filesystem();
+							$converter = new GhostscriptConverter($command, $filesystem, FCPATH."documentos/tmp");
+							$converter->convert(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}", '1.4');
+						}else {
+							$data['msg'] = "O arquivo precisa ser convertido para PDF 1.4 para ser baixado.(CODE: 0002)";
+							$data['msg_type'] = "danger";
+							return redirect()->route('documento')->with('data', $data);
+						}
 					}else {
-						$data['msg'] = "O arquivo precisa ser convertido para PDF 1.4 para ser baixado.";
+						$data['msg'] = "O arquivo PDF não pode ser convertido no momento.(CODE: 0001)";
 						$data['msg_type'] = "danger";
 						return redirect()->route('documento')->with('data', $data);
 					}
@@ -156,7 +352,6 @@ class DocumentoC extends BaseController {
 				$mpdf = new Mpdf;
 				// set the sourcefile
 				$total_paginas = $mpdf->setSourceFile(FCPATH."/documentos/{$documento->hash}.{$documento->extensao}");
-
 
 				for($i = 1; $i <= $total_paginas; $i++) {
 					// import page 1

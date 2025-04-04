@@ -44,7 +44,6 @@ class Documento extends Model
 	public function listar($options = array()) {
 		$sqlCpl = "";
 
-
 		if($options != null && count($options) > 0) {
 			if(isset($options['id']) && $options['id'] != null) {
 				$sqlCpl .= " AND d.id='{$options['id']}' ";
@@ -56,17 +55,24 @@ class Documento extends Model
 				$sqlCpl .= "AND d.nome like '%{$options['nome']}%' ";
 			}
 			if(isset($options['grupo_id']) && $options['grupo_id'] != null) {
-				$sqlCpl .= " AND r.grupo_id='{$options['grupo_id']}' ";
+				$sqlCpl .= " AND g.id='{$options['grupo_id']}' ";
+			}
+			if(isset($options['vinculo']) && $options['vinculo'] != null) {
+				$sqlCpl .= " AND d.vinculo='{$options['vinculo']}' ";
+			}
+			if(isset($options['tipo']) && $options['tipo'] != null) {
+				$sqlCpl .= " AND d.tipo='{$options['tipo']}' ";
 			}
 		}
 
 		$sql = "SELECT
-					d.*, r.titulo AS reuniao_titulo
+					d.*, r.titulo AS reuniao_titulo, g.nome as grupo_nome
 				FROM
 					documentos d
-						INNER JOIN
-					reunioes r ON r.id = d.referencia_id
-						AND d.vinculo = 'reunião'
+				LEFT JOIN
+					reunioes r ON r.id = d.referencia_id and d.vinculo = 'reunião'
+				LEFT JOIN
+					grupos g ON g.id = d.referencia_id and d.vinculo = 'grupo'
 				WHERE
 					d.status_id = 1
 					{$sqlCpl}

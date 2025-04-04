@@ -74,6 +74,7 @@ $routes->group('documento', static function ($routes) {
 	$routes->post('', 'DocumentoC::index');
 	$routes->match(['get', 'post'], 'cadastrar', 'DocumentoC::cadastrarDocumento', ['as' => 'documento_cadastar']);
 	$routes->match(['get', 'post'], '(:num)/alterar', 'DocumentoC::alterarDocumento/$1', ['as' => 'documento_alterar']);
+	$routes->match(['get', 'post'], '(:num)/remover', 'DocumentoC::removerDocumento/$1', ['as' => 'documento_remover']);
 });
 
 // Email
