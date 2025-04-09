@@ -10,6 +10,7 @@ $routes->get('/', 'Home::index');
 // Usuario
 $routes->group('usuario', static function ($routes) {
 	$routes->get('', 'UsuarioC::index');
+	$routes->post('', 'UsuarioC::index');
 	$routes->match(['get', 'post'], 'cadastrar', 'UsuarioC::cadastrar', ['as' => 'usuario_cadastar']);
 	$routes->match(['get', 'post'], '(:num)/alterar', 'UsuarioC::alterar/$1', ['as' => 'usuario_alterar']);
 	$routes->match(['get', 'post'], '(:num)/visualizar', 'UsuarioC::visualizar/$1', ['as' => 'usuario_visualizar']);

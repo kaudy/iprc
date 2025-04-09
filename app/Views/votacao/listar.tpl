@@ -69,8 +69,7 @@
 		<div style="height: 1px;background-color:grey"></div>
 		<br>
 		<div class="row">
-			<table cellspacing="1" summary="Listagem de todos usuários"
-				class="table table-sm table-responsive table-striped">
+			<table cellspacing="1" summary="Listagem de todos usuários" class="table table-sm table-responsive table-striped">
 				<thead class="thead-light">
 					<tr>
 						<th scope="col">
@@ -115,28 +114,28 @@
 							</td>
 							<td data-title="Ações">
 								{if $registro->permite_resultado == true}
-									<a class="btn btn-sm btn-votar" href="{url_to('votacao_resultado', $registro->id)}">Resultado</a>
+									<a class="btn btn-sm bi btn-acao bi-file-text-fill" href="{url_to('votacao_resultado', $registro->id)}" title="Resultado"></a>
 								{/if}
 								{if $registro->permite_finalizar == true}
-									<a class="btn btn-sm btn-votar" href="{url_to('votacao_finalizar', $registro->id)}">Finalizar</a>
+									<a class="btn btn-sm bi btn-acao bi-stop-circle-fill" href="{url_to('votacao_finalizar', $registro->id)}" title="Finalizar"></a>
 								{/if}
 								{if $registro->permite_votar == true}
-									<a class="btn btn-sm btn-votar" href="{url_to('votacao_votar', $registro->id)}">Votar</a>
+									<a class="btn btn-sm bi btn-acao bi-envelope-paper-fill" href="{url_to('votacao_votar', $registro->id)}" title="Votar"></a>
 								{/if}
 								{if $registro->permite_alterar == true}
-									<a class="btn btn-sm btn-ativar" href="{url_to('votacao_ativar', $registro->id)}">Ativar</a>
+									<a class="btn btn-sm bi btn-acao bi-play-fill" href="{url_to('votacao_ativar', $registro->id)}" title="Ativar"></a>
 								{/if}
 								{if $registro->permite_alterar == true}
-									<a class="btn btn-sm btn-alterar"
-										href="{url_to('votacao_alterar', $registro->id)}">Alterar</a>
-									<a class="btn btn-sm btn-alterar priority-5"
-										href="{url_to('votacao_cadastar_opcoes', $registro->id)}">Opções</a>
+									<a class="btn btn-sm bi btn-alterar bi-pencil-square"
+										href="{url_to('votacao_alterar', $registro->id)}" title="Alterar"></a>
+									<a class="btn btn-sm bi btn-acao bi-pencil-square priority-5"
+										href="{url_to('votacao_cadastar_opcoes', $registro->id)}" title="Opções"></a>
 								{/if}
-								<a class="btn btn-sm btn-outline-secondary btn-visualizar"
-									href="{url_to('votacao_visualizar', $registro->id)}">Visualizar</a>
+								<a class="btn btn-sm bi btn-visualizar bi-eye-fill"
+									href="{url_to('votacao_visualizar', $registro->id)}" title="Visualizar"></a>
 								{if $registro->permite_cancelar == true}
-									<a class="btn btn-sm btn-outline-danger btn-cancelar"
-									href="{url_to('votacao_cancelar', $registro->id)}">Cancelar</a>
+									<a class="btn btn-sm bi btn-excluir bi-trash"
+									href="{url_to('votacao_cancelar', $registro->id)}" title="Cancelar"></a>
 								{/if}
 							</td>
 						</tr>

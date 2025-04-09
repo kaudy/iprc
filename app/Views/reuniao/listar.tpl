@@ -132,20 +132,20 @@
 							</td>
 							<td data-title="Ações">
 								{if $permite_gerenciar_presencas == true}
-									<a class="btn btn-sm btn-justificar" href="{url_to('reuniao_presenca_gerenciar', $registro->id)}">Gerenciar</a>
+									<a class="btn btn-sm bi btn-gerenciar bi-gear-fill" href="{url_to('reuniao_presenca_gerenciar', $registro->id)}" title="Gerenciar"></a>
 								{/if}
 								{if $registro->permite_justificar == true}
-									<a class="btn btn-sm btn-justificar" href="{url_to('reuniao_justificar', $registro->id)}">Justificar</a>
+									<a class="btn btn-sm bi btn-justificar bi-check-square" href="{url_to('reuniao_justificar', $registro->id)}" title="Justificar"></a>
 								{/if}
 								{if $registro->permite_alterar == true}
-									<a class="btn btn-sm btn-alterar" href="{url_to('reuniao_alterar', $registro->id)}">Alterar</a>
+									<a class="btn btn-sm bi btn-alterar bi-pencil-square" href="{url_to('reuniao_alterar', $registro->id)}" title="Alterar"></a>
 								{/if}
 								{if $registro->permite_ativar == true}
-									<a class="btn btn-sm btn-ativar" href="{url_to('reuniao_ativar', $registro->id)}">Ativar</a>
+									<a class="btn btn-sm bi btn-acao bi-play-fill" href="{url_to('reuniao_ativar', $registro->id)}" title="Ativar"></a>
 								{/if}
-								<a class="btn btn-sm btn-outline-secondary btn-visualizar" href="{url_to('reuniao_visualizar', $registro->id)}">Visualizar</a>
+								<a class="btn btn-sm bi btn-visualizar bi-eye-fill" href="{url_to('reuniao_visualizar', $registro->id)}" title="Visualizar"></a>
 								{if $registro->permite_cancelar == true}
-									<a class="btn btn-sm btn-outline-danger btn-cancelar" href="{url_to('reuniao_cancelar', $registro->id)}">Cancelar</a>
+									<a class="btn btn-sm bi btn-excluir bi-trash" href="{url_to('reuniao_cancelar', $registro->id)}" title="Cancelar"></a>
 								{/if}
 							</td>
 						</tr>

@@ -46,10 +46,30 @@ class UsuarioC extends BaseController {
 			$data['errors'] = [];
 		}
 
-		// Carrega lista de usuários
-		$usuarios = $this->usuario->listar();
+		$usuarios = [];
+		if($this->request->getMethod() === 'post') {
+			$nome = $this->request->getPost('nome');
+			$tipo_status_id = $this->request->getPost('tipo_status_id');
+			$grupo_id = $this->request->getPost('grupo_id');
 
+			// Carrega lista de usuários
+			$usuarios = $this->usuario->listar(
+				array(
+					'nome' => $nome,
+					'status_id' => $tipo_status_id,
+					'grupo_id' => $grupo_id
+				)
+			);
+		}
+
+		// Carrega os tipos de status
+		$tipos_status = $this->tipoStatus->whereIn('id', array('1','2', '3'))->findAll();
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
+
+		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("usuarios", $usuarios);
+		$this->smarty->assign("tipos_status", $tipos_status);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/listar.tpl');

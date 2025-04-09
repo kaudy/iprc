@@ -1,5 +1,13 @@
 {extends file="../head.tpl"}
+
 {block name=main}
+	<script>
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+$(document).ready(function() {
+  $('[data-bs-toggle="tooltip"]').tooltip();
+});
+</script>
 	<div class="container">
 		<div class="row">
 			<div class="col-md-11">
@@ -109,10 +117,10 @@
 							<th scope="col">
 								Vinculo
 							</th>
-							<th scope="col">
+							<th scope="col" class="priority-5">
 								Data
 							</th>
-							<th scope="col">
+							<th scope="col" class="acoes">
 								Ações
 							</th>
 						</tr>
@@ -123,8 +131,11 @@
 								<td data-title="ID">
 									{$registro->id}
 								</td>
-								<td data-title="Nome">
-									{$registro->nome|ucfirst}
+								<td data-title="Nome" >
+									<span class="texto">{$registro->nome|ucfirst}</span>
+									<span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-title="{$registro->nome|ucfirst}">
+										<button class="btn btn-sm bi btn-tooltip bi-card-text" type="button" disabled></button>
+									</span>
 								</td>
 								<td data-title="Tipo">
 									{$registro->tipo|ucfirst}
@@ -132,15 +143,15 @@
 								<td data-title="Vinculo">
 									{$registro->vinculo|ucfirst}
 								</td>
-								<td data-title="Data">
+								<td data-title="Data" class="priority-5">
 									{$registro->data_cadastro|DataHoraConvertBrString}
 								</td>
-								<td data-title="Ações">
+								<td data-title="Ações" class="acoes">
 									{if $registro->hash}
-										<a class="bi bi-cloud-download-fill" href="{url_to('documento_download', $registro->hash)}" target="_blank"></a>
+										<a class="btn btn-sm bi btn-download bi-cloud-download-fill" href="{url_to('documento_download', $registro->hash)}" title="Download" target="_blank"></a>
 									{/if}
-									<a class="bi bi-pencil-square" href="{url_to('documento_alterar', $registro->id)}"></a>
-									<a class="bi bi-trash" href="{url_to('documento_remover', $registro->id)}"></a>
+									<a class="btn btn-sm bi btn-alterar bi-pencil-square" href="{url_to('documento_alterar', $registro->id)}" title="Alterar"></a>
+									<a class="btn btn-sm bi btn-excluir bi-trash" href="{url_to('documento_remover', $registro->id)}" title="Remover Documento"></a>
 								</td>
 							</tr>
 						{foreachelse}

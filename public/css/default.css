@@ -104,7 +104,7 @@
 	min-width: 84px;
 }
 
-.btn-sm.btn-alterar {
+/*.btn-sm.btn-alterar {
 	background-color: #e19004;
 	color:white;
 	border-color: #e19004;
@@ -116,9 +116,9 @@
 	border-color: #e19004;
 	color: #e19004;
 	min-width: 84px;
-}
+}*/
 
-.btn-sm.btn-visualizar {
+/**.btn-sm.btn-visualizar {
 	background-color: white;
 	color:gray;
 	border-color: gray;
@@ -144,23 +144,31 @@
 	border-color: #f41737;
 	color: white;
 	min-width: 84px;
-}
+}**/
 
-.btn-sm.btn-cadastrar {
+.btn-cadastrar {
 	background-color: #046fe1;
 	color:white;
 	border-color: #046fe1;
 	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
 }
 
-.btn-sm.btn-cadastrar:hover {
+.btn-cadastrar:hover {
 	background-color: white;
 	border-color: #046fe1;;
 	color: #046fe1;
 	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
 }
 
-.btn-sm.btn-gerenciar {
+/*.btn-sm.btn-gerenciar {
 	background-color: #00448b;
 	color:white;
 	border-color: #00448b;
@@ -172,7 +180,7 @@
 	border-color: #00448b;;
 	color: #00448b;
 	min-width: 84px;
-}
+}*/
 
 .btn-sm.btn-justificar {
 	background-color: gray;
@@ -201,6 +209,194 @@
 	color: white;
 	min-width: 84px;
 }
+
+.btn-acao {
+	background-color: #00448b;
+	border-color: #00448b;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-acao:hover {
+	background-color: white;
+	border-color: #f41737;
+	align-self: center;
+	color: #f41737;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Botão Ação Excluir*/
+.btn-excluir {
+	background-color: #f41737;
+	border-color: #f41737;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-excluir:hover {
+	background-color: white;
+	border-color: #f41737;
+	align-self: center;
+	color: #f41737;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Botão Ação Download*/
+.btn-download {
+	background-color: #00448b;
+	border-color: #00448b;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-download:hover {
+	background-color: white;
+	border-color: #f41737;
+	align-self: center;
+	color: #f41737;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Botão Ação Alterar*/
+.btn-alterar {
+	background-color: #e19004;
+	border-color: #e19004;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-alterar:hover {
+	background-color: white;
+	border-color: #e19004;
+	align-self: center;
+	color: #e19004;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Botão Ação Gerenciar*/
+.btn-gerenciar {
+	background-color: gray;
+	border-color: gray;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-gerenciar:hover {
+	background-color: white;
+	border-color: gray;
+	align-self: center;
+	color: gray;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Botão Ação Justificar*/
+.btn-justificar {
+	background-color: gray;
+	border-color: gray;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-justificar:hover {
+	background-color: white;
+	border-color: gray;
+	align-self: center;
+	color: gray;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+/* Botão Ação Visualizar*/
+.btn-visualizar {
+	background-color: gray;
+	border-color: gray;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-visualizar:hover {
+	background-color: white;
+	border-color: gray;
+	align-self: center;
+	color: gray;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
+.btn-tooltip {
+	display:none;
+	background-color: gray;
+	border-color: gray;
+	align-self: center;
+	color: white;
+	width: 40px;
+	height: 38px;
+	vertical-align: middle;
+	font-size: 22px;
+	text-align: center;
+}
+
 /* STATUS *************************************************/
 
 .pendente {
@@ -231,6 +427,11 @@
 	color: gray;
 }
 
+.texto {
+	display:inline;
+}
+
+
 /* *************************************************/
 
 @media screen and (max-width: 1225px) and (min-width: 1045px) {
@@ -248,6 +449,13 @@
 	.btn-filtro:hover {
 		margin-top: 2px;
 		width: 100%;
+	}
+
+	.texto {
+		display:inline;
+	}
+	.btn-tooltip {
+		display:none;
 	}
 }
 
@@ -270,6 +478,12 @@
 		margin-top: 2px;
 		width: 100%;
 	}
+	.texto {
+		display:inline;
+	}
+	.btn-tooltip {
+		display:none;
+	}
 }
 
 @media screen and (max-width: 1045px) and (min-width: 835px) {
@@ -290,6 +504,12 @@
 	.btn-filtro:hover {
 		margin-top: 2px;
 		width: 100%;
+	}
+	.texto {
+		display:inline;
+	}
+	.btn-tooltip {
+		display:none;
 	}
 }
 
@@ -312,6 +532,12 @@
 		margin-top: 2px;
 		width: 100%;
 	}
+	.texto {
+		display:inline;
+	}
+	.btn-tooltip {
+		display:none;
+	}
 }
 
 @media screen and (max-width: 720px) and (min-width: 300px) {
@@ -324,17 +550,8 @@
 	.priority-3{
 		display:none;
 	}
-	.btn-pesquisar {
-		margin-top: 2px;
-		width: 100%;
-	}
-	.btn-filtro {
-		margin-top: 2px;
-		width: 100%;
-	}
-	.btn-filtro:hover {
-		margin-top: 2px;
-		width: 100%;
+	.priority-2{
+		display:none;
 	}
 	.btn-pesquisar {
 		margin-top: 2px;
@@ -347,6 +564,24 @@
 	.btn-filtro:hover {
 		margin-top: 2px;
 		width: 100%;
+	}
+	.btn-pesquisar {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.btn-filtro:hover {
+		margin-top: 2px;
+		width: 100%;
+	}
+	.texto {
+		display:none;
+	}
+	.btn-tooltip {
+		display: inline;
 	}
 }
 
@@ -374,5 +609,11 @@
 	.btn-filtro:hover {
 		margin-top: 2px;
 		width: 100%;
+	}
+	.texto {
+		display:none;
+	}
+	.btn-tooltip {
+		display: inline;
 	}
 }

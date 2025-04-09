@@ -140,8 +140,6 @@ class Usuario extends Model {
 			$retorno->modulos = $modulos;
 			// Usuario Grupos
 			$retorno->usuario_grupos = $usuario_grupos;
-			// Regras
-			// TODO: carregas as regras
 
 			// Atualizada data do ultimo login e ip
 			$data = array(
@@ -157,11 +155,29 @@ class Usuario extends Model {
 	/**
 	 * Lista todos os usuários cadastrados
 	 */
-	public function listar($id=null, $email=null) {
+	public function listar($options=array()) {
 		$sqlCpl = "";
+		$sqlCplInner = "";
 
-		if($email != null) {
-			$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" p.email='{$email}' ");
+		if($options != null && count($options) > 0) {
+			if(isset($options['id']) && $options['id'] != null) {
+				$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" u.id='{$options['id']}' ");
+			}
+			if(isset($options['email']) && $options['email'] != null && $options['email'] != '') {
+				$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" p.email LIKE '%{$options['email']}%' ");
+			}
+			if(isset($options['nome']) && $options['nome'] != null && $options['nome'] != '') {
+				$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" p.nome LIKE '%{$options['nome']}%' ");
+			}
+			if(isset($options['documento']) && $options['documento'] != null) {
+				$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" p.documento LIKE '%{$options['documento']}%' ");
+			}
+			if(isset($options['status_id']) && $options['status_id'] != null) {
+				$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" u.status_id='{$options['status_id']}' ");
+			}
+			if(isset($options['grupo_id']) && $options['grupo_id'] != null) {
+				$sqlCplInner = "INNER JOIN  usuarios_grupos ug ON ug.usuario_id = u.id AND ug.grupo_id = {$options['grupo_id']}";
+			}
 		}
 
 		$sql = "SELECT
@@ -175,10 +191,11 @@ class Usuario extends Model {
 					u.data_cadastro
 				FROM
 					usuarios u
-						INNER JOIN
+				INNER JOIN
 					pessoas p ON p.id = u.pessoa_id
-						INNER JOIN
+				INNER JOIN
 					tipos_status ts ON ts.id = u.status_id
+				{$sqlCplInner}
 				{$sqlCpl}
 				ORDER BY p.nome ASC;";
 		$query = $this->db->query($sql);
