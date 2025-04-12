@@ -14,6 +14,11 @@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 	<link href="{base_url()}/css/default.css" rel="stylesheet">
 	<title>{if $usuario_sessao}{$usuario_sessao->titulo}-{$usuario_sessao->subtitulo}{else}iPRC{/if}</title>
+	<script>
+		$(document).ready(function() {
+			//$('.dropdown-toggle').dropdown()
+		});
+	</script>
 </head>
 
 <body class="m-0 border-0 bd-example m-0 border-0">
@@ -49,48 +54,12 @@
 								</li>
 							{/if}
 						{/foreach}
-
-						<!--
-						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" href="/">Home</a>
-						</li>
-
-						<li class="nav-item">
-							<a class="nav-link active" href="usuario">Usuários</a>
-						</li>
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-								aria-expanded="false">
-								Deliberativo
-							</a>
-							<ul class="dropdown-menu">
-								<li><a class="dropdown-item" href="#">Atas</a></li>
-								<li><a class="dropdown-item" href="#">Conselheiros</a></li>
-								<li><a class="dropdown-item" href="#">Documentos</a></li>
-								<li><a class="dropdown-item" href="#">Relatórios</a></li>
-								<li>
-									<hr class="dropdown-divider">
-								</li>
-								<li><a class="dropdown-item" href="#">Something else here</a></li>
-							</ul>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link disabled" aria-disabled="true">Link</a>
-						</li>
-						!-->
 					</ul>
-
-					<!--
-					<form class="d-flex" role="search">
-						<input class="form-control me-2" type="search" placeholder="Procurar" aria-label="Procurar">
-						<button class="btn btn-outline-light" type="submit">Procurar</button>
-					</form>
-					!-->
 					{if $usuario_sessao && $usuario_sessao->logado}
 						<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}meus_dados">Meus Dados</a>
 						<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}logout">Sair</a>
 					{else}
-					<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}login">Entrar</a>
+						<a class="btn btn-outline-light m-1" type="submit" href="{base_url()}login">Entrar</a>
 					{/if}
 				</div>
 			</div>

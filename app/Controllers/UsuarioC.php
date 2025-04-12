@@ -625,8 +625,8 @@ class UsuarioC extends BaseController {
 
 		// Monta os dados do email
 		$dados_email = (object) array(
-			'email_destinatario'=> 'ti@paranaclube.com.br',
-			'nome_destinatario' => 'Willian Kaudy',
+			'email_destinatario'=> $pessoa->email,
+			'nome_destinatario' => $pessoa->nome,
 			'titulo'			=> 'Email de teste 123',
 			'corpo'				=> 'Teste envio de email pelo custom helper sem template',
 			'template'			=> null

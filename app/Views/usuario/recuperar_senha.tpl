@@ -31,7 +31,6 @@
 									<div class="form-outline form-white mb-4">
 										<input type="email" id="email_recuperacao" name="email_recuperacao" class="form-control"
 											placeholder="Email Válido" required/>
-										<label class="form-label" for="email_recuperacao">Email</label>
 									</div>
 									</p>
 									<button class="btn btn-outline-light btn-lg px-5" type="submit">Recuperar Senha</button>

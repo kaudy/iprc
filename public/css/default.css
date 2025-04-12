@@ -583,6 +583,9 @@
 	.btn-tooltip {
 		display: inline;
 	}
+	.divisor-default {
+		display:none;
+	}
 }
 
 @media screen and (max-width: 300px) {
@@ -615,5 +618,8 @@
 	}
 	.btn-tooltip {
 		display: inline;
+	}
+	.divisor-default {
+		display:none;
 	}
 }

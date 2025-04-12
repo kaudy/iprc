@@ -176,16 +176,12 @@
 		switch (getenv('CI_ENVIRONMENT')) {
 			case 'development':
 				return $result->desenvolvimento;
-				break;
 			case 'test':
 				return $result->homologacao;
-				break;
 			case 'production':
 				return $result->producao;
-				break;
 			default:
 				return $result->desenvolvimento;
-				break;
 		}
 	}
 
@@ -197,22 +193,25 @@
 			// Configuações
 			$mail = new PHPMailer;
 			$mail->isSMTP();
-			$mail->SMTPDebug = 2; // 2-DEBUG TOTAL
+			$mail->SMTPDebug = 0; // 2-DEBUG TOTAL
+			$mail->setLanguage('br');
+			$mail->CharSet = getenv('email.CharSet') ? getenv('email.CharSet') : 'UTF-8';
 			$mail->Host = getenv('email.host') ? getenv('email.host') : 'sandbox.smtp.mailtrap.io';
 			$mail->Port = getenv('email.port') ? getenv('email.port') : 25;
 			$mail->SMTPAuth = getenv('email.smtpauth') ? getenv('email.smtpauth') : true;
 			$mail->SMTPAutoTLS = getenv('email.smtpautotls') ? getenv('email.smtpautotls') : false;
+			$mail->SMTPSecure = getenv('email.SMTPSecure') ? getenv('email.SMTPSecure') : 'tls';
 			$mail->Username = getenv('email.username') ? getenv('email.username') : 'f28874ad168bc9';
 			$mail->Password = getenv('email.Password') ? getenv('email.Password') : '0aa6ba0dd16f30';
-			$mail->CharSet = getenv('email.CharSet') ? getenv('email.CharSet') : 'utf-8';
-			$mail->setFrom((getenv('email.fromemail') ? getenv('email.fromemail') : 'ti@paranaclube.com.br'), (getenv('email.fromdescription') ? getenv('email.fromdescription') : 'iPRC'));
+			$mail->setFrom((getenv('email.fromemail') ? getenv('email.fromemail') : 'iprc@paranaclube.com.br'), (getenv('email.fromdescription') ? getenv('email.fromdescription') : 'iPRC'));
 
-			var_dump($mail->Host, $mail->Port, $mail->Username, $mail->Password , $mail->SMTPAuth, $mail->SMTPAutoTLS);
 			// Monta os dados do email
 			$mail->addAddress($dados_email->email_destinatario, $dados_email->nome_destinatario);
 			$mail->Subject = "iPRC - {$dados_email->titulo}";
 			$mail->Body = isset($dados_email->corpo) ? $dados_email->corpo : null;
 			//$mail->addReplyTo('test@hostinger-tutorials.com', 'Your Name');
+			//$mail->addCC('cc@exemplo.com');
+			//$mail->addBCC('bcc@exemplo.com');
 
 			if($dados_email->template != null) {
 				$mail->Body = null;
@@ -223,9 +222,7 @@
 				$mail->Body = $dados_email->corpo;
 			}
 
-			//echo('<pre>');
-			//var_dump($mail->Host, $mail->Port, $mail->Username, $mail->Password , $mail->SMTPAuth);
-			//exit();
+			//echo '<pre>'; var_dump($mail);exit;
 
 			if(!$mail->send()) {
 				echo 'Mailer Error: ' . $mail->ErrorInfo;

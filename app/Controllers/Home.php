@@ -7,6 +7,8 @@ use App\Models\Share;
 
 class Home extends BaseController {
 
+	protected $usuario;
+
 	public function __construct() {
 		$this->usuario = model(Usuario::class);
 		$this->share = model(Share::class);

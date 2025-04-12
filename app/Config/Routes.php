@@ -15,6 +15,7 @@ $routes->group('usuario', static function ($routes) {
 	$routes->match(['get', 'post'], '(:num)/alterar', 'UsuarioC::alterar/$1', ['as' => 'usuario_alterar']);
 	$routes->match(['get', 'post'], '(:num)/visualizar', 'UsuarioC::visualizar/$1', ['as' => 'usuario_visualizar']);
 	$routes->match(['get', 'post'], '(:num)/reenviarAtivacao', 'UsuarioC::reenviaEmailAtivacao/$1', ['as' => 'usuario_reenviar_ativacao']);
+	$routes->match(['get', 'post'], 'mail', 'UsuarioC::mail', ['as' => 'usuario_teste_email']);
 });
 $routes->match(['get', 'post'], 'login', 'UsuarioC::login');
 $routes->match(['get', 'post'], 'logout', 'UsuarioC::logout');

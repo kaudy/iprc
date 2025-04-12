@@ -411,7 +411,7 @@
 															<tr>
 																<td class="pad" style="text-align:center">
 																	<div class="alignment" align="center">
-																		<a href="mailto:iprc@teste.com" target="_blank"
+																		<a href="mailto:iprc@paranaclube.com.br" target="_blank"
 																			style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#a7b1b6;border-radius:4px;width:auto;border-top:0px solid transparent;font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:'Roboto', Tahoma, Verdana, Segoe, sans-serif;font-size:14px;text-align:center;mso-border-alt:none;word-break:keep-all;">
 																			<span
 																				style="padding-left:60px;padding-right:60px;font-size:14px;display:inline-block;letter-spacing:normal;">
