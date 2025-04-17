@@ -176,7 +176,8 @@ class Usuario extends Model {
 				$sqlCpl .= ((trim($sqlCpl) == '') ? ' WHERE ' : ' AND ').(" u.status_id='{$options['status_id']}' ");
 			}
 			if(isset($options['grupo_id']) && $options['grupo_id'] != null) {
-				$sqlCplInner = "INNER JOIN  usuarios_grupos ug ON ug.usuario_id = u.id AND ug.grupo_id = {$options['grupo_id']}";
+				$sqlCplInner = "INNER JOIN  usuarios_grupos ug ON ug.usuario_id = u.id AND ug.grupo_id = {$options['grupo_id']}
+									AND ug.status_id = 1 ";
 			}
 		}
 
