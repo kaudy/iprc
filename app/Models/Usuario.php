@@ -309,7 +309,7 @@ class Usuario extends Model {
 				if($usuario_atualizado) {
 					if($dados->usuario_grupos == null) {
 						// Inativa todos os grupos do usuário que não estiverem na lista
-						$usuario_grupo_inativar = $this->usuarioGrupo->where('status_id', 1)->findAll();
+						$usuario_grupo_inativar = $this->usuarioGrupo->where('usuario_id', $dados->usuario_id)->where('status_id', 1)->findAll();
 						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {
 							$usuario_grupo->status_id = 4; // Excluido
 							$usuario_grupo->data_alteracao = $dados->data_alteracao;
@@ -318,7 +318,7 @@ class Usuario extends Model {
 						}
 					}else if(count($dados->usuario_grupos) > 0) {
 						// Inativa todos os grupos do usuário que não estiverem na lista
-						$usuario_grupo_inativar = $this->usuarioGrupo->whereNotIn('grupo_id', $dados->usuario_grupos)->where('status_id', 1)->findAll();
+						$usuario_grupo_inativar = $this->usuarioGrupo->whereNotIn('grupo_id', $dados->usuario_grupos)->where('usuario_id', $dados->usuario_id)->where('status_id', 1)->findAll();
 						foreach($usuario_grupo_inativar as $c => $usuario_grupo) {
 							$usuario_grupo->status_id = 4; // Excluido
 							$usuario_grupo->data_alteracao = $dados->data_alteracao;

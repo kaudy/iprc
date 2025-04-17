@@ -347,7 +347,7 @@ class UsuarioC extends BaseController {
 				}else {
 					$data['msg'] = "Usuário não alterado. Erros encontrados:";
 					$data['msg_type'] = "danger";
-					array_push($data['errors'], $novo_usuario);
+					array_push($data['errors'], $usuario->id);
 					$status = false;
 				}
 			}
@@ -468,7 +468,7 @@ class UsuarioC extends BaseController {
 				}else {
 					$data['msg'] = "Usuário não alterado. Erros encontrados:";
 					$data['msg_type'] = "danger";
-					array_push($data['errors'], $novo_usuario);
+					array_push($data['errors'], $usuario->id);
 					$status = false;
 				}
 			}
