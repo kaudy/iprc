@@ -218,7 +218,7 @@ class VotacaoC extends BaseController {
 		}
 
 		// Carrega todos os grupos ativos
-		$grupos = $this->grupo->where('status', 1)->findAll();
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		$this->smarty->assign("votacao", $votacao);
 		$this->smarty->assign("grupos", $grupos);

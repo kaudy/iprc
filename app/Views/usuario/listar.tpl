@@ -99,17 +99,17 @@
 					<tbody>
 						{foreach from=$usuarios item=registro}
 							<tr>
-								<td data-title="Usuário">
+								<td data-title="Usuário" class="align-middle">
 									{$registro->id}
 								</td>
-								<td data-title="Usuário">
+								<td data-title="Usuário" class="align-left">
 									{$registro->nome}
 								</td>
-								<td data-title="Status">
+								<td data-title="Status" class="align-middle">
 									<i class="bi bi-circle-fill {$registro->status_nome}"></i>
 									{$registro->status_nome|ucfirst}
 								</td>
-								<td data-title="Ações">
+								<td data-title="Ações" class="align-middle">
 									<a class="btn btn-sm bi btn-alterar bi-pencil-square" href="{url_to('usuario_alterar', $registro->id)}" title="Alterar"></a>
 									<a class="btn btn-sm bi btn-visualizar bi-eye-fill" href="{url_to('usuario_visualizar', $registro->id)}" title="Visualizar"></a>
 								</td>

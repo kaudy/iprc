@@ -38,7 +38,7 @@
 								</select>
 							</div>
 							<div class="col">
-								<button class="btn btn-primary btn-sm" type="submit">Adicionar</button>
+								<button class="btn btn-sm btn-cadastrar" type="submit">Adicionar</button>
 							</div>
 						</div>
 					</div>
@@ -85,8 +85,8 @@
 			<br>
 			<div style="height: 1px;background-color:grey"></div>
 			<br>
-			<a class="btn btn-outline-warning btn-sm" href="{url_to('votacao_cadastar_grupos', $votacao->id)}">Voltar</a>
-			<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_visualizar', $votacao->id)}">Próximo >></a>
+			<a class="btn btn-sm btn-voltar" href="{url_to('votacao_cadastar_grupos', $votacao->id)}">Voltar</a>
+			<a class="btn btn-sm btn-cadastrar" href="{url_to('votacao_visualizar', $votacao->id)}">Próximo >></a>
 		</form>
 	</div>
 {/block}

@@ -226,9 +226,10 @@
 
 			if(!$mail->send()) {
 				echo 'Mailer Error: ' . $mail->ErrorInfo;
+				return false;
 			}else {
 				echo 'The email message was sent.';
-
+				return true;
 			}
 		}else {
 			return false;

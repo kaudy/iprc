@@ -47,11 +47,13 @@ class UsuarioGrupo extends Model
 			$sqlCpl .= " AND u.id={$usuario_id} ";
 		}
 		if($grupo_id != null) {
-			$sqlCpl .= " AND u.id={$grupo_id} ";
+			$sqlCpl .= " AND g.id={$grupo_id} ";
 		}
 
 		$sql = "SELECT
-					ug.*, g.nome AS 'grupo_nome'
+					ug.*,
+					g.nome AS 'grupo_nome',
+					u.pessoa_id
 				FROM
 					usuarios_grupos AS ug
 						INNER JOIN

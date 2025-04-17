@@ -87,7 +87,7 @@
 						<th scope="col">
 							Status
 						</th>
-						<th scope="col" class="center">
+						<th scope="col" class="align-middle">
 							Ações
 						</th>
 					</tr>
@@ -95,24 +95,24 @@
 				<tbody>
 					{foreach from=$votacoes item=registro}
 						<tr>
-							<td data-title="#">
+							<td data-title="#" class="align-middle">
 								{$registro@iteration}
 							</td>
-							<td data-title="Título">
+							<td data-title="Título" class="align-left">
 								{$registro->titulo}
 							</td>
-							<td data-title="Qtde. Escolhas" class="priority-5">
+							<td data-title="Qtde. Escolhas" class="priority-5 align-middle">
 								{$registro->qtd_escolhas}
 							</td>
-							<td data-title="Qtde. Opções" class="priority-4">
+							<td data-title="Qtde. Opções" class="align-middle priority-4">
 								{$registro->qtde_opcoes}
 							</td>
 
-							<td data-title="Status">
+							<td data-title="Status" class="align-middle">
 								<i class="bi bi-circle-fill {$registro->status_nome}"></i>
 								{$registro->status_nome|ucfirst}
 							</td>
-							<td data-title="Ações">
+							<td data-title="Ações" class="align-middle">
 								{if $registro->permite_resultado == true}
 									<a class="btn btn-sm bi btn-acao bi-file-text-fill" href="{url_to('votacao_resultado', $registro->id)}" title="Resultado"></a>
 								{/if}

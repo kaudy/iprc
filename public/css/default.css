@@ -40,7 +40,7 @@
 	background-color: #00448b;
 }
 
-/* Botões */
+/* Botões **************************************************/
 .div-pesquisar {
 	align-self:self-end;
 	align-items:baseline;
@@ -168,39 +168,15 @@
 	text-align: center;
 }
 
-/*.btn-sm.btn-gerenciar {
-	background-color: #00448b;
-	color:white;
-	border-color: #00448b;
-	min-width: 84px;
-}
-
-.btn-sm.btn-gerenciar:hover {
-	background-color: white;
-	border-color: #00448b;;
-	color: #00448b;
-	min-width: 84px;
-}*/
-
-.btn-sm.btn-justificar {
-	background-color: gray;
-	color:white;
-	border-color: gray;
-	min-width: 84px;
-}
-
-.btn-sm.btn-justificar:hover {
-	background-color: white;
-	border-color: gray;
-	color: gray;
-	min-width: 84px;
-}
-
 .btn-sm.btn-voltar {
 	background-color: white;
 	color:#e19004;
 	border-color: #e19004;
 	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
 }
 
 .btn-sm.btn-voltar:hover {
@@ -208,6 +184,10 @@
 	border-color: #e19004;
 	color: white;
 	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
 }
 
 .btn-acao {
@@ -397,6 +377,53 @@
 	text-align: center;
 }
 
+.btn-sm.btn-justificar-presente {
+	background-color: #00448b;
+	color:white;
+	border-color: #00448b;
+	min-width: 84px;
+	height: 38px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.btn-sm.btn-justificar-presente:hover {
+	background-color: white;
+	border-color: #00448b;
+	color: #00448b;
+	min-width: 84px;
+	height: 38px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.btn-sm.btn-justificar-ausente {
+	background-color: white;
+	color:#f41737;
+	border-color: #f41737;
+	min-width: 84px;
+	height: 38px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.btn-sm.btn-justificar-ausente:hover {
+	background-color: #f41737;
+	border-color: white;
+	color: white;
+	min-width: 84px;
+	height: 38px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+/* Botoes Tela inicial *************************************/
+
+.botao-default {
+	background-color: #00448b;
+	color:white;
+}
+
 /* STATUS *************************************************/
 
 .pendente {
@@ -431,6 +458,15 @@
 	display:inline;
 }
 
+/*********************************************************/
+.align-left {
+	vertical-align: middle;
+	text-align: left;
+}
+.align-middle {
+	vertical-align: middle;
+	text-align: left;
+}
 
 /* *************************************************/
 

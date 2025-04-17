@@ -11,8 +11,9 @@ use App\Models\Grupo;
 use App\Models\ReuniaoGrupo;
 use App\Models\ReuniaoPresenca;
 use App\Models\Documento;
-
-use CodeIgniter\Files\File;
+use App\Models\UsuarioGrupo;
+use App\Models\Pessoa;
+use App\Models\EnvioEmail;
 
 class ReuniaoC extends BaseController {
 
@@ -24,6 +25,9 @@ class ReuniaoC extends BaseController {
 	protected $reuniaoGrupo;
 	protected $reuniaoPresenca;
 	protected $documento;
+	protected $usuarioGrupo;
+	protected $pessoa;
+	protected $envioEmail;
 
 	public function __construct() {
 		$this->reuniao = model(Reuniao::class);
@@ -34,6 +38,9 @@ class ReuniaoC extends BaseController {
 		$this->reuniaoGrupo = model(ReuniaoGrupo::class);
 		$this->reuniaoPresenca = model(ReuniaoPresenca::class);
 		$this->documento = model(Documento::class);
+		$this->usuarioGrupo = model(UsuarioGrupo::class);
+		$this->pessoa = model(Pessoa::class);
+		$this->envioEmail = model(EnvioEmail::class);
 	}
 
 	/**
@@ -99,8 +106,7 @@ class ReuniaoC extends BaseController {
 		}
 
 		// Permite cadastrar reuniões
-		// TODO: Criar regra para permissões de cadastro de reuniões
-		$permite_cadastrar_reuniao = true;
+		$permite_cadastrar_reuniao = $this->regra->possuiRegra($usuario_sessao->usuario->id, 8);
 
 		// Permite gerenciar presenças
 		$permite_gerenciar_presencas = $this->regra->possuiRegra($usuario_sessao->usuario->id, 12);
@@ -509,16 +515,13 @@ class ReuniaoC extends BaseController {
 		$dados = (object) array(
 			"status_id" => 1, // ativo
 			"data_ativacao" => date('Y-m-d H:i:s'),
-			"usuario_ativacao_id" => $usuario_sessao->usuario->id
+			"usuario_ativacao_id" => $usuario_sessao->usuario->id,
+			"status_envio_email" => 10 // a enviar
 		);
 		$status = $this->reuniao->update($reuniao_id, $dados);
 		if($status) {
 			$data['msg'] = "Reunião Ativada!";
 			$data['msg_type'] = "primary";
-
-			/** TODO: NO FUTURO, CRIAR DISPARO DE EMAILS A TODOS OS INTEGRANDES DOS GRUPOS QUANDO
-			 * A REUNIAO FOR ATIVADA
-			**/
 			return redirect()->route('reuniao')->with('data', $data);
 		}else {
 			$data['msg'] = "Erro ao tentar ativar a votação selecionada(#{$reuniao_id})!";
@@ -869,6 +872,70 @@ class ReuniaoC extends BaseController {
 				$status = false;
 			}
 			return redirect()->route('reuniao_visualizar', array($reuniao_id))->with('data', $data);
+		}
+	}
+
+	/**
+	 *	Agenda o envio de email para os membros da reunão
+	 */
+	public function agendarEnvioEmailReuniao(){
+		$reunioes = $this->reuniao->listar(null, null, 1, null, array("status_envio_email" => 10));
+
+		if(count($reunioes) > 0) {
+			foreach($reunioes as $reuniao) {
+				if($reuniao->status_id == 1 && $reuniao->status_envio_email == 10) {
+					$status = false;
+
+					// Grupos da reunião
+					$reuniao_grupos = $this->reuniaoGrupo->listar(null, $reuniao->id, null, 1);
+					if(count($reuniao_grupos) > 0) {
+						foreach($reuniao_grupos as $reuniao_grupo) {
+
+							// Usuarios do grupo
+							$usuarios = $this->usuarioGrupo->listar(null, $reuniao_grupo->grupo_id);
+							if(count($usuarios) > 0) {
+								foreach($usuarios as $usuario) {
+
+									$pessoa = $this->pessoa->find($usuario->pessoa_id);
+									$link = url_to('reuniao_visualizar', $reuniao->id);
+									$template = '/emails/reuniao_conselho.tpl';
+
+									// Monta os dados do template
+									$payload = (object) array (
+										'titulo'	=> "Edital de Convocação - {$reuniao->titulo}",
+										"nome" 		=> primeiroNome($pessoa->nome),
+										"descricao" => $reuniao->descricao,
+										"link" 		=> $link
+									);
+
+									// Adiciona agendamento
+									$dados = (object) array(
+										"status_id" => 3, // pendente
+										"destinatario" => $pessoa->email,
+										"titulo" => "Edital de Convocação - {$reuniao->titulo}",
+										"template" => $template,
+										"payload" => json_encode($payload),
+										"tentativa_reenvio" => 0,
+										"data_cadastro" => date('Y-m-d H:i:s'),
+										"usuario_cadastro_id" => 1
+									);
+									$status = $this->envioEmail->insert( $dados);
+								}
+							}
+						}
+					}
+
+					// Atualiza status da reunião
+					if($status) {
+						$dados = (object) array(
+							"status_envio_email" => 11, // enviado
+							"data_alteracao" => date('Y-m-d H:i:s'),
+							"usuario_alteracao_id" => 1
+						);
+						$this->reuniao->update($reuniao->id, $dados);
+					}
+				}
+			}
 		}
 	}
 }

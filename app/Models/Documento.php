@@ -66,7 +66,12 @@ class Documento extends Model
 		}
 
 		$sql = "SELECT
-					d.*, r.titulo AS reuniao_titulo, g.nome as grupo_nome
+					d.*,
+					r.titulo AS reuniao_titulo,
+					g.nome as grupo_nome,
+					FALSE AS permite_excluir,
+					FALSE AS permite_alterar,
+					FALSE AS permite_download
 				FROM
 					documentos d
 				LEFT JOIN

@@ -117,20 +117,20 @@
 				<tbody>
 					{foreach from=$reunioes item=registro}
 						<tr>
-							<td data-title="ID">
+							<td data-title="ID" class="align-middle">
 								{$registro->id}
 							</td>
-							<td data-title="Reunião">
+							<td data-title="Reunião" class="align-left">
 								{$registro->titulo|textoEncurtado:50}
 							</td>
-							<td data-title="Grupo">
+							<td data-title="Grupo" class="align-left">
 								{$registro->grupo_nome}
 							</td>
-							<td data-title="Status">
+							<td data-title="Status" class="align-middle">
 								<i class="bi bi-circle-fill {$registro->status_nome}"></i>
 								{$registro->status_nome|ucfirst}
 							</td>
-							<td data-title="Ações">
+							<td data-title="Ações" class="align-middle">
 								{if $permite_gerenciar_presencas == true}
 									<a class="btn btn-sm bi btn-gerenciar bi-gear-fill" href="{url_to('reuniao_presenca_gerenciar', $registro->id)}" title="Gerenciar"></a>
 								{/if}

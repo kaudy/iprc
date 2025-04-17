@@ -135,9 +135,9 @@ class Votacao extends Model
 					votacoes AS v
 					INNER JOIN
 						tipos_status ts ON ts.id = v.status_id
-					INNER JOIN
+					LEFT JOIN
 						votacoes_fiscais vf ON vf.votacao_id = v.id
-					INNER JOIN
+					LEFT JOIN
 						votacoes_grupos vg ON vg.votacao_id = v.id
 						AND vg.status_id = 1
 					LEFT JOIN

@@ -185,11 +185,11 @@
 				<div class="row">
 					<div class="col-md-6">
 						{if $votacao->status_id == 3}
-							<a class="btn btn-primary btn-sm" href="{base_url()}votacao">Confirmar</a>
-							<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $votacao->id)}">Ativar</a>
-							<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_alterar', $votacao->id)}">Alterar</a>
+							<a class="btn btn-sm btn-cadastrar" href="{base_url()}votacao">Confirmar</a>
+							<a class="btn btn-sm btn-cadastrar" href="{url_to('votacao_ativar', $votacao->id)}">Ativar</a>
+							<a class="btn btn-outline-primary btn-cadastrar" href="{url_to('votacao_alterar', $votacao->id)}">Alterar</a>
 						{/if}
-						<a class="btn btn-outline-warning btn-sm" href="{base_url()}votacao">Voltar</a>
+						<a class="btn btn-sm btn-voltar" href="{base_url()}votacao">Voltar</a>
 					</div>
 				</div>
 			</div>

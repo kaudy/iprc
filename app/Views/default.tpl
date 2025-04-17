@@ -10,7 +10,7 @@
 				{/if}
 				<div class="col-xl-4 col-sm-4 col-12 m-sm-0 m-xl-0 m-1">
 					<a href="{url_to("{$modulo->rota}")}" style="text-decoration: none">
-						<div class="card col-xl-7 col-sm-12 col-12 rounded p-5 text-white" style="background-color: #00448b;color:white;">
+						<div class="card col-xl-7 col-sm-12 col-12 rounded p-5 text-white botao-default">
 							{if $modulo->rota == 'votacao'}
 								<i class="bi-check2-square" style="font-size: 3rem;"></i>
 							{elseif $modulo->rota == 'reuniao'}
@@ -20,7 +20,7 @@
 							{else}
 								<i class="bi-file-earmark-text" style="font-size: 3rem;"></i>
 							{/if}
-							<h5 class="title" style="font-size: max(2em, 12px);font-size-adjust:0.5;flex-wrap:nowrap;wrap:nowrap";>{$modulo->nome|capitalize}</h4>
+							<h5 class="title" style="font-size: max(1.5em, 12px);font-size-adjust:0.5px;flex-wrap:nowrap;wrap:nowrap";>{$modulo->nome|capitalize}</h4>
 						</div>
 					</a>
 				</div>

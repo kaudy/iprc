@@ -11,6 +11,7 @@
     },
     "require": {
         "php": "^7.4 || ^8.0",
+        "ckeditor/ckeditor": "4.20.1",
         "codeigniter4/framework": "4.4.4",
         "codeigniter4/translations": "^4.4",
         "igorescobar/jquery-mask-plugin": "^1.14",

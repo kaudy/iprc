@@ -193,7 +193,7 @@
 							<a class="btn btn-primary btn-sm" href="{url_to('votacao_ativar', $votacao->id)}">Ativar</a>
 							<a class="btn btn-outline-primary btn-sm" href="{url_to('votacao_alterar', $votacao->id)}">Alterar</a>
 						{/if}
-						<a class="btn btn-outline-warning btn-sm" href="{base_url()}votacao">Voltar</a>
+						<a class="btn btn-sm btn-voltar" href="{base_url()}votacao">Voltar</a>
 					</div>
 				</div>
 			</div>

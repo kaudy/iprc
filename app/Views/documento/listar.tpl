@@ -128,30 +128,34 @@ $(document).ready(function() {
 					<tbody>
 						{foreach from=$documentos item=registro}
 							<tr>
-								<td data-title="ID">
+								<td data-title="ID" class="align-middle">
 									{$registro->id}
 								</td>
-								<td data-title="Nome" >
+								<td data-title="Nome" class="align-left">
 									<span class="texto">{$registro->nome|ucfirst}</span>
 									<span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip" data-bs-title="{$registro->nome|ucfirst}">
 										<button class="btn btn-sm bi btn-tooltip bi-card-text" type="button" disabled></button>
 									</span>
 								</td>
-								<td data-title="Tipo">
+								<td data-title="Tipo" class="align-middle">
 									{$registro->tipo|ucfirst}
 								</td>
-								<td data-title="Vinculo">
+								<td data-title="Vinculo" class="align-middle">
 									{$registro->vinculo|ucfirst}
 								</td>
-								<td data-title="Data" class="priority-5">
+								<td data-title="Data" class="align-left priority-5">
 									{$registro->data_cadastro|DataHoraConvertBrString}
 								</td>
-								<td data-title="Ações" class="acoes">
-									{if $registro->hash}
+								<td data-title="Ações" class="acoes" class="align-middle">
+									{if $registro->hash && $registro->permite_download == true}
 										<a class="btn btn-sm bi btn-download bi-cloud-download-fill" href="{url_to('documento_download', $registro->hash)}" title="Download" target="_blank"></a>
 									{/if}
-									<a class="btn btn-sm bi btn-alterar bi-pencil-square" href="{url_to('documento_alterar', $registro->id)}" title="Alterar"></a>
-									<a class="btn btn-sm bi btn-excluir bi-trash" href="{url_to('documento_remover', $registro->id)}" title="Remover Documento"></a>
+									{if $registro->permite_alterar == true}
+										<a class="btn btn-sm bi btn-alterar bi-pencil-square" href="{url_to('documento_alterar', $registro->id)}" title="Alterar"></a>
+									{/if}
+									{if $registro->permite_excluir == true}
+										<a class="btn btn-sm bi btn-excluir bi-trash" href="{url_to('documento_remover', $registro->id)}" title="Remover Documento"></a>
+									{/if}
 								</td>
 							</tr>
 						{foreachelse}

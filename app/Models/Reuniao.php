@@ -59,11 +59,14 @@ class Reuniao extends Model
 			$sqlCpl .= " AND r.grupo_id='{$grupo_id}' ";
 		}
 		if($filtros != null) {
-			if($filtros["data_reuniao_inicial"] != null) {
+			if(isset($filtros["data_reuniao_inicial"]) && $filtros["data_reuniao_inicial"] != null ) {
 				$sqlCpl .= " AND r.data_reuniao >='{$filtros["data_reuniao_inicial"]}' ";
 			}
-			if($filtros["data_reuniao_final"] != null) {
+			if(isset($filtros["data_reuniao_inicial"]) && $filtros["data_reuniao_final"] != null) {
 				$sqlCpl .= " AND r.data_reuniao <='{$filtros["data_reuniao_final"]}' ";
+			}
+			if(isset($filtros["status_envio_email"]) &&  $filtros["status_envio_email"] != null) {
+				$sqlCpl .= " AND r.status_envio_email='{$filtros["status_envio_email"]}' ";
 			}
 		}
 

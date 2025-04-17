@@ -8,7 +8,7 @@
 	</script>
 	<div class="container">
 		<div class="title">
-			<h2>Reunião - Justificativa</h2>
+			<h2>Justificar > {$reuniao->titulo}</h2>
 		</div>
 		{if $data['msg'] != null}
 			<div class="alert alert-{$data['msg_type']}" role="alert">
@@ -24,24 +24,24 @@
 		{/if}
 		<div class="row">
 			<div class="col-12">
-				<label for="titulo">
-					<span class="nameField">
-						Titulo:
-					</span>
-					<p>
-						<strong class="infoTxt">{$reuniao->titulo}</strong>
-					</p>
-				</label>
-			</div>
-			<div class="col-12">
-				<label for="descricao">
-					<span class="nameField">
-						Texto/Descrição:
-					</span>
-					<p>
-						<strong class="infoTxt">{$reuniao->descricao}</strong>
-					</p>
-				</label>
+				<div class="accordion accordion-flush" id="accordionFlushExample">
+					<div class="accordion-item">
+							<h2 class="accordion-header" id="flush-headingOne">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+									Descrição:
+								</button>
+							</h2>
+							<div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+								<div class="accordion-body">
+									{$reuniao->descricao}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>
+				<br>
+				<br>
 			</div>
 			<div class="row">
 				<div class="col-md-3">
@@ -85,7 +85,7 @@
 			<br>
 			<div style="height: 1px;background-color:grey"></div>
 			<br>
-			<button class="btn btn-sm btn-cadastrar" type="submit">Cadastrar</button>
+			<button class="btn btn-sm btn-cadastrar" type="submit">Confirmar Justificativa</button>
 			<a class="btn btn-sm btn-voltar" href="{previous_url()}">Voltar</a>
 		</form>
 	</div>

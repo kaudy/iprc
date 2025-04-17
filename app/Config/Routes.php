@@ -84,3 +84,11 @@ $routes->match(['get', 'post'], 'mail', 'UsuarioC::mail');
 
 // Download Documentos
 $routes->get('download/(:segment)', 'DocumentoC::download/$1', ['as' => 'documento_download']);
+
+// Cron Temporaria
+$routes->match(['get', 'post'], 'agendar_envio_email', 'ReuniaoC::agendarEnvioEmailReuniao');
+
+// Cron
+$routes->group('cron', static function ($routes) {
+	$routes->match(['get', 'post'], 'enviar_email_agendado', 'CronC::enviarEmails');
+});

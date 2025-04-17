@@ -25,6 +25,9 @@
 # app_baseURL = ''
 # app.forceGlobalSecureRequests = false
 # app.CSPEnabled = false
+# app.appTimezone = 'America/Sao_Paulo'
+# app.negotiateLocale = true
+# app.supportedLocales = ['pt-BR']
 
 #--------------------------------------------------------------------
 # DATABASE
@@ -45,6 +48,19 @@
 # database.tests.DBDriver = MySQLi
 # database.tests.DBPrefix =
 # database.tests.port = 3306
+
+#--------------------------------------------------------------------
+# EMAIL - PHPMailer
+#--------------------------------------------------------------------
+# email.host				= ''
+# email.port				= 587
+# email.smtpauth			= true
+# email.username			= ''
+# email.Password			= ''
+# emai.CharSet			= 'UTF-8'
+# email.fromemail			= ''
+# email.fromdescription	= ''
+# email.SMTPSecure		= ''
 
 #--------------------------------------------------------------------
 # CONTENT SECURITY POLICY
