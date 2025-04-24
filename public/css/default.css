@@ -468,6 +468,25 @@
 	text-align: left;
 }
 
+/* Radio button e Check box ****************************/
+.radio-inline {
+	vertical-align: middle;
+	text-align: left;
+	color: #f41737;
+	border-color:#00448b;
+}
+
+.radio-inline:checked {
+	vertical-align: middle;
+	text-align: left;
+	color: #f41737;
+	border-color:#00448b;
+	background-color: #f41737;
+}
+
+
+
+
 /* *************************************************/
 
 @media screen and (max-width: 1225px) and (min-width: 1045px) {

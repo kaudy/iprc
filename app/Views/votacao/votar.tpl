@@ -11,7 +11,7 @@
 		// $('#acao').val(acao);
 		//$( "#formulario" ).submit();
 		//$( "#formulario" ).trigger( "submit" );
-		console.log("aaaa");
+		//console.log("aaaa");
 	}
 	</script>
 	<div class="container">
@@ -79,9 +79,9 @@
 										</td>
 										<td>
 											{if $votacao->qtd_escolhas == 1}
-												<input class="form-check-input" type="radio" name="voto" id="voto" value="{$opcao->id}" required>
+												<input class="form-check-input radio-inline" type="radio" name="voto" id="voto" value="{$opcao->id}" required>
 											{else}
-												<input class="form-check-input" type="checkbox" name="voto[]" id="voto" value="{$opcao->id}">
+												<input class="form-check-input radio-inline" type="checkbox" name="voto[]" id="voto" value="{$opcao->id}">
 											{/if}
 										</td>
 									</tr>
