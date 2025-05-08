@@ -14,7 +14,7 @@
 				$('#reuniao_id').attr('required', 'required');
 
 				$.ajax({
-					url: "/reuniao/listar_reunioes/" + grupo_id,
+					url: "{base_url()}/reuniao/listar_reunioes/" + grupo_id,
 					type: 'GET',
 					dataType: 'json',
 					cache: false,

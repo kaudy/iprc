@@ -126,10 +126,10 @@ $(document).ready(function() {
 						</tr>
 					</thead>
 					<tbody>
-						{foreach from=$documentos item=registro}
+						{foreach from=$documentos item=registro name=reg}
 							<tr>
 								<td data-title="ID" class="align-middle">
-									{$registro->id}
+									{$smarty.foreach.reg.iteration}
 								</td>
 								<td data-title="Nome" class="align-left">
 									<span class="texto">{$registro->nome|ucfirst}</span>

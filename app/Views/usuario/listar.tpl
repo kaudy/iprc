@@ -97,10 +97,10 @@
 						</tr>
 					</thead>
 					<tbody>
-						{foreach from=$usuarios item=registro}
+						{foreach from=$usuarios item=registro name=reg}
 							<tr>
 								<td data-title="Usuário" class="align-middle">
-									{$registro->id}
+									{$smarty.foreach.reg.iteration}
 								</td>
 								<td data-title="Usuário" class="align-left">
 									{$registro->nome}

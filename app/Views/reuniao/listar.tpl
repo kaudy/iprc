@@ -115,10 +115,10 @@
 					</tr>
 				</thead>
 				<tbody>
-					{foreach from=$reunioes item=registro}
+					{foreach from=$reunioes item=registro name=reg}
 						<tr>
 							<td data-title="ID" class="align-middle">
-								{$registro->id}
+								{$smarty.foreach.reg.iteration}
 							</td>
 							<td data-title="Reunião" class="align-left">
 								{$registro->titulo|textoEncurtado:50}
