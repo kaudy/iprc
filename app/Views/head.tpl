@@ -22,7 +22,7 @@
 	</script>
 </head>
 
-<body class="m-0 border-0 bd-example m-0 border-0">
+<body class="p-3 border-0 bd-example m-0 border-0">
 	<div>
 		<nav class="navbar fixed-top navbar-expand-lg nav-color">
 			<div class="container-fluid">
@@ -66,6 +66,7 @@
 			</div>
 		</nav>
 	</div>
+	<br><br><br>
 	{block name=main}{/block}
 </body>
 

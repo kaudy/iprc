@@ -68,6 +68,8 @@ class Documento extends Model
 		$sql = "SELECT
 					d.*,
 					r.titulo AS reuniao_titulo,
+					g1.id as grupo_reuniao_id,
+					g1.nome as grupo_reuniao_nome,
 					g.nome as grupo_nome,
 					FALSE AS permite_excluir,
 					FALSE AS permite_alterar,
@@ -77,6 +79,8 @@ class Documento extends Model
 				LEFT JOIN
 					reunioes r ON r.id = d.referencia_id and d.vinculo = 'reunião'
 				LEFT JOIN
+					grupos g1 ON g1.id = r.grupo_id
+				LEFT JOIN
 					grupos g ON g.id = d.referencia_id and d.vinculo = 'grupo'
 				WHERE
 					d.status_id = 1
@@ -84,6 +88,37 @@ class Documento extends Model
 				ORDER BY d.nome , d.data_cadastro ASC;";
 		$query = $this->db->query($sql);
 		$result = $query->getResult();
+
+		// Valida permissões arquivos
+		if(isset($options['valida_propriedade']) && $options['valida_propriedade'] == true) {
+			if(isset($options['proprietario_id']) && $options['proprietario_id'] != null) {
+				foreach($result as $c => $v) {
+					if($v->vinculo == 'reunião' && $v->permissao == 'grupo') {
+						$sql = "SELECT
+									ug.*
+								FROM
+									usuarios_grupos ug
+								WHERE
+									ug.usuario_id = {$options['proprietario_id']}
+									AND ug.grupo_id = {$v->grupo_reuniao_id}
+									AND ug.status_id = 1;";
+						$query = $this->db->query($sql);
+						$result_permissao = $query->getResult();
+
+						// Remove se nenhuma permissão encontrada
+						if(count($result_permissao) == 0) {
+							unset($result[$c]);
+						}
+					}elseif($v->vinculo == 'reunião' && $v->permissao == 'proprietário') {
+						// Remove se nenhuma permissão encontrada
+						if($v->usuario_cadastro_id != $options['proprietario_id']) {
+							unset($result[$c]);
+						}
+					}
+				}
+			}
+		}
+
 		return $result;
 	}
 }

@@ -405,6 +405,7 @@ class ReuniaoC extends BaseController {
 			// TODO: PREPARAR OS DADOS DO DOCUMENTO
 			$dados = (object) array(
 				"nome" => $nome_arquivo,
+				"nome_arquivo" => $nome_arquivo,
 				"tipo" => 'edital',
 				"vinculo" => 'reunião',
 				"referencia_id" => $reuniao_id,
@@ -435,6 +436,16 @@ class ReuniaoC extends BaseController {
 
 		// Carrega os documentos vinculados a votação
 		$reuniao_documentos = $this->documento->where('vinculo', 'reunião')->where('referencia_id', $reuniao_id)->where('status_id', '1')->find();
+
+		$reuniao_documentos = $this->documento->listar(
+			array(
+				'vinculo' => 'reunião',
+				'referencia_id' => $reuniao_id,
+				'status_id' => '1',
+				'valida_propriedade' => true,
+				'proprietario_id' => $usuario_sessao->usuario->id
+			)
+		);
 
 		// Justificativa Usuario
 		$presenca_usuario = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
@@ -937,5 +948,15 @@ class ReuniaoC extends BaseController {
 				}
 			}
 		}
+	}
+
+	public function listarReunioes($grupo_id = null) {
+
+		if($this->request->getMethod() === 'post') {
+		}
+
+
+		$reunioes = $this->reuniao->listar(null, null, 1, $grupo_id);
+		echo json_encode($reunioes);
 	}
 }

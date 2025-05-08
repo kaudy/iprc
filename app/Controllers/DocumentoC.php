@@ -8,7 +8,7 @@ use App\Models\Usuario;
 use App\Models\Pessoa;
 use App\Models\Grupo;
 use App\Models\Regra;
-use CodeIgniter\Files\File;
+use App\Models\Reuniao;
 use Mpdf\Mpdf;
 use Symfony\Component\Filesystem\Filesystem;
 use Xthiago\PDFVersionConverter\Guesser\RegexGuesser;
@@ -23,6 +23,7 @@ class DocumentoC extends BaseController {
 	protected $pessoa;
 	protected $grupo;
 	protected $regra;
+	protected $reuniao;
 
 	public function __construct() {
 		$this->documento = model(Documento::class);
@@ -31,6 +32,7 @@ class DocumentoC extends BaseController {
 		$this->pessoa = model(Pessoa::class);
 		$this->grupo = model(Grupo::class);
 		$this->regra = model(Regra::class);
+		$this->reuniao = model(Reuniao::class);
 	}
 
 	/**
@@ -59,7 +61,9 @@ class DocumentoC extends BaseController {
 				array(
 					"nome" => $nome,
 					"tipo" => $tipo_documento,
-					"grupo_id" => $grupo_id
+					"grupo_id" => $grupo_id,
+					"valida_propriedade" => true,
+					"proprietario_id" => $usuario_sessao->usuario->id
 				)
 			);
 			// Verifica permissões das reuniões
@@ -72,7 +76,7 @@ class DocumentoC extends BaseController {
 				if(($this->regra->possuiRegra($usuario_sessao->usuario->id, 18))) {
 					$documentos[$c]->permite_alterar = true;
 				}
-				// Permite baixar documento
+				// Permite Baixar documento
 				if(($this->regra->possuiRegra($usuario_sessao->usuario->id, 19))) {
 					$documentos[$c]->permite_download = true;
 				}
@@ -113,8 +117,14 @@ class DocumentoC extends BaseController {
 		}
 
 		if(count($this->request->getFiles()) > 0) {
+			$titulo = $this->request->getPost('titulo');
+			$tipo_vinculo = $this->request->getPost('tipo_vinculo');
 			$grupo_id = $this->request->getPost('grupo_id');
+			$reuniao_id = $this->request->getPost('reuniao_id');
 			$tipo_documento = $this->request->getPost('tipo_documento');
+			$tipo_permissao = $this->request->getPost('tipo_permissao');
+			$marca_dagua = $this->request->getPost('marca_dagua') == "sim" ? 1 : 0;
+			$referencia_id = $tipo_vinculo == 'reunião' ? $reuniao_id : $grupo_id;
 
 			$validationRule = [
 				'userfile' => [
@@ -142,14 +152,17 @@ class DocumentoC extends BaseController {
 
 			// Persistir o documento e caminho no banco de dados
 			$dados = (object) array(
-				"nome" => $nome_arquivo,
+				"nome" => $titulo,
+				"nome_arquivo" => $nome_arquivo,
 				"tipo" => $tipo_documento,
-				"vinculo" => 'grupo',
-				"referencia_id" => $grupo_id,
+				"vinculo" => $tipo_vinculo,
+				"referencia_id" => $referencia_id,
 				"status_id" => 1,
 				"arquivo" => $newName,
 				"hash" => $arquivo_hash,
 				"extensao" => $ext,
+				"marca_dagua" => $marca_dagua,
+				"permissao" => $tipo_permissao,
 				"data_cadastro" => date('Y-m-d H:i:s'),
 				"usuario_cadastro_id" => $usuario_sessao->usuario->id
 			);
@@ -170,6 +183,8 @@ class DocumentoC extends BaseController {
 		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
 		$this->smarty->assign("tipos_documento", getEnum('documentos', 'tipo'));
+		$this->smarty->assign("tipos_vinculos", getEnum('documentos', 'vinculo'));
+		$this->smarty->assign("tipos_permissoes", getEnum('documentos', 'permissao'));
 		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
@@ -199,18 +214,28 @@ class DocumentoC extends BaseController {
 		}
 
 		if($this->request->getMethod() === 'post') {
+			$titulo = $this->request->getPost('titulo');
+			$tipo_vinculo = $this->request->getPost('tipo_vinculo');
 			$grupo_id = $this->request->getPost('grupo_id');
+			$reuniao_id = $this->request->getPost('reuniao_id');
 			$tipo_documento = $this->request->getPost('tipo_documento');
-			$vinculo_documento = $this->request->getPost('vinculo_documento');
+			$tipo_permissao = $this->request->getPost('tipo_permissao');
+			$marca_dagua = $this->request->getPost('marca_dagua') == "sim" ? 1 : 0;
+			$referencia_id = $tipo_vinculo == 'reunião' ? $reuniao_id : $grupo_id;
 
 			// Persistir o documento e caminho no banco de dados
 			$dados = (object) array(
+				"nome" => $titulo,
 				"tipo" => $tipo_documento,
-				"vinculo" => $vinculo_documento,
-				"referencia_id" => $grupo_id,
+				"vinculo" => $tipo_vinculo,
+				"referencia_id" => $referencia_id,
+				"status_id" => 1,
+				"marca_dagua" => $marca_dagua,
+				"permissao" => $tipo_permissao,
 				"data_alteracao" => date('Y-m-d H:i:s'),
 				"usuario_alteracao_id" => $usuario_sessao->usuario->id
 			);
+
 			$novo_documento = $this->documento->update($documento->id, $dados);
 			if($novo_documento) {
 				$data['msg'] = "Documento adicionado com sucesso";
@@ -226,9 +251,20 @@ class DocumentoC extends BaseController {
 
 		// Carrega todos os grupos ativos
 		$grupos = $this->grupo->where('status_id', 1)->findAll();
+		//
+		if($documento->vinculo == 'reunião') {
+			$reuniao = $this->reuniao->find($documento->referencia_id);
+			$grupo_reuniao = $this->grupo->find($reuniao->grupo_id);
+		}else {
+			$reuniao = null;
+			$grupo_reuniao = null;
+		}
 
+		$this->smarty->assign("grupo_reuniao", $grupo_reuniao);
+		$this->smarty->assign("reuniao", $reuniao);
 		$this->smarty->assign("tipos_documento", getEnum('documentos', 'tipo'));
-		$this->smarty->assign("vinculos_documento", getEnum('documentos', 'vinculo'));
+		$this->smarty->assign("tipos_vinculos", getEnum('documentos', 'vinculo'));
+		$this->smarty->assign("tipos_permissoes", getEnum('documentos', 'permissao'));
 		$this->smarty->assign("grupos", $grupos);
 		$this->smarty->assign("documento", $documento);
 		$this->smarty->assign("data", $data);
@@ -332,7 +368,7 @@ class DocumentoC extends BaseController {
 
 			// Valida qual tipo do arquivo está sendo feito download
 			if($documento->extensao != 'pdf') {
-				return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome}");
+				return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome_arquivo}");
 
 			}else {
 				$guesser = new RegexGuesser();
@@ -414,7 +450,7 @@ class DocumentoC extends BaseController {
    					}
 				}
 
-				$mpdf->Output();
+				$mpdf->Output("{$documento->nome_arquivo}", 'I');
 			}
 		}
 	}
