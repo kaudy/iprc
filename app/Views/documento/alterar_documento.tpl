@@ -9,27 +9,33 @@
 			let grupo_id = $('#grupo_id').val();
 			let vinculo = $('#tipo_vinculo').val();
 			let reuniao_id_vinculado = '{if $documento->vinculo == "reunião" && $reuniao}{$reuniao->id}{/if}';
-			console.log(reuniao_id_vinculado);
 
 			if(vinculo == 'reunião' && grupo_id != '' && grupo_id != null && grupo_id != undefined) {
 				$('#reuniao_id').attr('required', 'required');
 
-				$.get( "/reuniao/listar_reunioes/"+grupo_id, function( data ) {
-					$('#reuniao_id').html('');
-					data = JSON.parse(data);
-
-					var option = '<option value="">Selecione</option>';
-					if(data.length != 0) {
-						for (let index = 0; index < data.length; index++) {
-							var element = data[index];
-							option += '<option value="' + element.id + '"';
-							if(element.id == reuniao_id_vinculado) {
-								option += ' selected ';
+				$.ajax({
+					url: "/reuniao/listar_reunioes/" + grupo_id,
+					type: 'GET',
+					dataType: 'json',
+					cache: false,
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest'
+					},
+					success: function(data) {
+						$('#reuniao_id').html('');
+						var option = '<option value="">Selecione</option>';
+						if (data.length != 0) {
+							for (let index = 0; index < data.length; index++) {
+								var element = data[index];
+								option += '<option value="' + element.id + '"';
+								if (element.id == reuniao_id_vinculado) {
+									option += ' selected ';
+								}
+								option += '>' + element.titulo + '</option>';
 							}
-							option += '>' + element.titulo + '</option>';
 						}
+						$('#reuniao_id').html(option);
 					}
-					$('#reuniao_id').html(option);
 				});
 				$('#grupo_reuniao').removeAttr('hidden');
 			} else {

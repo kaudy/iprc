@@ -12,18 +12,25 @@
 			if(vinculo == 'reunião' && grupo_id != '' && grupo_id != null && grupo_id != undefined) {
 				$('#reuniao_id').attr('required', 'required');
 
-				$.get( "/reuniao/listar_reunioes/"+grupo_id, function( data ) {
-					$('#reuniao_id').html('');
-					data = JSON.parse(data);
-
-					var option = '<option value="">Selecione</option>';
-					if(data.length != 0) {
-						for (let index = 0; index < data.length; index++) {
-							var element = data[index];
-							option += '<option value="' + element.id + '">' + element.titulo + '</option>';
+				$.ajax({
+					url: "/reuniao/listar_reunioes/" + grupo_id,
+					type: 'GET',
+					dataType: 'json',
+					cache: false,
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest'
+					},
+					success: function(data) {
+						$('#reuniao_id').html('');
+						var option = '<option value="">Selecione</option>';
+						if (data.length != 0) {
+							for (let index = 0; index < data.length; index++) {
+								var element = data[index];
+								option += '<option value="' + element.id + '">' + element.titulo + '</option>';
+							}
 						}
+						$('#reuniao_id').html(option);
 					}
-					$('#reuniao_id').html(option);
 				});
 				$('#grupo_reuniao').removeAttr('hidden');
 			} else {
