@@ -370,6 +370,9 @@ class DocumentoC extends BaseController {
 			if($documento->extensao != 'pdf') {
 				return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome_arquivo}");
 
+			}elseif ($documento->extensao == 'pdf' && $documento->marca_dagua == 0) {
+				return $this->response->download("./documentos/{$documento->hash}.{$documento->extensao}", null)->setFileName("{$documento->nome_arquivo}");
+
 			}else {
 				$guesser = new RegexGuesser();
 				$permite_converter_pdf = sistemaCFG(1);

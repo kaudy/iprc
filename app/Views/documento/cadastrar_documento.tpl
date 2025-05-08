@@ -125,7 +125,7 @@
 				<div class="col-4">
 					<div class="mb-3 form-check" style="margin-top: 12px;">
 						<br>
-						<input class="form-check-input" type="checkbox" value="sim" name="marca_dagua" id="marca_dagua" required>
+						<input class="form-check-input" type="checkbox" value="sim" name="marca_dagua" id="marca_dagua" checked>
 						<label for="marca_dagua" class="form-check-label">Marca d'agua</label>
 					</div>
 				</div>
