@@ -213,7 +213,7 @@
 			//$mail->addCC('cc@exemplo.com');
 			//$mail->addBCC('bcc@exemplo.com');
 
-			if($dados_email->template != null) {
+			if(isset($dados_email->template) && $dados_email->template != null) {
 				$mail->Body = null;
 				$mail->isHTML(true); //Define formato do email em HTML
 				$mail->msgHTML($dados_email->template);
@@ -226,13 +226,13 @@
 
 			if(!$mail->send()) {
 				echo 'Mailer Error: ' . $mail->ErrorInfo;
-				return false;
+				return (object) ['status' => false, 'erro' => $mail->ErrorInfo];
 			}else {
 				echo 'The email message was sent.';
-				return true;
+				return (object) ['status' => true, 'erro' => null];
 			}
 		}else {
-			return false;
+			return (object) ['status' => false, 'erro' => 'Dados do email inválidos.'];
 		}
 	}
 
