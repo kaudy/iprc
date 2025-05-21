@@ -900,6 +900,7 @@ class ReuniaoC extends BaseController {
 					// Grupos da reunião
 					$reuniao_grupos = $this->reuniaoGrupo->listar(null, $reuniao->id, null, 1);
 					if(count($reuniao_grupos) > 0) {
+						$usuarios_reuniao = array();
 						foreach($reuniao_grupos as $reuniao_grupo) {
 
 							// Usuarios do grupo
@@ -907,30 +908,35 @@ class ReuniaoC extends BaseController {
 							if(count($usuarios) > 0) {
 								foreach($usuarios as $usuario) {
 
-									$pessoa = $this->pessoa->find($usuario->pessoa_id);
-									$link = url_to('reuniao_visualizar', $reuniao->id);
-									$template = '/emails/reuniao_conselho.tpl';
+									// Verifica se o usuario já foi adicionado
+									if(!in_array($usuario->usuario_id, $usuarios_reuniao)) {
+										$usuarios_reuniao[] = $usuario->usuario_id;
 
-									// Monta os dados do template
-									$payload = (object) array (
-										'titulo'	=> "Edital de Convocação - {$reuniao->titulo}",
-										"nome" 		=> primeiroNome($pessoa->nome),
-										"descricao" => $reuniao->descricao,
-										"link" 		=> $link
-									);
+										$pessoa = $this->pessoa->find($usuario->pessoa_id);
+										$link = url_to('reuniao_visualizar', $reuniao->id);
+										$template = '/emails/reuniao_conselho.tpl';
 
-									// Adiciona agendamento
-									$dados = (object) array(
-										"status_id" => 3, // pendente
-										"destinatario" => $pessoa->email,
-										"titulo" => "Edital de Convocação - {$reuniao->titulo}",
-										"template" => $template,
-										"payload" => json_encode($payload),
-										"tentativa_reenvio" => 0,
-										"data_cadastro" => date('Y-m-d H:i:s'),
-										"usuario_cadastro_id" => 1
-									);
-									$status = $this->envioEmail->insert( $dados);
+										// Monta os dados do template
+										$payload = (object) array (
+											'titulo'	=> "Edital de Convocação - {$reuniao->titulo}",
+											"nome" 		=> primeiroNome($pessoa->nome),
+											"descricao" => $reuniao->descricao,
+											"link" 		=> $link
+										);
+
+										// Adiciona agendamento
+										$dados = (object) array(
+											"status_id" => 3, // pendente
+											"destinatario" => $pessoa->email,
+											"titulo" => "Edital de Convocação - {$reuniao->titulo}",
+											"template" => $template,
+											"payload" => json_encode($payload),
+											"tentativa_reenvio" => 0,
+											"data_cadastro" => date('Y-m-d H:i:s'),
+											"usuario_cadastro_id" => 1
+										);
+										$status = $this->envioEmail->insert( $dados);
+									}
 								}
 							}
 						}
