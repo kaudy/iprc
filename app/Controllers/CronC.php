@@ -41,7 +41,7 @@ class CronC extends BaseController {
 
 				// Monta os dados do email
 				$dados = (object) array(
-					'email_destinatario'=> '',
+					'email_destinatario'=> $email_dados->destinatario,
 					'nome_destinatario' => $payload->nome,
 					'titulo'			=> $email_dados->titulo,
 					'template'			=> $template
