@@ -146,7 +146,8 @@ class ReuniaoPresenca extends Model {
 								INNER JOIN
 							reunioes_grupos rg ON rg.reuniao_id = r.id
 						WHERE
-							r.id = {$reuniao_id});";
+							r.id = {$reuniao_id})
+				ORDER BY p.nome ASC;";
 
 		$query = $this->db->query($sql);
 		$result = $query->getResult();
