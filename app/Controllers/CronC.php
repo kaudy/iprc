@@ -26,12 +26,14 @@ class CronC extends BaseController {
 	public function enviarEmails() {
 		$envioEmail = model(EnvioEmail::class);
 
-		$tempo = 120; // 2 minutos
-		$emails_enviar = $envioEmail->where('status_id', 3)->find();
+		//$tempo = 120; // 2 minutos
+		$emails_enviar = $envioEmail->where('status_id', 3)->limit(1)->find();
+
+		//echo '<pre>'; var_dump(count($emails_enviar));exit;
 
 		if(count($emails_enviar) > 0) {
 
-			//echo("<pre>".date('Y-m-d H:i:s')." - Cron Enviando email:<br>");
+			echo("<pre>".date('Y-m-d H:i:s')." - Cron Enviando email:<br>");
 			foreach($emails_enviar as $email_dados) {
 				//echo(date('Y-m-d H:i:s')." - Enviando email para ".$email_dados->destinatario."<br>");
 
@@ -46,12 +48,13 @@ class CronC extends BaseController {
 					'titulo'			=> $email_dados->titulo,
 					'template'			=> $template
 				);
+				echo("Enviando para: {$email_dados->destinatario}<br>");
 
 				// Envia email
 				$retorno = enviaEmail($dados);
 				if($retorno->status == true) {
 					$envioEmail->update($email_dados->id, (object) ['status_id' => 11]);
-					break;
+					//break;
 				}else {
 					$envioEmail->update($email_dados->id, (object) ['tentativa_reenvio' => $email_dados->tentativa_reenvio + 1]);
 					if($email_dados->tentativa_reenvio >= 3) {
@@ -71,13 +74,13 @@ class CronC extends BaseController {
 						);
 						enviaEmail($dados_erro);
 					}
-					break;
+					//break;
 				}
 
 				// Aguarda tempo para enviar o proximo email
 				//sleep($tempo);
 			}
-			//echo('<br>'.date('Y-m-d H:i:s')." Fim de envio de email <br>");
+			echo('<br>'.date('Y-m-d H:i:s')." Fim de envio de email <br>");
 		}
 	}
 }
