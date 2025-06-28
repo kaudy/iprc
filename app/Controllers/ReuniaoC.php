@@ -49,6 +49,7 @@ class ReuniaoC extends BaseController {
 	public function index() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -134,6 +135,7 @@ class ReuniaoC extends BaseController {
 	public function cadastrarReuniao() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 8)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -192,6 +194,7 @@ class ReuniaoC extends BaseController {
 	public function alterarReuniao($reuniao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 4)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -253,6 +256,7 @@ class ReuniaoC extends BaseController {
 	public function cadastrarGrupos($reuniao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -360,6 +364,7 @@ class ReuniaoC extends BaseController {
 	public function visualizar($reuniao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -593,6 +598,7 @@ class ReuniaoC extends BaseController {
 	public function justificarReuniao($reuniao_id, $usuario_id=null, $redirect=null) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -713,6 +719,7 @@ class ReuniaoC extends BaseController {
 	public function gerenciarPresencasReuniao($reuniao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -960,8 +967,6 @@ class ReuniaoC extends BaseController {
 
 		if($this->request->getMethod() === 'post') {
 		}
-
-
 		$reunioes = $this->reuniao->listar(null, null, 1, $grupo_id);
 		echo json_encode($reunioes);
 	}

@@ -44,6 +44,7 @@ class VotacaoC extends BaseController {
 	public function index() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -121,6 +122,7 @@ class VotacaoC extends BaseController {
 	public function cadastrarVotacao() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 2)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -172,6 +174,7 @@ class VotacaoC extends BaseController {
 	public function alterarVotacao($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 4)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -233,6 +236,7 @@ class VotacaoC extends BaseController {
 	public function cadastrarGrupos($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -344,6 +348,7 @@ class VotacaoC extends BaseController {
 	public function cadastrarOpcoes($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -443,6 +448,7 @@ class VotacaoC extends BaseController {
 	public function cadastrarFiscais($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -547,6 +553,7 @@ class VotacaoC extends BaseController {
 	public function visualizar($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -645,6 +652,7 @@ class VotacaoC extends BaseController {
 	public function votar($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -731,6 +739,7 @@ class VotacaoC extends BaseController {
 	public function resultado($votacao_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
