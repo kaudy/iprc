@@ -41,6 +41,7 @@ class DocumentoC extends BaseController {
 	public function index() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -106,6 +107,7 @@ class DocumentoC extends BaseController {
 	public function cadastrarDocumento() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 16)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao
@@ -197,6 +199,7 @@ class DocumentoC extends BaseController {
 	public function alterarDocumento($documento_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao) || !$this->regra->possuiRegra($usuario_sessao->usuario->id, 16)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		// mensagem temporaria da sessao

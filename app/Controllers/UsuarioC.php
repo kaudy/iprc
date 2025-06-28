@@ -101,6 +101,14 @@ class UsuarioC extends BaseController {
 				$this->session->set('usuario', $usuario_sessao);
 
 				// Redireciona para tela principal
+				if($this->session->get('redirect_back')) {
+					// Redireciona para a url anterior
+					if(strpos($this->session->get('redirect_back'), base_url()) === 0) {
+						return redirect()->to($this->session->get('redirect_back'));
+					}else {
+						return redirect()->route('/');
+					}
+				}
 				return redirect()->route('/');
 			}
 		}
@@ -145,6 +153,7 @@ class UsuarioC extends BaseController {
 	public function cadastrar() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		$data['msg'] = "";
@@ -266,6 +275,7 @@ class UsuarioC extends BaseController {
 	public function alterar($usuario_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		$data['msg'] = "";
@@ -384,6 +394,7 @@ class UsuarioC extends BaseController {
 	public function visualizar($usuario_id) {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		$data['msg'] = "";
@@ -571,6 +582,7 @@ class UsuarioC extends BaseController {
 	public function meus_dados() {
 		$usuario_sessao = $this->session->get('usuario');
 		if(is_null($usuario_sessao)) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		$data['msg'] = "";

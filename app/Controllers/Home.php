@@ -16,6 +16,7 @@ class Home extends BaseController {
 
 	public function index() {
 		if(is_null($this->session->get('usuario'))) {
+			$this->session->set('redirect_back', current_url());
 			return redirect()->route('login');
 		}
 		$usuario_sessao = $this->session->get('usuario');
