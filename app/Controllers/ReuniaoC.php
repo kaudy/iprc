@@ -452,9 +452,6 @@ class ReuniaoC extends BaseController {
 			)
 		);
 
-		// Justificativa Usuario
-		$presenca_usuario = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
-
 		// Presencas e justificativas
 		if($this->regra->possuiRegra($usuario_sessao->usuario->id, 11)) {
 			$presencas = $this->reuniaoPresenca->listar(null, $reuniao->id);
@@ -487,8 +484,25 @@ class ReuniaoC extends BaseController {
 			$permite_adicionar_documento = true;
 			$permite_remover_documento = true;
 		}
+		// Justificativa Usuario
+		$presenca_usuario = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $usuario_sessao->usuario->id)->find();
+
+		// Permite justificar reunião
+		$permite_justificar = false;
+		// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
+		if(count($presenca_usuario) == 0) {
+			$grupos_permitidos = $this->reuniaoPresenca->verificaPermissaoJustificativaUsuario($reuniao->id, $usuario_sessao->usuario->id);
+			if(count($grupos_permitidos) > 0) {
+				// Verifica horario maximo para justificativa da reunião
+				$data_max_justificativa = date_sub(date_create($reuniao->data_reuniao), date_interval_create_from_date_string("10 minutes"));
+				if(date('Y-m-d H:i:s') <= $data_max_justificativa->format('Y-m-d H:i:s')) {
+					$permite_justificar = true;
+				}
+			}
+		}
 
 		// Permissões
+		$this->smarty->assign("permite_justificar", $permite_justificar);
 		$this->smarty->assign("permite_alterar", $permite_alterar);
 		$this->smarty->assign("permite_ativar", $permite_ativar);
 		$this->smarty->assign("permite_confirmar", $permite_confirmar);
