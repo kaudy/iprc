@@ -2,8 +2,7 @@
 {block name=main}
 	<script>
 	$(document).ready(function() {
-
-
+		verificaBarraAcao();
 	});
 
 	function submit(elemento, acao) {
@@ -14,6 +13,36 @@
 		//$( "#formulario" ).submit();
 		//$( "#formulario" ).trigger( "submit" );
 	}
+
+	document.addEventListener('DOMContentLoaded', function() {
+		const barraRodape = document.querySelector('#barra_acao_rodape');
+
+		// Executa a função sempre que a janela for rolada
+		window.addEventListener('scroll', function() {
+			verificaBarraAcao();
+		});
+		window.addEventListener('resize', function() {
+			verificaBarraAcao();
+		});
+	});
+
+	function verificaBarraAcao() {
+		const innerHeight = window.innerHeight;
+		const scrollHeight = document.documentElement.scrollHeight;
+
+		// Verifica se a altura do conteúdo é maior que a altura visível
+		if (scrollHeight > (innerHeight + 80)) {
+			// A página tem barra de rolagem
+			document.querySelector('#barra_acao_rodape').classList.add('barra-acao-rodape-fixa');
+			document.querySelector('#corpo').classList.add('corpo-rodape-fixo');
+		} else {
+			// A página não tem barra de rolagem
+			document.querySelector('#barra_acao_rodape').classList.remove('barra-acao-rodape-fixa');
+			document.querySelector('#corpo').classList.remove('corpo-rodape-fixo');
+		}
+	}
+
+
 	</script>
 	<div class="container">
 		<form method="post" id="formulario" enctype="multipart/form-data">
@@ -226,32 +255,36 @@
 			</div>
 			<div style="height: 1px;background-color:grey"></div>
 			<br>
-			<div class="row">
+			<div id="barra_acao_rodape">
 				<div class="row">
-					<div class="col-md-1">
-						<p>
-							<strong class="infoTxt">Ações</strong>
-						</p>
+					<div class="row">
+						<div class="col-md-1">
+							<p>
+								<strong class="infoTxt">Ações</strong>
+							</p>
+						</div>
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-6">
-							{if $permite_confirmar == true}
-								<a class="btn btn-sm btn-cadastrar" href="{base_url()}reuniao">Confirmar</a>
-							{/if}
-							{if $permite_ativar == true}
-								<a class="btn btn-sm btn-cadastrar" href="{url_to('reuniao_ativar', $reuniao->id)}">Ativar</a>
-							{/if}
-							{if $permite_alterar == true}
-								<a class="btn btn-sm btn-fl-alterar" href="{url_to('reuniao_alterar', $reuniao->id)}">Alterar</a>
-							{/if}
-							{if $permite_justificar == true}
-								<a class="btn btn-sm btn-acao-justificar" href="{url_to('reuniao_justificar', $reuniao->id)}">Justificar</a>
-							{/if}
-						<a class="btn btn-sm btn-voltar" href="{base_url()}reuniao">Voltar</a>
+					<div class="row">
+						<div class="col-md-6">
+								{if $permite_confirmar == true}
+									<a class="btn btn-sm btn-cadastrar" href="{base_url()}reuniao">Confirmar</a>
+								{/if}
+								{if $permite_ativar == true}
+									<a class="btn btn-sm btn-cadastrar" href="{url_to('reuniao_ativar', $reuniao->id)}">Ativar</a>
+								{/if}
+								{if $permite_alterar == true}
+									<a class="btn btn-sm btn-fl-alterar" href="{url_to('reuniao_alterar', $reuniao->id)}">Alterar</a>
+								{/if}
+								{if $permite_justificar == true}
+									<a class="btn btn-sm btn-acao-justificar" href="{url_to('reuniao_justificar', $reuniao->id)}">Justificar</a>
+								{/if}
+							<a class="btn btn-sm btn-voltar" href="{base_url()}reuniao">Voltar</a>
+						</div>
 					</div>
 				</div>
 			</div>
 		</form>
+	</div>
+	<div id="corpo" class="corpo-rodape-fixo container">
 	</div>
 {/block}

@@ -532,6 +532,24 @@
 
 
 
+.barra-acao-rodape-fixa {
+	border-top: #00448b 1px solid;
+	margin-left: 0px;
+	margin-right: 0px;
+	background-color: #f0f0f0;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+	padding: 15px;
+	box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+	box-sizing: border-box;
+}
+
+.corpo-rodape-fixo {
+	padding-bottom: 80px; /* Espaço para a barra fixa */
+}
 
 /* *************************************************/
 
