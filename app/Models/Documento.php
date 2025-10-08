@@ -63,6 +63,9 @@ class Documento extends Model
 			if(isset($options['tipo']) && $options['tipo'] != null) {
 				$sqlCpl .= " AND d.tipo='{$options['tipo']}' ";
 			}
+			if(isset($options['referencia_id']) && $options['referencia_id'] != null) {
+				$sqlCpl .= " AND d.referencia_id='{$options['referencia_id']}' ";
+			}
 		}
 
 		$sql = "SELECT

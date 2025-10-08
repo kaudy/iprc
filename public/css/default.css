@@ -146,6 +146,30 @@
 	min-width: 84px;
 }**/
 
+
+/* Botão Completo Alterar */
+.btn-fl-alterar {
+	background-color: white;
+	color:#e19004;
+	border-color: #e19004;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+.btn-fl-alterar:hover {
+	background-color: #e19004;
+	border-color: #e19004;
+	color: white;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
 .btn-cadastrar {
 	background-color: #046fe1;
 	color:white;
@@ -182,6 +206,28 @@
 .btn-sm.btn-voltar:hover {
 	background-color: #e19004;
 	border-color: #e19004;
+	color: white;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+.btn-sm.btn-acao-justificar {
+	background-color: white;
+	color:#00448b;
+	border-color: #00448b;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+.btn-sm.btn-acao-justificar:hover {
+	background-color: #00448b;
+	border-color: #00448b;
 	color: white;
 	min-width: 84px;
 	height: 36px;
@@ -316,8 +362,8 @@
 
 /* Botão Ação Justificar*/
 .btn-justificar {
-	background-color: gray;
-	border-color: gray;
+	background-color: #00448b;
+	border-color: #00448b;
 	align-self: center;
 	color: white;
 	width: 40px;
@@ -329,9 +375,9 @@
 
 .btn-justificar:hover {
 	background-color: white;
-	border-color: gray;
+	border-color: #00448b;
 	align-self: center;
-	color: gray;
+	color: #00448b;
 	width: 40px;
 	height: 38px;
 	vertical-align: middle;

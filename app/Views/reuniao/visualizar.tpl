@@ -237,13 +237,13 @@
 				<div class="row">
 					<div class="col-md-6">
 							{if $permite_confirmar == true}
-								<a class="btn btn-primary btn-sm" href="{base_url()}reuniao">Confirmar</a>
+								<a class="btn btn-sm btn-cadastrar" href="{base_url()}reuniao">Confirmar</a>
 							{/if}
 							{if $permite_ativar == true}
-								<a class="btn btn-primary btn-sm" href="{url_to('reuniao_ativar', $reuniao->id)}">Ativar</a>
+								<a class="btn btn-sm btn-cadastrar" href="{url_to('reuniao_ativar', $reuniao->id)}">Ativar</a>
 							{/if}
 							{if $permite_alterar == true}
-								<a class="btn btn-outline-primary btn-sm" href="{url_to('reuniao_alterar', $reuniao->id)}">Alterar</a>
+								<a class="btn btn-sm btn-fl-alterar" href="{url_to('reuniao_alterar', $reuniao->id)}">Alterar</a>
 							{/if}
 							{if $permite_justificar == true}
 								<a class="btn btn-sm btn-acao-justificar" href="{url_to('reuniao_justificar', $reuniao->id)}">Justificar</a>

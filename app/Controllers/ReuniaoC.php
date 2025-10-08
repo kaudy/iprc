@@ -436,12 +436,10 @@ class ReuniaoC extends BaseController {
 		// Grupo proprietário
 		$grupo_proprietario = $this->grupo->find($reuniao->grupo_id);
 
-		// Carrega os grupos vinculados a votação
+		// Carrega os grupos vinculados a reunião
 		$reuniao_grupos = $this->reuniaoGrupo->listar(null, $reuniao_id, null, 1);
 
-		// Carrega os documentos vinculados a votação
-		$reuniao_documentos = $this->documento->where('vinculo', 'reunião')->where('referencia_id', $reuniao_id)->where('status_id', '1')->find();
-
+		// Carrega os documentos vinculados a reunião
 		$reuniao_documentos = $this->documento->listar(
 			array(
 				'vinculo' => 'reunião',

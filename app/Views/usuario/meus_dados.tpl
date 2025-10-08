@@ -149,7 +149,7 @@
 			</div>
 			<div class="row">
 				<div class="col-md-6">
-					<a class="btn btn-outline-warning btn-sm" href="{base_url()}">Voltar</a>
+					<a class="btn btn-sm btn-voltar" href="{base_url()}">Voltar</a>
 				</div>
 			</div>
 		</div>

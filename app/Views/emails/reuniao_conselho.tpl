@@ -258,7 +258,7 @@
 																			style="text-decoration:none;display:inline-block;color:#ffffff;background-color:#00448b;border-radius:4px;width:auto;border-top:0px solid transparent;font-weight:400;border-right:0px solid transparent;border-bottom:0px solid transparent;border-left:0px solid transparent;padding-top:5px;padding-bottom:5px;font-family:'Roboto', Tahoma, Verdana, Segoe, sans-serif;font-size:14px;text-align:center;mso-border-alt:none;word-break:keep-all;">
 																			<span style="padding-left:30px;padding-right:30px;font-size:14px;display:inline-block;letter-spacing:normal;">
 																				<span style="word-break: break-word; line-height: 28px;">
-																					Edital de Convocação
+																					Edital de Convocação / Justificar
 																				</span>
 																			</span>
 																		</a>
@@ -336,10 +336,18 @@
 																	<div style="font-family:Tahoma,Verdana,sans-serif">
 																		<div class
 																			style="font-size:14px;font-family:Roboto,Tahoma,Verdana,Segoe,sans-serif;mso-line-height-alt:16.8px;color:#000;line-height:1.2">
-																			<p
-																				style="margin:0;font-size:14px;text-align:center;mso-line-height-alt:16.8px">
+																			<p style="margin:0;font-size:14px;text-align:center;mso-line-height-alt:16.8px">
 																				<span style="font-size:16px;">
-																				Caso não tenha conhecimento do documento ou recebeu por engano, favor desconsiderar!</span>
+																					Email enviado automaticamente, não responder! <br>
+																					Justificativas devem ser enviadas pelo link acima ou pelo email 
+																					<a href="mailto:deliberativo@paranaclube.com.br">deliberativo@paranaclube.com.br</a> 
+																				</span>
+																			</p>
+																			<br>
+																			<p style="margin:0;font-size:14px;text-align:center;mso-line-height-alt:16.8px">
+																				<span style="font-size:16px;">
+																					Caso não tenha conhecimento do documento ou recebeu por engano, favor desconsiderar!
+																				</span>
 																			</p>
 																		</div>
 																	</div>
