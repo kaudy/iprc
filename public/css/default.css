@@ -360,10 +360,14 @@
 	text-align: center;
 }
 
-/* Botão Ação Justificar*/
+/*
+* Botões de ações no gerenciar presenças ----------------------------------
+*/
+
+/*Justificar*/
 .btn-justificar {
-	background-color: #00448b;
-	border-color: #00448b;
+	background-color: #e19004;
+	border-color: #e19004;
 	align-self: center;
 	color: white;
 	width: 40px;
@@ -375,15 +379,155 @@
 
 .btn-justificar:hover {
 	background-color: white;
-	border-color: #00448b;
-	align-self: center;
-	color: #00448b;
+	border-color: #e19004;
+	color: #e19004;
 	width: 40px;
 	height: 38px;
-	vertical-align: middle;
+	align-self: center;
 	font-size: 22px;
 	text-align: center;
+	vertical-align: middle;
 }
+
+/* Confirmar Presença */
+.btn-sm.btn-justificar-presente {
+	background-color: #00448b;
+	color:white;
+	border-color: #00448b;
+	min-width: 40px;
+	height: 38px;
+	font-size: 22px;
+	text-align: center;
+	vertical-align: middle;
+	align-self: center;
+}
+
+.btn-sm.btn-justificar-presente:hover {
+	background-color: white;
+	border-color: #00448b;
+	color: #00448b;
+	min-width: 40px;
+	height: 38px;
+	font-size: 22px;
+	text-align: center;
+	vertical-align: middle;
+	align-self: center;
+}
+
+/* Confirmar Ausência */
+.btn-sm.btn-justificar-ausente {
+	background-color: #f41737;
+	color:white;
+	border-color: #f41737;
+	min-width: 40px;
+	height: 38px;
+	font-size: 22px;
+	text-align: center;
+	vertical-align: middle;
+	align-self: center;
+}
+
+.btn-sm.btn-justificar-ausente:hover {
+	background-color: white;
+	border-color: white;
+	color: white;
+	min-width: 40px;
+	height: 38px;
+	font-size: 22px;
+	text-align: center;
+	vertical-align: middle;
+	align-self: center;
+}
+
+/* Botão Selecao Justificar Múltiplos */
+.justificativa-multiplas-selecoes {
+	vertical-align: middle;
+	text-align: left;
+	color: #f41737;
+	border-color:#00448b;
+	height: 24px;
+	width: 24px;
+}
+
+.justificativa-multiplas-selecoes:checked {
+	vertical-align: middle;
+	text-align: left;
+	color: #f41737;
+	border-color:#00448b;
+	background-color: #f41737;
+	height: 24px;
+	width: 24px;
+}
+
+/* Botão múltiplas presenças */
+.btn-presente-multiplos {
+	background-color: #00448b;
+	color:white;
+	border-color: #00448b;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+.btn-presente-multiplos:hover {
+	background-color: white;
+	border-color: #00448b;;
+	color: #00448b;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+/* Botão múltiplas ausências */
+.btn-ausente-multiplos {
+	background-color: #f41737;
+	color:white;
+	border-color: #f41737;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+.btn-ausente-multiplos:hover {
+	background-color: white;
+	border-color: #f41737;
+	color: #f41737;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+.btn-justificar-multiplos {
+	background-color: #e19004;
+	color:white;
+	border-color: #e19004;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+.btn-justificar-multiplos:hover {
+	background-color: white;
+	border-color: #e19004;;
+	color: #e19004;
+	min-width: 84px;
+	height: 36px;
+	vertical-align: middle;
+	font-size: 20px;
+	text-align: center;
+}
+
+
+/* --------------------------------------------------------- */
 
 /* Botão Ação Visualizar*/
 .btn-visualizar {
@@ -423,45 +567,7 @@
 	text-align: center;
 }
 
-.btn-sm.btn-justificar-presente {
-	background-color: #00448b;
-	color:white;
-	border-color: #00448b;
-	min-width: 84px;
-	height: 38px;
-	text-align: center;
-	vertical-align: middle;
-}
 
-.btn-sm.btn-justificar-presente:hover {
-	background-color: white;
-	border-color: #00448b;
-	color: #00448b;
-	min-width: 84px;
-	height: 38px;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.btn-sm.btn-justificar-ausente {
-	background-color: white;
-	color:#f41737;
-	border-color: #f41737;
-	min-width: 84px;
-	height: 38px;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.btn-sm.btn-justificar-ausente:hover {
-	background-color: #f41737;
-	border-color: white;
-	color: white;
-	min-width: 84px;
-	height: 38px;
-	text-align: center;
-	vertical-align: middle;
-}
 
 /* Botoes Tela inicial *************************************/
 
@@ -529,8 +635,10 @@
 	border-color:#00448b;
 	background-color: #f41737;
 }
+/*********************************************************/
 
 
+/* Barra de Ação Fixa no Rodapé **************************/
 
 .barra-acao-rodape-fixa {
 	border-top: #00448b 1px solid;

@@ -113,7 +113,30 @@ class ReuniaoPresenca extends Model {
 	 * Lista todos os participantes da reunião com status de presença e justificativas
 	 * Caso a presença status esteva vazio é que não foi lançado a presença/justificativa ainda
 	 */
-	public function listaTodosParticipantes($reuniao_id) {
+	public function listaTodosParticipantes($reuniao_id, $filtros= array()) {
+		$sqlCpl = "";
+		// nome
+		if(isset($filtros['nome']) && trim($filtros['nome']) != '') {
+			$nome = $this->db->escapeLikeString(trim($filtros['nome']));
+			$sqlCpl .= " AND p.nome LIKE '%{$nome}%'";
+		}
+		// Status
+		if(isset($filtros['status_id']) && trim($filtros['status_id']) != '') {
+			$status_id = (int)$filtros['status_id'];
+			if($status_id == 3) {
+				// pendente
+				$sqlCpl .= " AND rp.status_id IS NULL";
+			} else {
+				// presente, ausente, justificado
+				$sqlCpl .= " AND rp.status_id = {$status_id}";
+			}
+		}
+		// Grupo
+		if(isset($filtros['grupo_id']) && trim($filtros['grupo_id']) != '') {
+			$grupo_id = (int)$filtros['grupo_id'];
+			$sqlCpl .= " AND ug.grupo_id = {$grupo_id} and ug.status_id = 1";
+		}
+
 		$sql = "SELECT DISTINCT
 					u.id,
 					p.nome AS pessoa_nome,
@@ -133,6 +156,7 @@ class ReuniaoPresenca extends Model {
 					tipos_status ts ON ts.id = rp.status_id
 				WHERE
 					u.status_id = 1
+					{$sqlCpl}
 					AND ug.grupo_id IN (SELECT
 							r.grupo_id
 						FROM
