@@ -749,12 +749,179 @@ class ReuniaoC extends BaseController {
 			return redirect()->route('reuniao');
 		}
 
-		$participantes_reuniao = $this->reuniaoPresenca->listaTodosParticipantes($reuniao_id);
+		if($this->request->getMethod() === 'post') {
+			if($this->request->getPost('acao') == 'justificar_multiplos') {
+				$usuarios_justificativa = $this->request->getPost('selecao_multiplas');
+				if($usuarios_justificativa && count($usuarios_justificativa) > 0) {
+					$status = false;
+					foreach($usuarios_justificativa as $c => $v) {
+						// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
+						$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $v)->find();
+						$justificativa = "Justificativa recebida no e-mail do deliberativo.";
+
+						if(!$presencas || count($presencas) == 0) {
+							$dados = (object) array(
+								"reuniao_id" => $reuniao->id,
+								"usuario_id" => $v,
+								"justificativa" => $justificativa,
+								"status_id" => 9, // justificado
+								"data_cadastro" => date('Y-m-d H:i:s'),
+								"usuario_cadastro_id" => $usuario_sessao->usuario->id
+							);
+							$status = $this->reuniaoPresenca->insert($dados);
+							if(!$status) {
+								$data['msg'] = "Erro ao tentar justificar uma ou mais presenças da reunião selecionada(#{$reuniao_id})!";
+								$data['msg_type'] = "danger";
+								array_push($data['errors'], $status);
+								return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+							}
+						}else {
+							$dados = (object) array(
+								"justificativa" => $justificativa,
+								"status_id" => 9, // justificado
+								"data_alteracao" => date('Y-m-d H:i:s'),
+								"usuario_alteracao_id" => $usuario_sessao->usuario->id
+							);
+							$status = $this->reuniaoPresenca->update($presencas[0]->id, $dados);
+							if(!$status) {
+								$data['msg'] = "Uma ou mais presenças não foram alteradas. Erros encontrados:";
+								$data['msg_type'] = "danger";
+								array_push($data['errors'], $presencas[0]->id);
+								return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+							}
+						}
+					}
+
+					if($status) {
+						$data['msg'] = "Justificativas Adicionadas!";
+						$data['msg_type'] = "primary";
+						return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+					}
+				}
+			} else if($this->request->getPost('acao') == 'presente_multiplos') {
+				$usuarios_justificativa = $this->request->getPost('selecao_multiplas');
+				if($usuarios_justificativa && count($usuarios_justificativa) > 0) {
+					$status = false;
+					foreach($usuarios_justificativa as $c => $v) {
+						// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
+						$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $v)->find();
+
+						if(!$presencas || count($presencas) == 0) {
+							$dados = (object) array(
+								"reuniao_id" => $reuniao->id,
+								"usuario_id" => $v,
+								"status_id" => 7, // status_id = sim
+								"data_cadastro" => date('Y-m-d H:i:s'),
+								"usuario_cadastro_id" => $usuario_sessao->usuario->id
+							);
+							$status = $this->reuniaoPresenca->insert($dados);
+							if(!$status) {
+								$data['msg'] = "Erro ao tentar marcar como presente uma ou mais presenças da reunião selecionada(#{$reuniao_id})!";
+								$data['msg_type'] = "danger";
+								array_push($data['errors'], $status);
+								return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+							}
+						}else {
+							$dados = (object) array(
+								"justificativa" => null,
+								"status_id" => 7, // status_id = sim
+								"data_alteracao" => date('Y-m-d H:i:s'),
+								"usuario_alteracao_id" => $usuario_sessao->usuario->id
+							);
+							$status = $this->reuniaoPresenca->update($presencas[0]->id, $dados);
+							if(!$status) {
+								$data['msg'] = "Uma ou mais presenças não foram alteradas. Erros encontrados:";
+								$data['msg_type'] = "danger";
+								array_push($data['errors'], $presencas[0]->id);
+								return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+							}
+						}
+					}
+
+					if($status) {
+						$data['msg'] = "Presenças Adicionadas!";
+						$data['msg_type'] = "primary";
+						return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+					}
+				}
+
+			} else if($this->request->getPost('acao') == 'ausente_multiplos') {
+				$usuarios_justificativa = $this->request->getPost('selecao_multiplas');
+				if($usuarios_justificativa && count($usuarios_justificativa) > 0) {
+					$status = false;
+					foreach($usuarios_justificativa as $c => $v) {
+						// Verifica s existe uma justificativa para o usuário logado e para essa reuniao?
+						$presencas = $this->reuniaoPresenca->where('reuniao_id', $reuniao->id)->where('usuario_id', $v)->find();
+
+						if(!$presencas || count($presencas) == 0) {
+							$dados = (object) array(
+								"reuniao_id" => $reuniao->id,
+								"usuario_id" => $v,
+								"status_id" => 8, // status_id = não
+								"data_cadastro" => date('Y-m-d H:i:s'),
+								"usuario_cadastro_id" => $usuario_sessao->usuario->id
+							);
+							$status = $this->reuniaoPresenca->insert($dados);
+							if(!$status) {
+								$data['msg'] = "Erro ao tentar marcar como ausente uma ou mais presenças da reunião selecionada(#{$reuniao_id})!";
+								$data['msg_type'] = "danger";
+								array_push($data['errors'], $status);
+								return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+							}
+						}else {
+							$dados = (object) array(
+								"justificativa" => null,
+								"status_id" => 8, // status_id = não
+								"data_alteracao" => date('Y-m-d H:i:s'),
+								"usuario_alteracao_id" => $usuario_sessao->usuario->id
+							);
+							$status = $this->reuniaoPresenca->update($presencas[0]->id, $dados);
+							if(!$status) {
+								$data['msg'] = "Uma ou mais presenças não foram alteradas. Erros encontrados:";
+								$data['msg_type'] = "danger";
+								array_push($data['errors'], $presencas[0]->id);
+								return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+							}
+						}
+					}
+
+					if($status) {
+						$data['msg'] = "Ausências Adicionadas!";
+						$data['msg_type'] = "primary";
+						return redirect()->route('reuniao_presenca_gerenciar', array($reuniao_id))->with('data', $data);
+					}
+				}
+			}
+		}
+
+		// Filtros
+		if($this->request->getMethod() === 'post') {
+			$nome = $this->request->getPost('nome');
+			$tipo_status_id = $this->request->getPost('tipo_status_id');
+			$grupo_id = $this->request->getPost('grupo_id');
+
+			// Carrega os participantes da reunião
+			$participantes_reuniao = $this->reuniaoPresenca->listaTodosParticipantes($reuniao_id,
+			array(
+				'nome' => $nome,
+				'status_id' => $tipo_status_id,
+				'grupo_id' => $grupo_id
+			));
+		}else {
+			// Carrega os participantes da reunião
+			$participantes_reuniao = $this->reuniaoPresenca->listaTodosParticipantes($reuniao_id);
+		}
 
 		// Grupo proprietário
 		$grupo_proprietario = $this->grupo->find($reuniao->grupo_id);
 
+		// Carrega os tipos de status
+		$tipos_status = $this->tipoStatus->whereIn('id', array('3','7','8', '9'))->findAll();
+		// Carrega todos os grupos ativos
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
+		$this->smarty->assign("grupos", $grupos);
+		$this->smarty->assign("tipos_status", $tipos_status);
 		$this->smarty->assign("participantes_reuniao", $participantes_reuniao);
 		$this->smarty->assign("grupo_proprietario", $grupo_proprietario);
 		$this->smarty->assign("reuniao", $reuniao);
