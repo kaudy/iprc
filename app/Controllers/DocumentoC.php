@@ -82,8 +82,31 @@ class DocumentoC extends BaseController {
 					$documentos[$c]->permite_download = true;
 				}
 			}
+		}else if(count($this->request->getGet()) > 0) {
+			$grupo_id = $this->request->getGet('grupo_id');
+			$documentos = $this->documento->listar(
+				array(
+					"grupo_id" => $grupo_id,
+					"valida_propriedade" => true,
+					"proprietario_id" => $usuario_sessao->usuario->id
+				)
+			);
+			// Verifica permissões das reuniões
+			foreach($documentos as $c => $reuniao) {
+				// Permite Excluir Arquivo
+				if($this->regra->possuiRegra($usuario_sessao->usuario->id, 17)) {
+					$documentos[$c]->permite_excluir = true;
+				}
+				// Permite Alterar documento
+				if(($this->regra->possuiRegra($usuario_sessao->usuario->id, 18))) {
+					$documentos[$c]->permite_alterar = true;
+				}
+				// Permite Baixar documento
+				if(($this->regra->possuiRegra($usuario_sessao->usuario->id, 19))) {
+					$documentos[$c]->permite_download = true;
+				}
+			}
 		}
-
 		// Carrega todos os grupos ativos
 		$grupos = $this->grupo->where('status_id', 1)->findAll();
 
