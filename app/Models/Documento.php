@@ -117,6 +117,22 @@ class Documento extends Model
 						if($v->usuario_cadastro_id != $options['proprietario_id']) {
 							unset($result[$c]);
 						}
+					}elseif($v->vinculo == 'grupo' && $v->permissao == 'grupo') {
+						$sql = "SELECT
+									ug.*
+								FROM
+									usuarios_grupos ug
+								WHERE
+									ug.usuario_id = {$options['proprietario_id']}
+									AND ug.grupo_id = {$v->referencia_id}
+									AND ug.status_id = 1;";
+						$query = $this->db->query($sql);
+						$result_permissao = $query->getResult();
+
+						// Remove se nenhuma permissão encontrada
+						if(count($result_permissao) == 0) {
+							unset($result[$c]);
+						}
 					}
 				}
 			}
