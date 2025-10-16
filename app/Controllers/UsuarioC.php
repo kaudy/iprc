@@ -9,6 +9,7 @@ use App\Models\Perfil;
 use App\Models\TipoStatus;
 use App\Models\Grupo;
 use App\Models\UsuarioGrupo;
+use App\Models\Reuniao;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class UsuarioC extends BaseController {
@@ -19,6 +20,7 @@ class UsuarioC extends BaseController {
 	protected $tipoStatus;
 	protected $grupo;
 	protected $usuarioGrupo;
+	protected $reuniao;
 
 	public function __construct() {
 		$this->usuario = model(Usuario::class);
@@ -27,6 +29,7 @@ class UsuarioC extends BaseController {
 		$this->tipoStatus = model(TipoStatus::class);
 		$this->grupo = model(Grupo::class);
 		$this->usuarioGrupo = model(UsuarioGrupo::class);
+		$this->reuniao = model(Reuniao::class);
 	}
 
 	/**
@@ -603,6 +606,8 @@ class UsuarioC extends BaseController {
 		$perfil_usuario = $this->perfil->where('id', $usuario->perfil_id)->first();
 		// Usuario Grupos
 		$usuario_grupos = $this->usuarioGrupo->listar($usuario->id);
+		// Ultimas presenças
+		$usuario_presencas = $this->reuniao->ultimasPresencasPorUsuario($usuario->id);
 
 		if($this->request->getMethod() === 'post') {
 		}
@@ -611,6 +616,7 @@ class UsuarioC extends BaseController {
 		$this->smarty->assign("pessoa", $pessoa);
 		$this->smarty->assign("perfil_usuario", $perfil_usuario);
 		$this->smarty->assign("usuario_grupos", $usuario_grupos);
+		$this->smarty->assign("usuario_presencas", $usuario_presencas);
 		$this->smarty->assign("data", $data);
 		$this->smarty->assign("usuario_sessao", $usuario_sessao);
 		$this->smarty->display($this->smarty->getTemplateDir(0) .'/usuario/meus_dados.tpl');

@@ -121,4 +121,40 @@ class Reuniao extends Model
 			return $e;
 		}
 	}
+
+	/**
+	 * Ultimas presenças do usuário
+	 */
+	public function ultimasPresencasPorUsuario($usuario_id, $limite = 6) {
+		$sql = "SELECT
+					r.*,
+					IFNULL((SELECT
+									rp1.status_id
+								FROM
+									reunioes_presencas rp1
+								WHERE
+									rp1.usuario_id = {$usuario_id}
+										AND rp1.reuniao_id = r.id),
+							3) AS presenca_id,
+					(SELECT
+							ts.nome
+						FROM
+							tipos_status ts
+						WHERE
+							ts.id = (IFNULL((SELECT
+											rp1.status_id
+										FROM
+											reunioes_presencas rp1
+										WHERE
+											rp1.usuario_id = {$usuario_id}
+												AND rp1.reuniao_id = r.id),
+									3))) AS presenca_nome
+				FROM
+					reunioes r
+				ORDER BY r.data_reuniao DESC
+				LIMIT {$limite};";
+		$query = $this->db->query($sql);
+		$result = $query->getResult();
+		return $result;
+	}
 }
