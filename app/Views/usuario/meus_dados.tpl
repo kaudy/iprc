@@ -2,7 +2,7 @@
 {block name=main}
 	<div class="container">
 		<div class="title">
-			<h2>Usuário</h2>
+			<h2>Meus Dados</h2>
 		</div>
 		{if $data['msg'] != null}
 			<div class="alert alert-{$data['msg_type']}" role="alert">
@@ -127,9 +127,9 @@
 			<div class="tab-pane fade" id="presencas" role="tabpanel" aria-labelledby="presencas-tab">
 				<div class="row m-1">
 					<div class="col">
-						<h3 class="text-center mb-4 text-primary">Presenças nas Últimas 6 Reuniões</h1>
+						<h4 class="text-center mb-4 text-primary">Últimas Reuniões</h1>
 						<div class="table-responsive">
-							<table class="table table-bordered table-striped text-center align-middle">
+							<table class="table table-sm table-responsive table-striped table-bordered text-center align-middle">
 								<thead class="table-primary">
 									<tr>
 										{foreach from=$usuario_presencas item=usuario_presenca}
