@@ -128,8 +128,7 @@
 				<div class="row m-1">
 					<div class="col">
 						<h4 class="text-center mb-4 text-primary">Últimas Reuniões</h1>
-						<div class="table-responsive">
-							<table class="table table-sm table-responsive table-striped table-bordered text-center align-middle">
+							<table class="table table-sm table-responsive table-striped table-bordered text-center align-middle table-responsive-stack">
 								<thead class="table-primary">
 									<tr>
 										{foreach from=$usuario_presencas item=usuario_presenca}
@@ -141,19 +140,19 @@
 									<tr>
 										{foreach from=$usuario_presencas item=usuario_presenca}
 											{if $usuario_presenca->presenca_id == 7}
-												<td class="table-success fw-bold">P</td>
+												<td data-label="{$usuario_presenca->titulo}" class="table-success fw-bold">P</td>
 											{elseif $usuario_presenca->presenca_id == 8}
-												<td class="table-danger fw-bold">F</td>
+												<td data-label="{$usuario_presenca->titulo}" class="table-danger fw-bold">F</td>
 											{elseif $usuario_presenca->presenca_id == 9}
-												<td class="table-warning fw-bold">J</td>
+												<td data-label="{$usuario_presenca->titulo}" class="table-warning fw-bold">J</td>
 											{else}
-												<td class="fw-bold">-</td>
+												<td data-label="{$usuario_presenca->titulo}" class="fw-bold">-</td>
 											{/if}
 										{/foreach}
 									</tr>
 								</tbody>
 							</table>
-						</div>
+
 						<p class="text-center">
 							Legenda:
 							<span class="badge bg-success">P = Presente</span> |
@@ -161,6 +160,9 @@
 							<span class="badge bg-warning">J = Justificado</span>
 						</p>
 					</div>
+				</div>
+				<div class="text-center">
+					<a class="btn btn-sm btn-outline-primary btn-cadastrar" href="{url_to('reuniao_relatorio_presenca')}">Visualizar todas as presenças</a>
 				</div>
 			</div>
 			<!-- GRUPOS ----------------------------------------------------------------------------- !-->

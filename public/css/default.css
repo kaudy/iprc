@@ -574,6 +574,22 @@
 .botao-default {
 	background-color: #00448b;
 	color:white;
+	width: 100%;
+	font-size: 20px;
+}
+
+.botao-default-i {
+	font-size: 60px;
+	color: white;
+	text-align: center;
+}
+
+.botao-titulo {
+	font-size: max(1.5em, 28px);
+	font-size-adjust:0.5px;
+	flex-wrap:nowrap;
+	wrap:nowrap;
+	text-align: center;
 }
 
 /* STATUS *************************************************/
@@ -637,6 +653,39 @@
 }
 /*********************************************************/
 
+/** Tabs **************************************************/
+.nav-tabs{
+	border-bottom: 1px solid #f41737;
+}
+
+.nav-tabs .nav-link.active {
+	background-color: #f41737;
+	color: white;
+	border-color: #f41737 #f41737 #fff;
+	border-bottom: 1px solid #f41737;
+}
+
+.nav-tabs .nav-link.active:hover {
+	background-color: #f41737;
+	color: white;
+	border-color: #f41737 #f41737 #fff;
+	border-bottom: 1px solid #f41737;
+}
+
+.nav-tabs .nav-link {
+	border-bottom-color: #f41737;
+	color: #00448b;
+	border-bottom: 1px solid #f41737;
+}
+
+.nav-tabs .nav-link:hover {
+	border-bottom-color: #f41737;
+	color: white;
+	background-color: #00448b;
+	border-bottom: 1px solid #f41737;
+}
+/*********************************************************/
+
 
 /* Barra de Ação Fixa no Rodapé **************************/
 
@@ -662,6 +711,11 @@
 /* *************************************************/
 
 @media screen and (max-width: 1225px) and (min-width: 1045px) {
+	.botao-default {
+		width: 100%;
+		font-size: 18px;
+	}
+
 	.priority-5{
 		display:none;
 	}
@@ -687,6 +741,11 @@
 }
 
 @media screen and (max-width: 1399px) and (min-width: 1045px) {
+	botao-default {
+		width: 100%;
+		font-size: 12px;
+	}
+
 	.priority-5{
 		display:none;
 	}
@@ -714,6 +773,11 @@
 }
 
 @media screen and (max-width: 1045px) and (min-width: 835px) {
+	botao-default {
+		width: 100%;
+		font-size: 10px;
+	}
+
 	.priority-5{
 		display:none;
 	}
@@ -741,6 +805,28 @@
 }
 
 @media screen and (max-width: 835px) and (min-width: 721px) {
+	.botao-default {
+		margin-top: 2px;
+		background-color: #00448b;
+		color:white;
+		width: 100%;
+		font-size: 16px;
+	}
+
+	.botao-default-i {
+		font-size: 60px;
+		color: white;
+		text-align: center;
+	}
+
+	.botao-titulo {
+		font-size: max(1.5em, 16px);
+		font-size-adjust:0.5px;
+		flex-wrap:nowrap;
+		wrap:nowrap;
+		text-align: center;
+	}
+
 	.priority-5{
 		display:none;
 	}
@@ -768,6 +854,66 @@
 }
 
 @media screen and (max-width: 720px) and (min-width: 300px) {
+	.table-responsive-stack thead {
+		display:none;
+	}
+
+	.table-responsive-stack,
+	.table-responsive-stack tbody,
+	.table-responsive-stack tr {
+		display: block;
+		width: 100%;
+	}
+
+	.table-responsive-stack tr {
+		margin-bottom: 0.75rem;
+		border: 1px solid #dee2e6;
+		padding: 0.5rem;
+		background: #fff;
+	}
+
+	.table-responsive-stack td {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem 0.25rem;
+		border: none;
+		border-bottom: 1px solid #eee;
+	}
+
+	.table-responsive-stack td:before {
+		content: attr(data-label);
+		font-weight: 600;
+		color: #00448b;
+		margin-right: 0.75rem;
+		flex: 0 0 auto;
+	}
+
+	.table-responsive-stack td:last-child {
+		border-bottom: 0;
+	}
+
+	.botao-default {
+		margin-top: 4px;
+		background-color: #00448b;
+		color:white;
+		width: 100%;
+		font-size: 16px;
+	}
+
+	.botao-default-i {
+		font-size: 60px;
+		color: white;
+		text-align: center;
+	}
+
+	.botao-titulo {
+		font-size: max(1.5em, 16px);
+		font-size-adjust:0.5px;
+		flex-wrap:nowrap;
+		wrap:nowrap;
+		text-align: center;
+	}
+
 	.priority-5{
 		display:none;
 	}
@@ -816,6 +962,66 @@
 }
 
 @media screen and (max-width: 300px) {
+	.table-responsive-stack thead {
+		display:none;
+	}
+
+	.table-responsive-stack,
+	.table-responsive-stack tbody,
+	.table-responsive-stack tr {
+		display: block;
+		width: 100%;
+	}
+
+	.table-responsive-stack tr {
+		margin-bottom: 0.75rem;
+		border: 1px solid #dee2e6;
+		padding: 0.5rem;
+		background: #fff;
+	}
+
+	.table-responsive-stack td {
+		display: flex;
+		justify-content: space-between;
+		padding: 0.5rem 0.25rem;
+		border: none;
+		border-bottom: 1px solid #eee;
+	}
+
+	.table-responsive-stack td:before {
+		content: attr(data-label);
+		font-weight: 600;
+		color: #00448b;
+		margin-right: 0.75rem;
+		flex: 0 0 auto;
+	}
+
+	.table-responsive-stack td:last-child {
+		border-bottom: 0;
+	}
+
+	.botao-default {
+		margin-top: 2px;
+		background-color: #00448b;
+		color:white;
+		width: 100%;
+		font-size: 12px;
+	}
+
+	.botao-default-i {
+		font-size: 48px;
+		color: white;
+		text-align: center;
+	}
+
+	.botao-titulo {
+		font-size: max(1.5em, 12px);
+		font-size-adjust:0.5px;
+		flex-wrap:nowrap;
+		wrap:nowrap;
+		text-align: center;
+	}
+
 	.priority-5{
 		display:none;
 	}

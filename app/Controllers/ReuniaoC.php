@@ -1073,6 +1073,39 @@ class ReuniaoC extends BaseController {
 	}
 
 	/**
+	 * Relatório de presença em reuniões
+	 */
+	public function relatorioPresencaReuniao() {
+		$usuario_sessao = $this->session->get('usuario');
+		if(is_null($usuario_sessao)) {
+			return redirect()->route('login');
+		}
+		// mensagem temporaria da sessao
+		$data = $this->session->getFlashdata('data');
+		if(!isset($data)) {
+			$data['msg'] = "";
+			$data['msg_type'] = "";
+			$data['errors'] = [];
+		}
+
+		$presencas = array();
+		if($this->request->getMethod() === 'post') {
+			$grupo_id = $this->request->getPost('grupo_id');
+			$presencas = $this->reuniao->ultimasPresencasPorUsuario($usuario_sessao->usuario->id, 12);
+		} else {
+			$presencas = $this->reuniao->ultimasPresencasPorUsuario($usuario_sessao->usuario->id, 12);
+		}
+
+		$grupos = $this->grupo->where('status_id', 1)->findAll();
+
+		$this->smarty->assign("presencas", $presencas);
+		$this->smarty->assign("grupos", $grupos);
+		$this->smarty->assign("data", $data);
+		$this->smarty->assign("usuario_sessao", $usuario_sessao);
+		$this->smarty->display($this->smarty->getTemplateDir(0) .'/reuniao/relatorio_presenca_reuniao.tpl');
+	}
+
+	/**
 	 *	Agenda o envio de email para os membros da reunão
 	 */
 	public function agendarEnvioEmailReuniao(){
